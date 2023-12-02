@@ -1,11 +1,9 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using IdentityServer4;
-using IdentityServerHost.Quickstart.UI;
+﻿using IdentityServer4;
+using Learning.Persistent.Identity.Data;
+using Learning.Persistent.Identity.Data.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,23 +28,27 @@ namespace Learning.Persistent.Identity
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
-            var builder = services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
+            services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(connectionString, migration => migration.MigrationsAssembly("Learning.Persistent.Identity")));
 
-                // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-                options.EmitStaticAudienceClaim = true;
-            })
-                .AddTestUsers(TestUsers.Users)
-                // this adds the config data from DB (clients, resources, CORS)
+            services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+            var builder = services
+                .AddIdentityServer(options =>
+                {
+                    options.Events.RaiseErrorEvents = true;
+                    options.Events.RaiseInformationEvents = true;
+                    options.Events.RaiseFailureEvents = true;
+                    options.Events.RaiseSuccessEvents = true;
+
+                    options.EmitStaticAudienceClaim = true;
+                })
+                .AddAspNetIdentity<AppUser>()
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = builder => builder.UseNpgsql(connectionString, b => b.MigrationsAssembly("Learning.Persistent.Identity"));
                 })
-                // this adds the operational data from DB (codes, tokens, consents)
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = builder => builder.UseNpgsql(connectionString, b => b.MigrationsAssembly("Learning.Persistent.Identity"));
@@ -82,6 +84,7 @@ namespace Learning.Persistent.Identity
 
             app.UseRouting();
             app.UseIdentityServer();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

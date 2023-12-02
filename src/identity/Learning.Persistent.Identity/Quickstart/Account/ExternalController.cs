@@ -4,6 +4,8 @@ using IdentityServer4.Events;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using IdentityServer4.Test;
+using Learning.Persistent.Identity.Data.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +23,7 @@ namespace IdentityServerHost.Quickstart.UI
     [AllowAnonymous]
     public class ExternalController : Controller
     {
-        private readonly TestUserStore _users;
+        private readonly UserManager<AppUser> _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly ILogger<ExternalController> _logger;
@@ -32,12 +34,8 @@ namespace IdentityServerHost.Quickstart.UI
             IClientStore clientStore,
             IEventService events,
             ILogger<ExternalController> logger,
-            TestUserStore users = null)
+            UserManager<AppUser> users)
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-            _users = users ?? new TestUserStore(TestUsers.Users);
-
             _interaction = interaction;
             _clientStore = clientStore;
             _logger = logger;
@@ -162,15 +160,15 @@ namespace IdentityServerHost.Quickstart.UI
             var providerUserId = userIdClaim.Value;
 
             // find external user
-            var user = _users.FindByExternalProvider(provider, providerUserId);
+            //var user = _users.FindByExternalProvider(provider, providerUserId);
 
-            return (user, provider, providerUserId, claims);
+            return (null, provider, providerUserId, claims);
         }
 
         private TestUser AutoProvisionUser(string provider, string providerUserId, IEnumerable<Claim> claims)
         {
-            var user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
-            return user;
+            //var user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
+            return null;
         }
 
         // if the external login is OIDC-based, there are certain things we need to preserve to make logout work

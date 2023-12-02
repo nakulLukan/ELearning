@@ -1,10 +1,11 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+﻿
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.EntityFramework.Storage;
+using Learning.Persistent.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -25,13 +26,17 @@ namespace Learning.Persistent.Identity
             {
                 options.ConfigureDbContext = db => db.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName));
             });
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseNpgsql(connectionString);
+            });
 
             var serviceProvider = services.BuildServiceProvider();
 
             using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
+                scope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
                 scope.ServiceProvider.GetService<PersistedGrantDbContext>().Database.Migrate();
-
                 var context = scope.ServiceProvider.GetService<ConfigurationDbContext>();
                 context.Database.Migrate();
                 EnsureSeedData(context);

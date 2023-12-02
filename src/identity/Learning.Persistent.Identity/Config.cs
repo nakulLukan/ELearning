@@ -1,11 +1,14 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
+using Learning.Persistent.Identity.Data.Domain;
 using System.Collections.Generic;
 
 namespace Learning.Persistent.Identity
 {
     public static class Config
     {
+        public const string VideoApiScope = "videoapi";
+
         public static IEnumerable<IdentityResource> IdentityResources =>
             new IdentityResource[]
             {
@@ -17,6 +20,7 @@ namespace Learning.Persistent.Identity
             new ApiScope[]
             {
                 new ApiScope("api", "E-Learning API Service"),
+                new ApiScope(VideoApiScope, "E-Learning Video API Service"),
             };
 
         public static IEnumerable<Client> Clients =>
@@ -28,7 +32,7 @@ namespace Learning.Persistent.Identity
 
                     AllowedGrantTypes = GrantTypes.Code,
                     RequireClientSecret = false,
-                    
+
                     RedirectUris = { "https://localhost:5020/signin-oidc" },
                     FrontChannelLogoutUri = "https://localhost:5020/signout-oidc",
                     PostLogoutRedirectUris = { "https://localhost:5020/signout-callback-oidc" },
@@ -54,5 +58,19 @@ namespace Learning.Persistent.Identity
                     AccessTokenLifetime = 60,
                 }
             };
+
+        public static IEnumerable<AppUser> Users() => new AppUser[]
+        {
+            new()
+            {
+                UserName = "sysadmin",
+                PasswordHash = "",
+                Email = "email@gmail.com",
+                EmailConfirmed = false,
+                NormalizedEmail = "EMAIL@GMAIL.COM",
+                NormalizedUserName = "SYSADMIN",
+                TwoFactorEnabled = false,
+            }
+        };
     }
 }

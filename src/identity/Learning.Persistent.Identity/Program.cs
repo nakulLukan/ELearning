@@ -39,7 +39,6 @@ namespace Learning.Persistent.Identity
                 Log.Information("Seeding database...");
                 var config = host.Services.GetRequiredService<IConfiguration>();
                 var connectionString = config.GetConnectionString("DefaultConnection");
-                SeedData.EnsureSeedData(connectionString);
                 Log.Information("Done seeding database.");
 
                 Log.Information("Starting host...");

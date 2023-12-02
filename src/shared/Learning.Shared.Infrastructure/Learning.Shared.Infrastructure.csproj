@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Learning.Shared.Application\Learning.Shared.Application.csproj" />
+    <ProjectReference Include="..\Learning.Shared.Common\Learning.Shared.Common.csproj" />
+  </ItemGroup>
+
+</Project>
