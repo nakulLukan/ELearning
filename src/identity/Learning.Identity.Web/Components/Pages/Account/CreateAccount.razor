@@ -1,0 +1,36 @@
+﻿@page "/account/new"
+@inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> UserManager;
+@layout AccessLayout
+@using Learning.Identity.Web.Components.Layout
+@using Learning.Identity.Web.Data.Entities
+@using Learning.Identity.Web.Data.Models
+@using Microsoft.AspNetCore.Identity
+
+<EditForm Model="model" OnValidSubmit="OnCreate">
+    <MudPaper>
+        <MudTextField @bind-Value="model.UserName" Label="Username" HelperText="Enter username" Variant="Variant.Filled" />
+        <MudTextField @bind-Value="model.Password" Label="Password" HelperText="Enter password" Variant="Variant.Filled" />
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="OnCreate">Create</MudButton>
+    </MudPaper>
+</EditForm>
+@code {
+    NewAccountModel model = new();
+    protected override void OnInitialized()
+    {
+    }
+
+    public async Task OnCreate()
+    {
+        var applicationUser = new ApplicationUser()
+            {
+                UserName = model.UserName,
+                Email = model.UserName,
+            };
+        var result = await UserManager.CreateAsync(applicationUser, model.Password);
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("account/login");
+        }
+    }
+}

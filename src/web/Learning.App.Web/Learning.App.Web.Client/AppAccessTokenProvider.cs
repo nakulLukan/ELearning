@@ -1,0 +1,17 @@
+﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+
+namespace Learning.App.Web.Client
+{
+    public class AppAccessTokenProvider : IAccessTokenProvider
+    {
+        public ValueTask<AccessTokenResult> RequestAccessToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<AccessTokenResult> RequestAccessToken(AccessTokenRequestOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
