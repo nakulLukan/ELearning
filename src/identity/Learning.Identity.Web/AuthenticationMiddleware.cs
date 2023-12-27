@@ -14,7 +14,7 @@ public class AuthenticationMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context, SignInManager<ApplicationUser> signInMgr)
+    public async Task Invoke(HttpContext context, SignInManager<Data.Entities.ApplicationUser> signInMgr)
     {
         if (context.Request.Path == "/login" && context.Request.Query.ContainsKey("Key"))
         {

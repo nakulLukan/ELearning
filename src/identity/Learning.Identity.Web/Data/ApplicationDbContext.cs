@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Learning.Identity.Web.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<Data.Entities.ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

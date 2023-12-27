@@ -1,9 +1,10 @@
-using Learning.Identity.Web;
 using Learning.Identity.Web.Components;
+using Learning.Identity.Web.Components.Account;
 using Learning.Identity.Web.Data;
 using Learning.Identity.Web.Data.Entities;
 using Learning.Identity.Web.ServiceRegistry;
 using Learning.Shared.Common.Constants;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
@@ -14,8 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
 var connectionString = builder.Configuration[AppSettingsKeyConstant.ConnectionStrings_Default];
-builder.Services.AddDbContext<ApplicationDbContext>(opt=> opt.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(connectionString));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -42,6 +48,8 @@ builder.Services.AddIdentityServer()
     })
     .AddAspNetIdentity<ApplicationUser>();
 
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
 // Add mudblazor
 builder.Services.AddMudServices();
 
@@ -59,10 +67,11 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-app.UseMiddleware<AuthenticationMiddleware>();
 app.UseAntiforgery();
 app.UseIdentityServer();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
 app.Run();
