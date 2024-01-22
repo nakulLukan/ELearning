@@ -69,7 +69,7 @@
     public async Task RegisterUser(EditContext editContext)
     {
         var user = CreateUser();
-
+        user.IsAdmin = false;
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -83,6 +83,7 @@
 
         Logger.LogInformation("User created a new account with password.");
 
+        var res = await UserManager.AddToRoleAsync(user, "user");
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
