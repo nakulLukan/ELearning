@@ -1,0 +1,129 @@
+﻿@page "/Account/Register/OtherDetails"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Learning.Business.Contracts.HttpContext
+@using Learning.Business.Impl.Data
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.EntityFrameworkCore
+
+@attribute [Authorize(PolicyConstant.UserPolicy)]
+
+@inject ILogger<Register> Logger
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@inject IRequestContext RequestContext
+@inject IAppDbContext DbContext
+
+<PageTitle>Register</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudStack>
+        <h1>Register</h1>
+        <EditForm Model="Input" method="post" OnValidSubmit="SubmitOtherDetails" FormName="submit">
+            <DataAnnotationsValidator />
+            <hr />
+            <MudGrid>
+                <MudItem xs="6">
+                    <label for="firstName">First Name</label>
+                    <InputText @bind-Value="Input.FirstName" class="form-control" aria-required="true" />
+                    <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+                </MudItem>
+                <MudItem xs="6">
+                    <label for="lastName">Last Name</label>
+                    <InputText @bind-Value="Input.LastName" class="form-control" aria-required="true" />
+                    <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                </MudItem>
+                <MudItem xs="3">
+                    <label for="countryCode">Country Code</label>
+                    <InputSelect @bind-Value="Input.CountryCode" class="form-select">
+                        <option value="+91">+91</option>
+                    </InputSelect>
+                </MudItem>
+                <MudItem xs="9">
+                    <label for="phoneNumber">Phone Number</label>
+                    <InputText @bind-Value="Input.PhoneNumber" class="form-control" aria-required="true" />
+                    <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
+                </MudItem>
+                <MudItem>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Submit</button>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </MudStack>
+</MudContainer>
+
+@code {
+    private IEnumerable<IdentityError>? identityErrors;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // If secondary details are provided then redirect to RedirectUrl.
+        var userId = await RequestContext.GetUserId();
+        var secondaryDetails = await DbContext.ApplicationUserOtherDetails.FirstOrDefaultAsync(x => x.UserId == userId);
+        if (secondaryDetails != null)
+        {
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
+    }
+
+    public async Task SubmitOtherDetails(EditContext editContext)
+    {
+        var userId = await RequestContext.GetUserId();
+        var secondaryDetail = await DbContext.ApplicationUserOtherDetails.AsTracking()
+        .FirstOrDefaultAsync(x => x.UserId == userId);
+        if (secondaryDetail == null)
+        {
+            secondaryDetail = new()
+                {
+                    UserId = userId
+                };
+            DbContext.ApplicationUserOtherDetails.Add(secondaryDetail);
+        }
+        else
+        {
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
+
+        secondaryDetail.PhoneNumber = Input.CountryCode + "-" + Input.PhoneNumber;
+        secondaryDetail.LastName = Input.LastName.Trim();
+        secondaryDetail.FirstName = Input.FirstName.Trim();
+        await DbContext.SaveAsync(default);
+        Logger.LogInformation("Secondary details updated");
+        RedirectManager.RedirectTo(ReturnUrl);
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [Phone]
+        [Display(Name = "Phone Number")]
+        [MaxLength(20)]
+        public string PhoneNumber { get; set; } = "";
+
+        [MaxLength(4)]
+        [Display(Name = "Country Code")]
+        public string CountryCode { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        [MaxLength(30)]
+        public string FirstName { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Last Name")]
+        [MaxLength(30)]
+        public string LastName { get; set; } = "";
+    }
+}

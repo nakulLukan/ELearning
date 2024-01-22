@@ -1,0 +1,49 @@
+﻿@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Requests.Core.Course
+@using MediatR;
+@using System.Linq.Expressions;
+@inject IMediator Mediator;
+
+<MudSelect Label="@LabelName" AnchorOrigin="Origin.BottomCenter" @bind-Value="@Value" For="For"
+           Class="@Class"
+           Variant="Variant.Outlined">
+    <MudSelectItem T="int?" Value="default(int?)">Select</MudSelectItem>
+    @foreach (var element in Elements)
+    {
+        <MudSelectItem T="int?" Value="element.CourseId">@element.CourseName (@element.CourseCode)</MudSelectItem>
+    }
+</MudSelect>
+@code {
+    List<CourseSelectItemDto> Elements = new();
+
+    [Parameter]
+    public string LabelName { get; set; } = "Course";
+
+    [Parameter]
+    public string Class { get; set; }
+
+    private int? _value;
+    [Parameter]
+    public int? Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+
+    [Parameter]
+    [Category("Validation")]
+    public Expression<Func<int?>> For { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        Elements = await Mediator.Send(new CourseSelectQuery());
+    }
+}

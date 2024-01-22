@@ -1,0 +1,203 @@
+﻿@using Learning.Business.Requests.Content
+@using Learning.Shared.Application.Contracts.Storage
+@using Learning.Shared.Common.Constants
+@using Learning.Shared.Common.Utilities
+@inject IFileStorage FileStorage
+@inherits AppBaseComponent
+
+<MudGrid>
+    <MudItem xs="7">
+
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                          AppendMultipleFiles
+                        OnFilesChanged="OnInputFileChanged"
+                        Hidden="@false"
+                        InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                        InputStyle="opacity:0"
+                        @ondragenter="@SetDragClass"
+                        @ondragleave="@ClearDragClass"
+                        @ondragend="@ClearDragClass"
+                        Accept=".mpd, .m4s" MaximumFileCount="10000">
+
+             <ButtonTemplate>
+                 <MudPaper Height="300px"
+                           Outlined="true"
+                           Class="@_dragClass">
+                     <MudText Typo="Typo.h6">
+                         Drag and drop files here or click
+                     </MudText>
+                     @foreach (var file in _fileNames)
+                    {
+                        <MudChip Color="Color.Dark" Text="@file" />
+                    }
+                </MudPaper>
+            </ButtonTemplate>
+        </MudFileUpload>
+    </MudItem>
+    <MudItem xs="5">
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="@_videoFileName" Variant="Variant.Filled" Class="my-2"
+                          HelperText="Provide a name for this video."></MudTextField>
+            <MudTextField T="string" HelperText="Duration of the video" InputType="InputType.Text"
+                          Variant="Variant.Filled" Pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" Format="hh:mm:ss"
+                          Mask="@(new PatternMask("00:00:00"))" @bind-Value="_videoDuration" />
+            <MudStack Row Justify="Justify.SpaceBetween">
+                 <MudButton OnClick="@Clear"
+                            Color="Color.Error"
+                            Disabled="@(!_fileNames.Any())"
+                            Variant="Variant.Filled">
+                     Clear
+                 </MudButton>
+                 <MudButton OnClick="@Upload"
+                            Color="Color.Primary"
+                            Disabled="@(!_fileNames.Any())"
+                            Variant="Variant.Filled">
+                     Upload
+                 </MudButton>
+             </MudStack>
+
+         </MudStack>
+     </MudItem>
+ </MudGrid>
+
+ <MudOverlay @bind-Visible="_isLoading" DarkBackground="true" ZIndex="9999" AutoClose="false">
+     <MudPaper Class="rounded pt-3" MinWidth="500px">
+         <MudText Typo="Typo.h6" Align="Align.Center" Class="mt-3">@_uploadProgressMessage</MudText>
+            <MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="@_currentUploadPercentage" Class="my-7" Max="100D" Min="0D" />
+        </MudPaper>
+    </MudOverlay>
+    @code {
+
+    /// <summary>
+    /// Invoked when a video is successfully uploaded. Returns video id
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnVideoUpload { get; set; }
+
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 my-4 mud-width-full mud-height-full z-10 overflow-y-scroll";
+    private string _dragClass = DefaultDragClass;
+
+    private readonly List<string> _fileNames = new();
+    private string _videoFileName = string.Empty;
+    private string _videoDuration = string.Empty;
+    private IReadOnlyList<IBrowserFile> files;
+
+    public int videoId { get; set; }
+    private string _currentUploadingFileName = string.Empty;
+    private float _currentUploadPercentage;
+    private string _uploadProgressMessage = string.Empty;
+    private string GetUploadMessage(float percentage, string currentUploadFileName, int filesProcessed)
+    {
+        if (percentage == 100)
+        {
+            return "Upload Completed";
+        }
+
+        return $"Uploading {currentUploadFileName} ({filesProcessed}/{files.Count})";
+    }
+
+    private async Task Clear()
+    {
+        _videoFileName = _videoDuration = string.Empty;
+        _fileNames.Clear();
+        ClearDragClass();
+        await Task.Delay(100);
+    }
+
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        ClearDragClass();
+        files = e.GetMultipleFiles(10000);
+        foreach (var file in files)
+        {
+            _fileNames.Add(file.Name);
+        }
+    }
+
+    private async Task Upload()
+    {
+        ChangeToLoadingState();
+        try
+        {
+            string filePrefix = AppDateTime.UtcNow.ToString("yyyyMMddHHmmssff");
+            long totalFileSize = files.Sum(x => x.Size);
+            var mpdFileName = GetMpdFileName();
+            var videoFileRelativePath = StoragePathConstant.VideoContentBasePath(_videoFileName, filePrefix);
+            await UploadFiles(videoFileRelativePath);
+
+            var videoIdTask = Mediator.Send(new AddVideoCommand
+                {
+                    Duration = ParseVideoDuration(),
+                    FileSize = totalFileSize,
+                    MpdFileName = mpdFileName,
+                    VideoFolderRelativeUrl = videoFileRelativePath,
+                    Name = _videoFileName,
+                });
+            await Task.Delay(1000);
+            videoId = (await videoIdTask).Data;
+            _videoFileName = string.Empty;
+            ClearDragClass();
+            _fileNames.Clear();
+        }
+        catch { }
+        ChangeToLoadedState();
+        await OnVideoUpload.InvokeAsync(videoId);
+    }
+
+    private string GetMpdFileName()
+    {
+        string mpdFileName = files.Where(x => x.Name.EndsWith(".mpd")).FirstOrDefault()?.Name;
+        if (string.IsNullOrEmpty(mpdFileName))
+        {
+            ToastService.Error("Manifest file not found. Please upload the .mpd file.");
+            throw new AppException("Manifest file not found");
+        }
+
+        return mpdFileName;
+    }
+
+    private async Task UploadFiles(string videoFileRelativePath)
+    {
+        int filesUploaded = 0;
+        foreach (var file in files)
+        {
+            _currentUploadingFileName = file.Name;
+            _uploadProgressMessage = GetUploadMessage(_currentUploadPercentage, _currentUploadingFileName, filesUploaded + 1);
+            StateHasChanged();
+            await FileStorage.UploadFile(file.OpenReadStream(10 * 1000 * 1000), file.Name, videoFileRelativePath, default);
+            filesUploaded++;
+            _currentUploadPercentage = (((float)filesUploaded / files.Count) * 100);
+            _uploadProgressMessage = GetUploadMessage(_currentUploadPercentage, _currentUploadingFileName, filesUploaded + 1);
+        }
+
+        StateHasChanged();
+    }
+
+    private int ParseVideoDuration()
+    {
+        int duration = 0;
+        var timeParts = _videoDuration.Split(":");
+        if (timeParts.Length > 0)
+        {
+            duration += int.Parse(timeParts[0]) * 60 * 60;
+        }
+
+        if (timeParts.Length > 1)
+        {
+            duration += int.Parse(timeParts[1]) * 60;
+        }
+
+        if (timeParts.Length > 2)
+        {
+            duration += int.Parse(timeParts[2]);
+        }
+
+        return duration;
+    }
+
+    private void SetDragClass()
+        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+}

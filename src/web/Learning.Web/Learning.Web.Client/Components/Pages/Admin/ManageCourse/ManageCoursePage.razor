@@ -1,0 +1,18 @@
+﻿@page "/admin/courses"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveAuto
+@attribute [Authorize(PolicyConstant.AdminPolicy)]
+
+@layout AdminLayout
+<MudGrid>
+    <MudItem xs="12" lg="4">
+        <AddCourseComponent OnCourseAdded="OnCourseAdded"></AddCourseComponent>
+    </MudItem>
+    <MudItem xs="12" lg="8">
+        <ListCourseComponent RefreshData=refreshData/>
+    </MudItem >
+</MudGrid>
+@code {
+    private bool refreshData = false;
+    void OnCourseAdded() => refreshData = !refreshData;
+}

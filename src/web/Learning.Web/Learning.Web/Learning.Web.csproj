@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-Learning.Web-2f2f9c89-f9ce-48a5-b540-641a959f38cd</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\Learning.Shared.Application\Learning.Shared.Application.csproj" />
+    <ProjectReference Include="..\..\Learning.Business\Learning.Business.csproj" />
+    <ProjectReference Include="..\..\Learning.Domain\Learning.Domain.csproj" />
+    <ProjectReference Include="..\..\Learning.Infrastructure\Learning.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Learning.Shared\Learning.Shared.csproj" />
+    <ProjectReference Include="..\Learning.Web.Client\Learning.Web.Client.csproj" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MudBlazor" Version="6.11.2" />
+  </ItemGroup>
+
+</Project>

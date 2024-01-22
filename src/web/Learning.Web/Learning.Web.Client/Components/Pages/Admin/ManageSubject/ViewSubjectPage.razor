@@ -1,0 +1,26 @@
+﻿@page "/admin/subjects/{SubjectId:int}"
+@using Learning.Business.Dto.Core.Lesson
+@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Subject
+@using Microsoft.AspNetCore.Authorization
+@layout AdminLayout
+@rendermode InteractiveAuto
+@attribute [Authorize(PolicyConstant.AdminPolicy)]
+
+<MudContainer>
+    <MudGrid>
+        <MudItem md="7">
+            <SubjectDetailComponent SubjectId="SubjectId" />
+        </MudItem>
+        <MudItem md="5">
+            <MudStack>
+                <Learning.Web.Client.Components.Pages.Admin.ManageLesson.ListChaptersAndLessonsComponent SubjectId="SubjectId" />
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int? SubjectId { get; set; }
+}

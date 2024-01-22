@@ -1,0 +1,60 @@
+﻿@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Requests.Core.Course
+@inherits AppBaseComponent
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit" FormName="add-course">
+    <DataAnnotationsValidator />
+    <MudGrid >
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <MudText Typo="Typo.h5">Add new course</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudTextField Label="Course Name" HelperText="Max. 8 characters" Variant="Variant.Outlined"
+                                  @bind-Value="model.CourseName" For="@(() => model.CourseName)" />
+                    <MudTextField Label="Short Code" Class="mt-3" Variant="Variant.Outlined"
+                                  @bind-Value="model.ShortCode" For="@(() => model.ShortCode)" />
+                    <MudTextField Label="Description" Class="mt-3" Lines="3" MaxLines="4" Variant="Variant.Outlined"
+                                  @bind-Value="model.Description" For="@(() => model.Description)"/>
+                    <MudCheckBox @bind-Value="@model.IsActive" Size="Size.Medium" Color="Color.Primary">@(model.IsActive ? "Enabled" : "Disabled")</MudCheckBox>
+                </MudCardContent>
+                <MudCardActions>
+                    <AppProgressButton ButtonType="ButtonType.Submit" IsProgressing="_isLoading"
+                    Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add Course</AppProgressButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+@code {
+
+    [Parameter]
+    public EventCallback OnCourseAdded { get; set; }
+
+    AddCourseDto model = new();
+    private async Task OnValidSubmit(EditContext context)
+    {
+        ChangeToLoadingState();
+        await AppMediator.Send(new AddCourseCommand
+            {
+                CourseName = model.CourseName,
+                Description = model.Description,
+                IsActive = model.IsActive,
+                ShortCode = model.ShortCode
+            })
+            .OnSuccess(data =>
+            {
+                ToastService.Success("New course added");
+                ChangeToLoadedState();
+                model = new();
+                Refresh();
+                InvokeAsync(OnCourseAdded.InvokeAsync);
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+                ChangeToLoadedState();
+            });
+    }
+}

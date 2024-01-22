@@ -1,0 +1,84 @@
+﻿@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Requests.Core.Course
+@using MediatR;
+@using System.Linq.Expressions;
+@inject IMediator Mediator;
+
+<MudSelect Label="@LabelName" AnchorOrigin="Origin.BottomCenter" @bind-Value="@Value" For="For"
+           Class="@Class"
+           Variant="Variant.Outlined">
+    <MudSelectItem T="int?" Value="default(int?)">Select</MudSelectItem>
+    @foreach (var element in Elements)
+    {
+        <MudSelectItem T="int?" Value="element.ClassId">@element.ClassName (@element.ClassCode)</MudSelectItem>
+    }
+</MudSelect>
+@code {
+    List<ClassSelectItemDto> Elements = new();
+
+    [Parameter]
+    public string LabelName { get; set; } = "Class";
+
+    [Parameter]
+    public string Class { get; set; }
+
+    private int? _value;
+    [Parameter]
+    public int? Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+
+    [Parameter]
+    [Category("Validation")]
+    public Expression<Func<int?>> For { get; set; }
+
+    /// <summary>
+    /// If course id is given then only classes belonging to that course shall be returned
+    /// </summary>
+    [Parameter]
+    public int? CourseId { get; set; }
+    private int? lastCourseId;
+
+    /// <summary>
+    /// Flag to indicate the component to load data only if <see cref="CourseId"/> is not null
+    /// </summary>
+    [Parameter]
+    public bool IsCourseRequired { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadClasses();
+    }
+
+    private async Task LoadClasses()
+    {
+        if (IsCourseRequired && !CourseId.HasValue)
+        {
+            return;
+        }
+        Elements = await Mediator.Send(new ClassSelectQuery()
+            {
+                CourseId = CourseId
+            });
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (lastCourseId != CourseId)
+        {
+            lastCourseId = CourseId;
+            await LoadClasses();
+        }
+    }
+}

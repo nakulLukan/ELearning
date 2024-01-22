@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Learning.Shared.Application\Learning.Shared.Application.csproj" />
+    <ProjectReference Include="..\..\shared\Learning.Shared.Common\Learning.Shared.Common.csproj" />
+    <ProjectReference Include="..\..\shared\Learning.Shared.Infrastructure\Learning.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\Learning.Business\Learning.Business.csproj" />
+    <ProjectReference Include="..\Learning.Domain\Learning.Domain.csproj" />
+    <ProjectReference Include="..\Learning.Shared\Learning.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

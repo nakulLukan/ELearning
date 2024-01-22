@@ -1,0 +1,76 @@
+﻿@using Learning.Business.Dto.Core.Lesson
+@using Learning.Business.Requests.Core.Lesson
+@inject IDialogService Dialog
+@inherits AppBaseComponent
+<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+           Class="my-3" OnClick="@(() => OpenDialog(null))">Add Chapter</MudButton>
+
+<MudDialog IsVisible=_addChapterDialog Options="DialogOptionConstant.SmallWidth">
+    <DialogContent>
+        <EditForm Model="@model" OnValidSubmit="OnValidSubmit" FormName="add-chapter">
+            <DataAnnotationsValidator />
+            <MudCard Elevation="0">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h5">New Chapter</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudTextField Label="Chapter Name" Variant="Variant.Outlined"
+                                  @bind-Value="model.ChapterName" For="@(() => model.ChapterName)" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton OnClick="@(()=> _addChapterDialog = false)">Cancel</MudButton>
+                    <MudSpacer />
+                    <AppProgressButton ButtonType="ButtonType.Submit" IsProgressing="_isLoading"
+                                       Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add Chapter</AppProgressButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public int? SubjectId { get; set; }
+
+    [Parameter]
+    public EventCallback OnChapterAdded { get; set; }
+
+    bool _addChapterDialog;
+
+    AddChapterDto model = new();
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        ChangeToLoadingState();
+        await AppMediator.Send(new AddChapterCommand
+            {
+                ChapterName = model.ChapterName,
+                SubjectId = SubjectId.Value,
+                PreviousChapterId = model.PreviousChapterId
+            })
+            .OnSuccess(data =>
+            {
+                ToastService.Success("New chapter added");
+                ChangeToLoadedState();
+                model = new();
+                _addChapterDialog = false;
+                Refresh();
+                InvokeAsync(OnChapterAdded.InvokeAsync);
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+                ChangeToLoadedState();
+            });
+    }
+
+    public void OpenDialog(int? prevChapterId)
+    {
+        _addChapterDialog = true;
+        model.PreviousChapterId = prevChapterId;
+        StateHasChanged();
+    }
+}

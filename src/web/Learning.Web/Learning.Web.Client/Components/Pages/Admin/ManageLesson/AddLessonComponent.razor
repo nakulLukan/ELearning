@@ -1,0 +1,122 @@
+﻿@using Learning.Business.Dto.Content
+@using Learning.Business.Dto.Core.Lesson
+@using Learning.Business.Requests.Content
+@using Learning.Business.Requests.Core.Lesson
+@using Learning.Shared.Application.Contracts.Storage
+@using Learning.Shared.Common.Constants
+@inject IFileStorage FileStorage
+@inherits AppBaseComponent
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid Justify="Justify.SpaceBetween">
+            <MudItem sm="12" hidden="@_hideVideoUploadContainer">
+                <Learning.Web.Client.Components.Pages.Admin.ManageContent.UploadVideoComponent OnVideoUpload="OnVideoUpload" />
+            </MudItem>
+            <MudItem xs="12" hidden="@_hideLessonAddContainer">
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudDataGrid Elevation="0" Items="@_videoFileChunks" Filterable=false Dense HorizontalScrollbar=false FixedHeader
+                                          Height="300px" OverscanCount="1">
+                                 <ToolBarContent>
+                                     <MudText Typo="Typo.h6">Chunk File Details</MudText>
+                                 </ToolBarContent>
+                                 <Columns>
+                                     <PropertyColumn Property="x => x.FileName" Title="File Name" />
+                                     <PropertyColumn Property="x => x.LastModified" Title="Last Modified" Sortable="false" />
+                                     <PropertyColumn Property="x => x.FileSize" Title="Size" Sortable="false" />
+                                 </Columns>
+                             </MudDataGrid>
+                         </MudItem>
+                         <MudItem xs="6">
+                             <EditForm Model="@model" OnValidSubmit="OnValidSubmit" FormName="add-new-lesson">
+                                 <DataAnnotationsValidator />
+                                 <MudCard Elevation="0">
+                                     <MudCardHeader>
+                                         <MudText Typo="Typo.h5">Enter lesson details</MudText>
+                                     </MudCardHeader>
+                                     <MudCardContent>
+                                         <MudTextField Label="Lesson Name *" Class="mt-3" Variant="Variant.Outlined"
+                                                       @bind-Value="model.LessonName" For="@(() => model.LessonName)" />
+                                         <MudTextField Label="Lesson Code" Class="mt-3" Variant="Variant.Outlined"
+                                                       @bind-Value="model.LessonCode" For="@(() => model.LessonCode)" />
+                                         <MudCheckBox @bind-Value="@model.IsPreviewable" Label="Can Preview" Color="Color.Surface"></MudCheckBox>
+                                     </MudCardContent>
+                                     <MudCardActions>
+                                         <AppProgressButton ButtonType="ButtonType.Submit" IsProgressing="_isLoading"
+                                                            Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add Lesson</AppProgressButton>
+                                     </MudCardActions>
+                                 </MudCard>
+                             </EditForm>
+                         </MudItem>
+                     </MudGrid>
+                 </MudItem>
+             </MudGrid>
+         </DialogContent>
+         <DialogActions>
+             <MudButton OnClick="@(()=> MudDialog.Close(DialogResult.Ok(false)))">
+                 Close
+             </MudButton>
+         </DialogActions>
+     </MudDialog>
+
+     @code {
+
+    [EditorRequired]
+    [Parameter]
+    public int? SubjectId { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public int? ChapterId { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public int LessonOrderWrtChapter { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnLessonAdded { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    bool _hideVideoUploadContainer = false;
+    bool _hideLessonAddContainer = true;
+
+    AddNewLessonDto model = new();
+
+    List<VideoChunkFileListItemDto> _videoFileChunks = new();
+
+    private async Task OnVideoUpload(int videoId)
+    {
+        _hideVideoUploadContainer = true;
+        _hideLessonAddContainer = false;
+        model.VideoId = videoId;
+        _videoFileChunks = await Mediator.Send(new GetVideoChunkFilesInfoQuery()
+            {
+                VideoId = videoId
+            });
+    }
+
+    private async Task OnValidSubmit()
+    {
+        await AppMediator.Send(new AddNewLessonCommand
+            {
+                ChapterId = ChapterId.Value,
+                LessonCode = model.LessonCode,
+                LessonName = model.LessonName,
+                OrderWrtChapter = LessonOrderWrtChapter,
+                VideoId = model.VideoId,
+                IsPreviewable = model.IsPreviewable
+            })
+            .OnSuccess(data =>
+            {
+                ToastService.Success("New lesson added successfully.");
+                InvokeAsync(() => MudDialog.Close(DialogResult.Ok(true)));
+                InvokeAsync(() => OnLessonAdded.InvokeAsync(data.Data));
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+            });
+    }
+}
