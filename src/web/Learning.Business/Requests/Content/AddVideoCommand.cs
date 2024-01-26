@@ -15,9 +15,9 @@ public class AddVideoCommandHandler : IRequestHandler<AddVideoCommand, ApiRespon
 {
     readonly IAppDbContext _dbContext;
 
-    public AddVideoCommandHandler(IAppDbContext dbContext)
+    public AddVideoCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(AddVideoCommand request, CancellationToken cancellationToken)

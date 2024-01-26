@@ -18,9 +18,9 @@ public class ClassDivisionsQueryHandler : IRequestHandler<ClassDivisionsQuery, P
 {
     readonly IAppDbContext _dbContext;
 
-    public ClassDivisionsQueryHandler(IAppDbContext dbContext)
+    public ClassDivisionsQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<PaginatedResponse<ClassDivisionListItemDto>> Handle(ClassDivisionsQuery request, CancellationToken cancellationToken)

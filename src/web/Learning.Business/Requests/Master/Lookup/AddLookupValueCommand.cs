@@ -15,9 +15,9 @@ public class AddLookupValueCommandHandler : IRequestHandler<AddLookupValueComman
 {
     readonly IAppDbContext _dbContext;
 
-    public AddLookupValueCommandHandler(IAppDbContext dbContext)
+    public AddLookupValueCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(AddLookupValueCommand request, CancellationToken cancellationToken)

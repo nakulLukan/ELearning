@@ -14,9 +14,9 @@ public class AddClassCommandHandler : IRequestHandler<AddClassCommand, ApiRespon
 {
     readonly IAppDbContext _dbContext;
 
-    public AddClassCommandHandler(IAppDbContext dbContext)
+    public AddClassCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(AddClassCommand request, CancellationToken cancellationToken)

@@ -14,7 +14,7 @@ public class ApplicationUserOtherDetailEFConfig : IEntityTypeConfiguration<Appli
         builder.Property(x => x.LastName).IsRequired(true).HasMaxLength(30);
 
         builder.HasOne(x => x.User)
-            .WithMany()
-            .HasForeignKey(x => x.UserId);
+            .WithOne(x=>x.OtherDetails)
+            .HasForeignKey<ApplicationUserOtherDetail>(x => x.UserId);
     }
 }

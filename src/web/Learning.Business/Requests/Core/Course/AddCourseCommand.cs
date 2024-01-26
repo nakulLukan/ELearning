@@ -14,9 +14,9 @@ public class AddCourseCommandHandler : IRequestHandler<AddCourseCommand, ApiResp
 {
     readonly IAppDbContext _dbContext;
 
-    public AddCourseCommandHandler(IAppDbContext dbContext)
+    public AddCourseCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(AddCourseCommand request, CancellationToken cancellationToken)

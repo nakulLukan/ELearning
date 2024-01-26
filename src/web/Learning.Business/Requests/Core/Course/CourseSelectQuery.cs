@@ -13,9 +13,9 @@ public class CourseSelectQueryHandler : IRequestHandler<CourseSelectQuery, List<
 {
     readonly IAppDbContext _dbContext;
 
-    public CourseSelectQueryHandler(IAppDbContext dbContext)
+    public CourseSelectQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<List<CourseSelectItemDto>> Handle(CourseSelectQuery request, CancellationToken cancellationToken)

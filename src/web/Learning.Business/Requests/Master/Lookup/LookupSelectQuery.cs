@@ -14,9 +14,9 @@ public class LookupSelectQueryHandler : IRequestHandler<LookupSelectQuery, List<
 {
     readonly IAppDbContext _dbContext;
 
-    public LookupSelectQueryHandler(IAppDbContext dbContext)
+    public LookupSelectQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<List<LookupSelectDto>> Handle(LookupSelectQuery request, CancellationToken cancellationToken)

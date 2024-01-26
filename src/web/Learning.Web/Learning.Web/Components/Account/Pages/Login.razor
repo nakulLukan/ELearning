@@ -99,6 +99,11 @@
             errorMessage = "Error: Invalid login attempt.";
             return;
         }
+        if (!user.IsActive)
+        {
+            errorMessage = "Error: Account is in-active";
+            return;
+        }
         var result = await SignInManager.CheckPasswordSignInAsync(user, Input.Password, true);
         if (result.Succeeded)
         {

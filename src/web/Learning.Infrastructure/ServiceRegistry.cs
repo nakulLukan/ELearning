@@ -15,10 +15,15 @@ public static class ServiceRegistry
     {
         var connectionString = configuration[AppSettingsKeyConstant.ConnectionStrings_Default];
 
+        services.AddDbContextFactory<ApplicationDbContext>(options =>
+            options
+            .UseNpgsql(connectionString));
         services.AddDbContext<ApplicationDbContext>(options =>
             options
-            .UseNpgsql(connectionString), contextLifetime: ServiceLifetime.Transient);
+            .UseNpgsql(connectionString), contextLifetime: ServiceLifetime.Scoped);
+
         services.AddTransient<IAppDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddSingleton<IAppDbContextFactory, ApplicationDbContextFactory>();
         services.AddScoped<IFileStorage, AwsStorage>();
     }
 }

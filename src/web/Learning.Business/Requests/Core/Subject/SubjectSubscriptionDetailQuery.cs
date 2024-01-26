@@ -17,9 +17,9 @@ public class SubjectSubscriptionDetailQueryHandlerHandler : IRequestHandler<Subj
 {
     readonly IAppDbContext _dbContext;
 
-    public SubjectSubscriptionDetailQueryHandlerHandler(IAppDbContext dbContext)
+    public SubjectSubscriptionDetailQueryHandlerHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<SubjectSubscriptionDetailDto> Handle(SubjectSubscriptionDetailQuery request, CancellationToken cancellationToken)

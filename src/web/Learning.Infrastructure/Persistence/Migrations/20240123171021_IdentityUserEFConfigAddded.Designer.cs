@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123171021_IdentityUserEFConfigAddded")]
+    partial class IdentityUserEFConfigAddded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -426,10 +429,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -446,8 +445,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("ApplicationUserOtherDetails");
                 });
@@ -836,8 +834,8 @@ namespace Learning.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Learning.Domain.Identity.ApplicationUserOtherDetail", b =>
                 {
                     b.HasOne("Learning.Domain.Identity.ApplicationUser", "User")
-                        .WithOne("OtherDetails")
-                        .HasForeignKey("Learning.Domain.Identity.ApplicationUserOtherDetail", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -956,12 +954,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Navigation("Chapters");
 
                     b.Navigation("SubscriptionDetail")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Learning.Domain.Identity.ApplicationUser", b =>
-                {
-                    b.Navigation("OtherDetails")
                         .IsRequired();
                 });
 

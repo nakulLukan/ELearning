@@ -16,9 +16,9 @@ public class UpdateSubjectSubscriptionDetailCommandHandler : IRequestHandler<Upd
 {
     readonly IAppDbContext _dbContext;
 
-    public UpdateSubjectSubscriptionDetailCommandHandler(IAppDbContext dbContext)
+    public UpdateSubjectSubscriptionDetailCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(UpdateSubjectSubscriptionDetailCommand request, CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 ﻿using Learning.Domain.Identity;
 using Learning.Infrasture.Persistence;
 using Learning.Shared.Common.Extensions;
+using Learning.Shared.Common.Utilities;
 using Learning.Shared.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,14 @@ public class AdminUserSeeder
                     UserName = defaultUser.Username,
                     Email = defaultUser.Username,
                     IsAdmin = true,
+                    IsActive = true,
+                    AccountCreatedOn = AppDateTime.UtcNow,
+                    OtherDetails = new ApplicationUserOtherDetail
+                    {
+                        FirstName = "Super Admin",
+                        LastName = "",
+                        PhoneNumber = "",
+                    }
                 };
                 await _userManager.CreateAsync(adminUser, defaultUser.Password);
                 await _userManager.AddToRoleAsync(adminUser, defaultUser.Role);

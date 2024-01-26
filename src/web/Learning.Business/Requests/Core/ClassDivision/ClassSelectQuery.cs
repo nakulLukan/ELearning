@@ -14,9 +14,9 @@ public class ClassSelectQueryHandler : IRequestHandler<ClassSelectQuery, List<Cl
 {
     readonly IAppDbContext _dbContext;
 
-    public ClassSelectQueryHandler(IAppDbContext dbContext)
+    public ClassSelectQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<List<ClassSelectItemDto>> Handle(ClassSelectQuery request, CancellationToken cancellationToken)

@@ -16,9 +16,9 @@ public class ChaptersAndLessonsQueryHandler : IRequestHandler<ChaptersAndLessons
 {
     readonly IAppDbContext _dbContext;
 
-    public ChaptersAndLessonsQueryHandler(IAppDbContext dbContext)
+    public ChaptersAndLessonsQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<List<ChapterListViewItemDto>> Handle(ChaptersAndLessonsQuery request, CancellationToken cancellationToken)

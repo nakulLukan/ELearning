@@ -18,9 +18,9 @@ public class CoursesQueryHandler : IRequestHandler<CoursesQuery, PaginatedRespon
 {
     readonly IAppDbContext _dbContext;
 
-    public CoursesQueryHandler(IAppDbContext dbContext)
+    public CoursesQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<PaginatedResponse<CourseListItemDto>> Handle(CoursesQuery request, CancellationToken cancellationToken)

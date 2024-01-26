@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
+@using Learning.Shared.Common.Utilities
 @using Learning.Web.Services
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
@@ -70,6 +71,8 @@
     {
         var user = CreateUser();
         user.IsAdmin = false;
+        user.IsActive = true;
+        user.AccountCreatedOn = AppDateTime.UtcNow;
 
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
@@ -104,7 +107,7 @@
         }
 
         // Add claims and signin user
-        var addClaims = await LoginService.AddClaims( user);
+        var addClaims = await LoginService.AddClaims(user);
         await SignInManager.SignInWithClaimsAsync(user, true, addClaims);
         RedirectManager.RedirectTo(
                 "Account/Register/OtherDetails",

@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -9,13 +8,11 @@
         <MudDrawer @bind-Open="@_drawerOpen" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
             <AppAdminNavMenu />
         </MudDrawer>
-        <MudMainContent Class="app-mud-layout-content overflow-y-scroll">
-            <MudContainer>
-                @Body
-            </MudContainer>
+        <MudMainContent Class="app-mud-layout-content overflow-y-scroll h-100">
+            @Body
         </MudMainContent>
     </MudDrawerContainer>
-    
+
 </MudLayout>
 @code {
     bool _drawerOpen = false;

@@ -18,9 +18,9 @@ public class SubjectQueryHandler : IRequestHandler<SubjectQuery, PaginatedRespon
 {
     readonly IAppDbContext _dbContext;
 
-    public SubjectQueryHandler(IAppDbContext dbContext)
+    public SubjectQueryHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<PaginatedResponse<SubjectListItemDto>> Handle(SubjectQuery request, CancellationToken cancellationToken)

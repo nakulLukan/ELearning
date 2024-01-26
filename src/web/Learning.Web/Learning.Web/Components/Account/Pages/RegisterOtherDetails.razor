@@ -99,6 +99,7 @@
         secondaryDetail.PhoneNumber = Input.CountryCode + "-" + Input.PhoneNumber;
         secondaryDetail.LastName = Input.LastName.Trim();
         secondaryDetail.FirstName = Input.FirstName.Trim();
+        secondaryDetail.FullName = secondaryDetail.FirstName + " " + secondaryDetail.LastName;
         await DbContext.SaveAsync(default);
         Logger.LogInformation("Secondary details updated");
         RedirectManager.RedirectTo(ReturnUrl);

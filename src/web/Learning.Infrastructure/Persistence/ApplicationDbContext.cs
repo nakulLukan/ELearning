@@ -51,6 +51,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
         }
     }
 
+    public DbSet<ApplicationUser> AspNetUsers { get; set; }
     public DbSet<ApplicationUserOtherDetail> ApplicationUserOtherDetails { get; set; }
 
     public DbSet<LookupMaster> LookupMasters { get; set; }

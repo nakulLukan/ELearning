@@ -15,9 +15,9 @@ public class AddNewLessonCommandHandler : IRequestHandler<AddNewLessonCommand, A
 {
     private readonly IAppDbContext _dbContext;
 
-    public AddNewLessonCommandHandler(IAppDbContext dbContext)
+    public AddNewLessonCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(AddNewLessonCommand request, CancellationToken cancellationToken)

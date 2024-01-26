@@ -6,4 +6,9 @@ namespace Learning.Domain.Identity;
 public class ApplicationUser : IdentityUser
 {
     public bool IsAdmin { get; set; }
+    public long Index { get; set; }
+    public DateTimeOffset AccountCreatedOn { get; set; }
+    public bool IsActive { get; set; }
+
+    public ApplicationUserOtherDetail OtherDetails { get; set; }
 }

@@ -21,6 +21,11 @@ public class ApplicationUserOtherDetail
     public string LastName { get; set; }
 
     /// <summary>
+    /// Full name of the user
+    /// </summary>
+    public string FullName { get; set; }
+
+    /// <summary>
     /// Associated user id
     /// </summary>
     public string UserId { get; set; }

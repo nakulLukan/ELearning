@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Learning.Shared\Learning.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Requests\Users\AdminUser\" />
+  </ItemGroup>
+
 </Project>

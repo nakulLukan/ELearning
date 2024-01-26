@@ -16,9 +16,9 @@ public class AddChapterCommandHandler : IRequestHandler<AddChapterCommand, ApiRe
 {
     readonly IAppDbContext _dbContext;
 
-    public AddChapterCommandHandler(IAppDbContext dbContext)
+    public AddChapterCommandHandler(IAppDbContextFactory dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContext.CreateDbContext();
     }
 
     public async Task<ApiResponseDto<int>> Handle(AddChapterCommand request, CancellationToken cancellationToken)
