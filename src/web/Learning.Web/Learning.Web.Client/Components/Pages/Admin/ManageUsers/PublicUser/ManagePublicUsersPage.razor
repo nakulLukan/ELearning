@@ -1,21 +1,24 @@
-﻿@page "/Manage/PublicUsers"
+﻿@page "/Admin/Manage/PublicUsers"
 @layout AdminLayout
 @using Learning.Business.Dto.Users
 @using Learning.Business.Requests.Users.PublicUser
+@using Microsoft.AspNetCore.Authorization
 @using MudBlazor.Utilities
 @inherits AppBaseComponent
+@attribute [Authorize(PolicyConstant.AdminPolicy)]
 
 <MudDataGrid @ref=_dataGrid T="PublicUserListItemDto" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense
               Hover RowClass="cursor-pointer" Loading="@_isLoading" ServerData="LoadUsers" Style="height: 100%"
-              Filterable=false SortMode="SortMode.None" FixedFooter Height="calc(100% -100)" Striped>
-     <ToolBarContent>
-         <MudText Typo="Typo.h6"><b>Public Users</b></MudText>
-         <MudSpacer />
-         <MudTextField @bind-Value="_searchString"
-                       Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
+              Filterable=false SortMode="SortMode.None" FixedFooter Height="calc(100% - 130px)" Striped>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6"><b>Public Users</b></MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="@SearchString" Lines="1" MaxLines =1 InputType=InputType.Email
+                      Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
                        AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
-                       IconSize="Size.Medium" Class="mt-0" OnKeyDown="@OnEnterPressed" Clearable
+                       IconSize="Size.Medium" Class="mt-0" Clearable AutoGrow
                        OnClearButtonClick="OnClear"></MudTextField>
+         <MudButton Variant="Variant.Outlined" Class="ml-2" OnClick="OnSearch">Search</MudButton>
      </ToolBarContent>
      <Columns>
          <PropertyColumn Property="x => x.Index" Title="Code" Sortable="true" />
@@ -44,12 +47,14 @@
      </PagerContent>
  </MudDataGrid>
  @code {
+    [SupplyParameterFromQuery(Name="Search")]
+    public string SearchString { get; set; }
+
     List<PublicUserListItemDto> _elements = new();
     MudDataGrid<PublicUserListItemDto> _dataGrid;
     GridState<PublicUserListItemDto> _gridState;
     private int _usersCount;
 
-    private string _searchString = "";
     private string _lastSearchString = "";
 
     private async Task<GridData<PublicUserListItemDto>> LoadUsers(GridState<PublicUserListItemDto> gridState)
@@ -62,7 +67,7 @@
                 Take = gridState.PageSize,
                 SortBy = sortBy?.SortBy ?? string.Empty,
                 IsDescending = sortBy?.Descending ?? false,
-                EmailOrNameFilter = _searchString,
+                EmailOrNameFilter = SearchString,
             }));
         return new GridData<PublicUserListItemDto>
             {
@@ -71,28 +76,15 @@
             };
     }
 
-    private async Task OnEnterPressed(KeyboardEventArgs eventArg)
-    {
-        if (eventArg.Code == "Enter")
-        {
-            await OnSearch();
-        }
-    }
-
     private async Task OnSearch()
     {
-        if (_lastSearchString == _searchString)
-        {
-            return;
-        }
-
-        await LoadUsers(_gridState);
-        _lastSearchString = _searchString;
+        await _dataGrid.ReloadServerData();
+        _lastSearchString = SearchString;
     }
 
     private async Task OnClear()
     {
-        _searchString = _lastSearchString = string.Empty;
-        await LoadUsers(_gridState);
+        SearchString = _lastSearchString = string.Empty;
+        await OnSearch();
     }
 }

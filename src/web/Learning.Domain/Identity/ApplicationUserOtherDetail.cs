@@ -30,5 +30,10 @@ public class ApplicationUserOtherDetail
     /// </summary>
     public string UserId { get; set; }
 
+    /// <summary>
+    /// Date of birth of the user
+    /// </summary>
+    public int? YearOfBirth { get; set; }
+
     public ApplicationUser User  { get; set; }
 }

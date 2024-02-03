@@ -12,6 +12,10 @@ public class Subject : DomainBase
     public bool IsActive { get; set; }
     public int? ClassId { get; set; }
     public int? SubjectGroupLookupId { get; set; }
+
+    /// <summary>
+    /// Relative path and filename of the thumbnail image.
+    /// </summary>
     public string ThumbnailRelativePath { get; set; }
 
     public ClassDivision Class { get; set; }

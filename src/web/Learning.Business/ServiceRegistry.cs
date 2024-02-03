@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Learning.Business.Services.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Learning.Business;
 
@@ -6,5 +7,6 @@ public static class ServiceRegistry
 {
     public static void RegisterBusinessServices(this IServiceCollection services, Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
+        services.AddScoped<SubjectManager>();
     }
 }

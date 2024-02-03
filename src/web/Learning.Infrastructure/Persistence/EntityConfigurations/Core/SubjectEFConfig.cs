@@ -14,6 +14,7 @@ public class SubjectEFConfig : IEntityTypeConfiguration<Subject>
         builder.Property(x => x.Name).IsRequired(true).HasMaxLength(30);
         builder.Property(x => x.Description).IsRequired(false).HasMaxLength(500);
         builder.Property(x => x.ThumbnailRelativePath).IsRequired(false);
+        builder.HasIndex(x => x.Code).IsUnique();
 
         builder.HasMany(x => x.Chapters)
             .WithOne(x => x.Subject)

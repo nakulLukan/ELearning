@@ -1,7 +1,7 @@
 ﻿
 window.dashPlayers = {};
 
-export function initializeDashPlayer(elementId, videoUrl, hash, autoLoad, playerOptions, dotnet){
+export function initializeDashPlayer(elementId, videoUrl, hash, autoLoad, playerOptions, dotnet) {
     const player = dashjs.MediaPlayer().create();
     dashPlayers[elementId] = player; // Store the Dash player instance for cleanup
     player.extend("RequestModifier", function () {
@@ -16,13 +16,13 @@ export function initializeDashPlayer(elementId, videoUrl, hash, autoLoad, player
         };
     });
 
-    /* restart playback in muted mode when auto playback was not allowed by the browser */
-    player.on(dashjs.MediaPlayer.events.PLAYBACK_NOT_ALLOWED, function (data) {
-        console.log('Playback did not start due to auto play restrictions. Muting audio and reloading');
-        const video = document.getElementById(elementId);
-        video.muted = true;
-        player.initialize(video, videoUrl, autoLoad);
-    });
+    ///* restart playback in muted mode when auto playback was not allowed by the browser */
+    //player.on(dashjs.MediaPlayer.events.PLAYBACK_NOT_ALLOWED, function (data) {
+    //    console.log('Playback did not start due to auto play restrictions. Muting audio and reloading');
+    //    const video = document.getElementById(elementId);
+    //    video.muted = true;
+    //    player.initialize(video, videoUrl, autoLoad);
+    //});
 
     // playback ended
     player.on(dashjs.MediaPlayer.events.PLAYBACK_ENDED, function () {
@@ -44,6 +44,7 @@ export function initializeDashPlayer(elementId, videoUrl, hash, autoLoad, player
     });
     player.setAutoPlay(autoLoad);
     player.attachView(document.getElementById(elementId));
+
     player.attachSource(videoUrl);
 
     var controlbar = new ControlBar(player); //Player is instance of Dash.js MediaPlayer;

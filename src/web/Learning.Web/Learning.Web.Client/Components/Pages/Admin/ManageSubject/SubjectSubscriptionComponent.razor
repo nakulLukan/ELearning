@@ -1,4 +1,5 @@
 ﻿@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Subject.ManageSubject
 @using Learning.Business.Dto.Master.Lookup
 @using Learning.Business.Requests.Core.Subject
 @using Learning.Business.Requests.Master.Subscription
@@ -14,14 +15,14 @@
                  <MudText Class="d-inline"><b>@(GetActualPrice())</b> </MudText>
                  <MudText Typo="Typo.body2" Class="d-inline"><del>@GetOriginalPrice()</del></MudText>
                 <MudText Typo="Typo.body2" Color=Color.Error Class="d-inline"><b>@GetDiscountPercentage()</b></MudText>
-                </div>
-            </MudStack>
-            <MudStack Spacing="1">
-                <MudText Typo="Typo.overline">Subscription Type</MudText>
-                <MudText>@GetSubscriptionType()</MudText>
+            </div>
+        </MudStack>
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.overline">Subscription Type</MudText>
+            <MudText>@GetSubscriptionType()</MudText>
             </MudStack>
             <div class="d-flex flex-column justify-center">
-                <MudIconButton Icon="@Icons.Filled.Settings" OnClick="@(()=> _showUpdateSubscriptionDialog = true)"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" OnClick="@(()=> _showUpdateSubscriptionDialog = true)"></MudIconButton>
             </div>
         </MudStack>
     </MudPaper>

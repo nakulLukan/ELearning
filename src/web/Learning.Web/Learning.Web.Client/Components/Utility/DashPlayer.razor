@@ -1,20 +1,19 @@
 ﻿@inject IJSRuntime JSRuntime;
+@implements IDisposable
 <style>
     video {
-        height:100%;
-        width: auto;
+        width: 100%;
     }
 
-    .controller-bar{
+    .controller-bar {
         position: absolute;
-        bottom:0;
-        width:100%;
+        bottom: 0;
+        width: 100%;
         background: #0000004d;
     }
-    
 </style>
 <div class="dash-video-player h-100">
-    <div id="videoContainer" class="videoContainer h-100 relative">
+    <div id="videoContainer" class="videoContainer h-100 relative d-flex">
         <video id="@_dashPlayerId" @onclick="TogglePlay"></video>
         <div class="controller-bar">
 
@@ -73,6 +72,7 @@
     [Parameter] public EventCallback OnPlaybackEnded { get; set; }
 
     private const string _dashPlayerId = "dash-player";
+    private bool _isDisposed = false;
     private IJSObjectReference _jsModule;
     private IJSObjectReference _jsDashPlayer;
     private DotNetObjectReference<DashPlayer> _dotnetObjectRef;
@@ -87,16 +87,26 @@
     {
         if (!firstRender) return;
 
-        _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dash.blazor.js");
         await InitialisePlayer();
     }
 
     private async Task InitialisePlayer()
     {
-        if (_jsModule != null && _jsDashPlayer is null)
+        if (_isDisposed || _dotnetObjectRef == null)
+        {
+            _dotnetObjectRef = DotNetObjectReference.Create(this);
+        }
+
+        if (_isDisposed || _jsModule == null)
+        {
+            _jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dash.blazor.js");
+        }
+        if (_isDisposed || _jsModule != null && _jsDashPlayer is null)
         {
             _jsDashPlayer = await _jsModule.InvokeAsync<IJSObjectReference>("initializeDashPlayer", "dash-player", VideoUrl, Hash, AutoLoad, Options, _dotnetObjectRef);
         }
+
+        _isDisposed = false;
     }
 
     public async Task ChangeVideoUrl(string newUrl)
@@ -121,7 +131,13 @@
         await InvokeAsync(OnPlaybackEnded.InvokeAsync);
     }
 
-    public void Dispose() => _dotnetObjectRef?.Dispose();
+    public void Dispose()
+    {
+        _jsModule?.DisposeAsync();
+        _jsDashPlayer?.DisposeAsync();
+        _dotnetObjectRef?.Dispose();
+        _isDisposed = true;
+    }
 }
 
 

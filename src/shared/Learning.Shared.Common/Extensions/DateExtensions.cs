@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Learning.Shared.Common.Extensions;
 
@@ -27,6 +28,16 @@ public static class DateExtensions
     }
 
     /// <summary>
+    /// Returns humanized form of date time value (2 hours ago, 1 day ago...)
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static string ToHumanizedDateTimeString(this DateTimeOffset dateTime)
+    {
+        return dateTime.Humanize();
+    }
+
+    /// <summary>
     /// Returns date time string "yyyy-MM-dd HH:mm:ss"
     /// </summary>
     /// <param name="dateTime"></param>
@@ -43,7 +54,27 @@ public static class DateExtensions
     /// <returns></returns>
     public static string ToLocalDateString(this DateTimeOffset dateTime)
     {
-        return dateTime.ToString("yyyy-MM-dd");
+        return dateTime.ToOffset(_timeZone.BaseUtcOffset).ToString("yyyy-MM-dd");
+    }
+
+    /// <summary>
+    /// Returns date string with specified format
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static string ToLocalDateFormatedString(this DateTimeOffset dateTime, [StringSyntax(StringSyntaxAttribute.DateTimeFormat)] string format = "dd MMM yyyy")
+    {
+        return dateTime.ToOffset(_timeZone.BaseUtcOffset).ToString(format);
+    }
+    
+    /// <summary>
+    /// Returns date string with specified format
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static string ToLocalDateFormatedString(this DateOnly dateTime, [StringSyntax(StringSyntaxAttribute.DateTimeFormat)] string format = "dd MMM yyyy")
+    {
+        return dateTime.ToString(format);
     }
 
     /// <summary>

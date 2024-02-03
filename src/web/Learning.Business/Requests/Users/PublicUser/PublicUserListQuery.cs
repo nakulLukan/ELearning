@@ -32,15 +32,15 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
         var usersQuery = _dbContext.AspNetUsers.Where(x => !x.IsAdmin)
             .AsQueryable();
         usersQuery = BuildFilterConditions(request, usersQuery);
-        usersQuery = BuildBatch(request, usersQuery);
 
         var totalUsers = await usersQuery.CountAsync(cancellationToken);
+        usersQuery = BuildBatch(request, usersQuery);
         usersQuery = BuildSortBy(request, usersQuery);
         var users = await usersQuery
             .Select(x => new PublicUserListItemDto
             {
                 Id = x.Id,
-                AccountCreatedOn = x.AccountCreatedOn.ToString(),
+                AccountCreatedOn = x.AccountCreatedOn.ToHumanizedDateTimeString(),
                 ContactNumber = x.OtherDetails.PhoneNumber,
                 EmailAddress = x.Email,
                 IsEmailAddressVerified = x.EmailConfirmed,

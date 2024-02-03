@@ -1,12 +1,13 @@
 ﻿@using Learning.Business.Dto.Core.Subject
 @using Learning.Business.Requests.Core.Subject
+@using Learning.Business.Requests.Core.Subject.ManageSubject
 <MudStack>
     @if (!string.IsNullOrEmpty(_subjectDetail.ThumbnailImage))
     {
         <MudCardMedia Height="200" Image="@_subjectDetail.ThumbnailImage">
         </MudCardMedia>
     }
-    
+
     <MudItem>
         <MudText Typo="Typo.h3">@_subjectDetail.SubjectName</MudText>
         </MudItem>
@@ -21,7 +22,8 @@
 
     @code {
 
-    [EditorRequired][Parameter]
+    [EditorRequired]
+    [Parameter]
     public int? SubjectId { get; set; }
 
     private SubjectDetailDto _subjectDetail = new();

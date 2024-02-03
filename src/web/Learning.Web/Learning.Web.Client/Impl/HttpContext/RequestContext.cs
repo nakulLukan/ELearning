@@ -19,9 +19,12 @@ public class RequestContext : IRequestContext
         _authStateProvider = authStateProvider;
     }
 
-    private async Task Init()
+    private async Task<bool> Init()
     {
         _authState ??= await _authStateProvider.GetAuthenticationStateAsync();
+
+        // If not logged in then this will be null. So return it as an indicator.
+        return _authState is not null;
     }
 
     public async Task<bool> IsAuthenticated()
@@ -45,7 +48,7 @@ public class RequestContext : IRequestContext
 
     public async Task<bool> IsAdmin()
     {
-        await Init();
+        if (!await Init()) return false;
         var isAdminClaim = _authState.User.Claims.FirstOrDefault(x => x.Type == ClaimConstant.IsAdminClaim)?.Value;
         return bool.Parse(isAdminClaim);
     }

@@ -10,4 +10,5 @@ public enum VideoPlaybackStatus
 {
     Success,
     VideoNotFound,
+    NotSubscribed
 }

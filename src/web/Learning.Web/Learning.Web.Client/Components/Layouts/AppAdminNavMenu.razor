@@ -2,10 +2,14 @@
 <MudPaper Elevation="0" Style="height: 100%">
     <MudStack Justify="Justify.SpaceBetween" Style="height: 100%">
         <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2">
-            <MudNavLink Href="/admin/courses">Manage Courses</MudNavLink>
-            <MudNavLink Href="/admin/classes">Manage Classes</MudNavLink>
-            <MudNavLink Href="/admin/subjects">Manage Subjects</MudNavLink>
-
+            <MudNavGroup Title="Administration">
+                <MudNavLink Href="/admin/courses">Manage Courses</MudNavLink>
+                <MudNavLink Href="/admin/classes">Manage Classes</MudNavLink>
+                <MudNavLink Href="/admin/subjects">Manage Subjects</MudNavLink>
+            </MudNavGroup>
+            <MudNavGroup Title="Account">
+                <MudNavLink Href="/admin/manage/publicusers">User Accounts</MudNavLink>
+            </MudNavGroup>
         </MudNavMenu>
         <div>
             <AuthorizeView Policy="@PolicyConstant.AdminPolicy">
@@ -24,6 +28,6 @@
             </AuthorizeView>
         </div>
     </MudStack>
-    
+
 </MudPaper>
 

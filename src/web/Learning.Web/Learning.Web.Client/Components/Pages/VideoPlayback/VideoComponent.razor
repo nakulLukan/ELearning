@@ -4,6 +4,7 @@
 @using Learning.Business.Requests.VideoPlayback
 @using static Learning.Web.Client.Components.Utility.DashPlayer
 @inject IRequestContext RequestContext;
+@inherits AppBaseComponent
 <style>
     .video-container {
         overflow: clip;
@@ -63,7 +64,7 @@
                                             </div>
                                             <div class="flex-1">
                                                 <MudText Typo=Typo.subtitle2 Class="m-auto" GutterBottom=false>@lesson.LessonName</MudText>
-                                                <MudText Typo=Typo.caption Class="m-auto" GutterBottom=false Color="Color.Tertiary">@lesson.Duration</MudText>
+                                                    <MudText Typo=Typo.caption Class="m-auto" GutterBottom=false Color="Color.Tertiary">@lesson.Duration</MudText>
                                                 </div>
                                                 <div class="flex-none playlist-lesson-indicator">
                                                     @if (lesson.HasCompleted)
@@ -86,10 +87,36 @@
         <div class="d-flex justify-center" Style="height: 100%">
             <MudIconButton Icon="@Icons.Filled.Menu" OnClick="ToggleStartDrawer" Color="Color.Inherit"
                            Style="position:absolute; z-index: 999; left:16px; top: 16px;"></MudIconButton>
-            <DashPlayer @ref=_dashPlayer AutoLoad=true
-                        Options="options"
-                        VideoUrl="@_mpdFileUrl"
-                        OnPlaybackEnded="OnPlaybackEnded"></DashPlayer>
+            @if (ShowBuy)
+            {
+                <MudPaper Width="100%" Height="100%" Class="d-flex justify-center align-content-center"
+                          Style="background: transparent">
+                    <MudStack Style="margin: auto">
+                        <MudText Align="Align.Center" Typo="Typo.h6">
+                            Course Not Purchased
+                        </MudText>
+                        <Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent ShowBuy=true SubjectId="@SubjectId"></Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent>
+                    </MudStack>
+
+                </MudPaper>
+            }
+            else if (!_isLoading && !string.IsNullOrEmpty(_mpdFileUrl))
+            {
+                <DashPlayer @ref=_dashPlayer AutoLoad=true
+                            Options="options"
+                            VideoUrl="@_mpdFileUrl"
+                            OnPlaybackEnded="OnPlaybackEnded"></DashPlayer>
+            }
+            else
+            {
+                <MudPaper Width="100%" Height="100%" Class="d-flex justify-center align-content-center"
+                          Style="background: transparent">
+                    <MudPaper Style="margin: auto;background: transparent" Class="pa-4">
+                        <MudProgressCircular Class="text-white" Indeterminate="true" />
+                    </MudPaper>
+                </MudPaper>
+            }
+
 
         </div>
     </MudDrawerContainer>
@@ -100,19 +127,24 @@
     public int? SubjectId { get; set; }
 
     [Parameter]
-    [SupplyParameterFromQuery]
+    public bool ShowBuy { get; set; }
+
+    [Parameter]
     public int? SelectedLesson { get; set; }
     public EventCallback<int?> SelectedLessonChanged { get; set; }
 
     DashPlayer _dashPlayer;
-    string _mpdFileUrl = string.Empty;
+    private string _mpdFileUrl = string.Empty;
 
     bool openStart = true;
     const string _lessonItemClass = "pl-3 pr-1";
 
     protected override void OnInitialized()
     {
-        SelectedLessonChanged = EventCallback.Factory.Create<int?>(this, LoadSelectedLesson);
+        if (!SelectedLessonChanged.HasDelegate)
+        {
+            SelectedLessonChanged = EventCallback.Factory.Create<int?>(this, LoadSelectedLesson);
+        }
     }
 
     void ToggleStartDrawer()
@@ -134,8 +166,9 @@
         await LoadGetPlaylistDetails();
     }
 
-    private async Task LoadGetPlaylistDetails()
+    public async Task LoadGetPlaylistDetails()
     {
+        if (!SubjectId.HasValue) return;
         _playlist = await Mediator.Send(new GetSubjectPlaylistQuery()
             {
                 SubjectId = SubjectId.Value
@@ -154,6 +187,7 @@
 
     private async Task LoadSelectedLesson(int? selectedVideoId)
     {
+        ChangeToLoadingState();
         SelectedLesson = selectedVideoId;
         if (!selectedVideoId.HasValue)
         {
@@ -164,15 +198,20 @@
             {
                 VideoId = selectedVideoId.Value
             });
-
         if (response.Data.Status == Shared.Common.Enums.VideoPlaybackStatus.VideoNotFound)
         {
-            return;
+            ShowBuy = false;
         }
-
-        _mpdFileUrl = response.Data.ManifestUrl;
-        await _dashPlayer.ChangeVideoUrl(_mpdFileUrl);
-        StateHasChanged();
+        else if (response.Data.Status == Shared.Common.Enums.VideoPlaybackStatus.NotSubscribed)
+        {
+            ShowBuy = true;
+        }
+        else
+        {
+            _mpdFileUrl = response.Data.ManifestUrl;
+            ShowBuy = false;
+        }
+        ChangeToLoadedState();
     }
 
     private string GetLessonListItemClass(ContentLessonListItemDto lessonItem)

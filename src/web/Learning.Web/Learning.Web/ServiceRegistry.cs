@@ -76,6 +76,13 @@ public static class ServiceRegistry
         builder.Services.AddIdentityCore<Learning.Domain.Identity.ApplicationUser>(options =>
         {
             options.SignIn.RequireConfirmedEmail = false;
+
+            // Password policy
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 4;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireDigit = false;
         })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()

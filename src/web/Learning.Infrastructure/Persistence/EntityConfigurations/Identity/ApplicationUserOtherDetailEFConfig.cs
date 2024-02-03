@@ -12,6 +12,7 @@ public class ApplicationUserOtherDetailEFConfig : IEntityTypeConfiguration<Appli
         builder.Property(x => x.PhoneNumber).IsRequired(true).HasMaxLength(30);
         builder.Property(x => x.FirstName).IsRequired(true).HasMaxLength(30);
         builder.Property(x => x.LastName).IsRequired(true).HasMaxLength(30);
+        builder.Property(x => x.YearOfBirth).IsRequired(false);
 
         builder.HasOne(x => x.User)
             .WithOne(x=>x.OtherDetails)
