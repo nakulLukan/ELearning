@@ -2,6 +2,8 @@
            ButtonType="@ButtonType"
            Variant="@Variant"
            Color="Color"
+           StartIcon="@StartIcon"
+           Size="@Size"
            OnClick="OnClick"
            Class="@Class">
     @if (IsProgressing)
@@ -40,4 +42,10 @@
 
     [Parameter]
     public string? Class { get; set; }
+
+    [Parameter]
+    public string StartIcon { get; set; }
+
+    [Parameter]
+    public Size Size { get; set; }
 }

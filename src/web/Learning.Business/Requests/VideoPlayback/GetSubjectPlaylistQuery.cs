@@ -17,16 +17,21 @@ public class GetSubjectPlaylistQueryHandler : IRequestHandler<GetSubjectPlaylist
 {
     readonly IAppDbContext _dbContext;
     readonly IRequestContext _requestContext;
+    readonly SubjectManager _subjectManager;
 
-    public GetSubjectPlaylistQueryHandler(IAppDbContext dbContext, IRequestContext requestContext)
+    public GetSubjectPlaylistQueryHandler(IAppDbContext dbContext, SubjectManager subjectManager, IRequestContext requestContext)
     {
         _dbContext = dbContext;
+        _subjectManager = subjectManager;
         _requestContext = requestContext;
     }
 
     public async Task<SubjectPlaylistDto> Handle(GetSubjectPlaylistQuery request, CancellationToken cancellationToken)
     {
-        var authDetail = await _requestContext.IsLoggedIn();
+        // Turn this flag if user has purchased the subject or logged in user is admin.
+        var isSubscribed = await _subjectManager.IsSubjectSubscribed(request.SubjectId, cancellationToken)
+            || await _requestContext.IsAdmin();
+
         var chapters = await _dbContext.Chapters
             .Where(x => x.SubjectId == request.SubjectId)
             .Select(x => new ContentChapterListItemDto
@@ -38,15 +43,20 @@ public class GetSubjectPlaylistQueryHandler : IRequestHandler<GetSubjectPlaylist
                     LessonId = y.Id,
                     Duration = y.Video.Duration.ToDurationString(),
                     HasCompleted = false,
-                    IsLocked = LessonManager.IsLessonLocked(y.IsPreviewable, authDetail.IsAuthenticated, authDetail.IsAdmin),
+                    IsLocked = LessonManager.IsLessonLocked(y.IsPreviewable, isSubscribed),
                     LessonName = y.Name,
                 }).ToList(),
             })
             .ToListAsync(cancellationToken);
 
+        var subjectCode = await _dbContext.Subjects.Where(x=>x.Id == request.SubjectId)
+            .Select(x=>x.Code)
+            .FirstAsync(cancellationToken);
         return new()
         {
-            Chapters = chapters
+            Chapters = chapters,
+            IsSubscribed = isSubscribed,
+            SubjectCode = subjectCode
         };
     }
 }

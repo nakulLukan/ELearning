@@ -2,9 +2,9 @@
 
 public class LessonManager
 {
-    public static bool IsLessonLocked(bool isLessonPreviewable, bool isAuthenticated, bool isAdmin)
+    public static bool IsLessonLocked(bool isLessonPreviewable, bool isSubscribed)
     {
-        if (isLessonPreviewable || isAdmin)
+        if (isLessonPreviewable || isSubscribed)
         {
             return false;
         }

@@ -1,0 +1,47 @@
+﻿@using Learning.Business.Requests.Core.Subject
+<MudPaper Elevation="0" Style="margin-top: calc(0px - var(--mud-appbar-height));" Class="py-2">
+    @if (SubjectId == null)
+    {
+        <MudSkeleton Width="100%" Height="24px" Class="pa-0 ma-0" />
+    }
+    else
+    {
+        <MudText Typo="Typo.body1" Align="Align.Justify"><b>@_courseName</b> / <b>@_className</b> / <b>@_subjectName</b></MudText>
+    }
+</MudPaper>
+@code {
+
+    [Parameter] [EditorRequired]
+    public int? SubjectId { get; set; }
+
+    private string _courseName;
+    private string _className;
+    private string _subjectName;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (SubjectId.HasValue)
+        {
+            await RefreshTitle();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await RefreshTitle();
+    }
+
+    private async Task RefreshTitle()
+    {
+        if (!SubjectId.HasValue) return;
+        var headerDetails = await Mediator.Send(new GetSubjectHeaderDetailQuery()
+            {
+                SubjectId = SubjectId.Value
+            });
+        _courseName = headerDetails.CourseName;
+        _className = headerDetails.ClassName;
+        _subjectName = headerDetails.SubjectName;
+        StateHasChanged();
+    }
+}

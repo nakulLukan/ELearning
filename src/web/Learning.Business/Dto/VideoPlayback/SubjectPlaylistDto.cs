@@ -4,6 +4,7 @@ public class SubjectPlaylistDto
 {
     public List<ContentChapterListItemDto> Chapters { get; set; } = new();
     public bool IsSubscribed { get; set; }
+    public string SubjectCode { get; set; }
 }
 
 public class ContentChapterListItemDto

@@ -1,4 +1,5 @@
-﻿using Learning.Infrastructure.Data.Seeder;
+﻿using Learning.Business.Impl.Data;
+using Learning.Infrastructure.Data.Seeder;
 using Learning.Infrasture.Persistence;
 using Learning.Shared.Models.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,7 @@ public static class DbInitializer
         {
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var connectionString = dbContext.Database.GetConnectionString();
+                var dbContext = scope.ServiceProvider.GetRequiredService<IAppDbContextFactory>().CreateDbContext() as ApplicationDbContext;
                 await dbContext.Database.MigrateAsync();
 
                 var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeeder>();

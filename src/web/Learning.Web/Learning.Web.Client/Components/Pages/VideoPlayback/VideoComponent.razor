@@ -10,7 +10,7 @@
         overflow: clip;
         position: relative;
         padding: 0px;
-        height: 500px;
+        height: @Height
     }
 
     .video-drawer {
@@ -95,7 +95,8 @@
                         <MudText Align="Align.Center" Typo="Typo.h6">
                             Course Not Purchased
                         </MudText>
-                        <Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent ShowBuy=true SubjectId="@SubjectId"></Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent>
+                        <Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent ShowBuy=true
+                                                                                                            SubjectCode="@_playlist.SubjectCode"></Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent>
                     </MudStack>
 
                 </MudPaper>
@@ -133,11 +134,22 @@
     public int? SelectedLesson { get; set; }
     public EventCallback<int?> SelectedLessonChanged { get; set; }
 
+    [Parameter]
+    public string Height { get; set; } = "500px";
+
     DashPlayer _dashPlayer;
     private string _mpdFileUrl = string.Empty;
 
     bool openStart = true;
     const string _lessonItemClass = "pl-3 pr-1";
+
+    DashPlayerOptions options = new DashPlayerOptions
+        {
+            FastSwitchEnabled = true,
+            ScheduleWhilePaused = false
+        };
+
+    SubjectPlaylistDto _playlist = new();
 
     protected override void OnInitialized()
     {
@@ -151,14 +163,6 @@
     {
         openStart = !openStart;
     }
-
-    DashPlayerOptions options = new DashPlayerOptions
-        {
-            FastSwitchEnabled = true,
-            ScheduleWhilePaused = false
-        };
-
-    SubjectPlaylistDto _playlist = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

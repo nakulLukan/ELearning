@@ -1,0 +1,29 @@
+﻿@page "/course/{SubjectShortCode}"
+@using Learning.Business.Requests.Core.Subject
+@using Learning.Web.Client.Components.Pages.VideoPlayback
+
+<MudStack Spacing="0">
+    <SubjectHeaderDetailComponent SubjectId="@SubjectId"></SubjectHeaderDetailComponent>
+    <VideoComponent SubjectId="SubjectId" SelectedLesson="@LessonId" Height="400px"/>
+    <SubjectBodyDetailComponent SubjectId="@SubjectId"/>
+
+</MudStack>
+@code {
+    [Parameter]
+    public string SubjectShortCode { get; set; }
+
+    [SupplyParameterFromQuery]
+    public int? LessonId { get; set; }
+
+    public int? SubjectId{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (SubjectId.HasValue) return;
+        var result = await Mediator.Send(new GetSubjectIdByCodeQuery
+            {
+                SubjectCode = SubjectShortCode
+            });
+        SubjectId = result.Data;
+    }
+}

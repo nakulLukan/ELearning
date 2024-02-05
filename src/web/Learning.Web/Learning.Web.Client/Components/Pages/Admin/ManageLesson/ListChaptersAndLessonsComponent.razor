@@ -4,7 +4,7 @@
 @inject IDialogService Dialog
 @inherits AppBaseComponent
 <MudStack>
-    <AddChapterComponent @ref=_addChapterComponent SubjectId="SubjectId"></AddChapterComponent>
+    <AddChapterComponent @ref=_addChapterComponent SubjectId="SubjectId" OnChapterAdded="LoadLessons"></AddChapterComponent>
     <MudPaper Class="pl-2 m-1 ">
         <MudList Clickable="true">
             @foreach (var chapter in _chapters)
@@ -16,9 +16,15 @@
                             <MudListItem>
                                 <div class="d-flex flex-column">
                                     <MudText Typo="Typo.subtitle1">@lesson.LessonName</MudText>
-                                        <MudText Typo="Typo.caption">@lesson.Duration</MudText>
-                                    </div>
-                                </MudListItem>
+                                        <MudStack Row AlignItems="AlignItems.Start" Justify="Justify.FlexStart">
+                                     <MudText Typo="Typo.caption">@lesson.Duration</MudText>
+                                            @if (!lesson.IsPreviewable)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.TwoTone.Lock" Size="Size.Small"/>
+                                        }
+                                    </MudStack>
+                                </div>
+                            </MudListItem>
                         }
                         <MudListItem DisableRipple=true>
                             <MudButtonGroup Variant="Variant.Outlined">
@@ -33,7 +39,7 @@
     </MudPaper>
 </MudStack>
 @code {
-
+    
     [EditorRequired]
     [Parameter]
     public int? SubjectId { get; set; }
