@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:ContentPageBase
+    x:Class="Learning.App.Pages.Startup.PlaygroundPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:Learning.App.Pages"
+    xmlns:startup="clr-namespace:Learning.App.Pages.Startup"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="PlaygroundPage"
+    x:DataType="startup:PlaygroundPage"
+    Shell.TabBarIsVisible="True">
+    <toolkit:MediaElement
+        x:Name="temp"
+        HeightRequest="100"
+        Source="https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
+        WidthRequest="100" />
+</pages:ContentPageBase>

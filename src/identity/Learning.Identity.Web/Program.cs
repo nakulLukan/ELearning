@@ -46,7 +46,8 @@ builder.Services.AddIdentityServer()
         options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
             sql => sql.MigrationsAssembly(migrationsAssembly));
     })
-    .AddAspNetIdentity<ApplicationUser>();
+    .AddAspNetIdentity<ApplicationUser>()
+    .AddDeveloperSigningCredential();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 

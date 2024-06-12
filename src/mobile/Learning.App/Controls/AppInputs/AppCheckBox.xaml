@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Learning.App.Controls.AppInputs.AppCheckBox"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Learning.App.Controls.AppInputs"
+    xmlns:constants="clr-namespace:Learning.App.Constants"
+    x:Name="This">
+    <ContentView.Triggers>
+        <DataTrigger
+        TargetType="controls:AppCheckBox"
+        Binding="{Binding IsChecked, Source={x:Reference This}}"
+        Value="True">
+            <Setter Property="CheckBoxBackgroundColor" Value="{StaticResource Primary}"/>
+            <Setter Property="BorderColor" Value="{StaticResource PrimaryDark}"/>
+        </DataTrigger>
+    </ContentView.Triggers>
+    <Grid
+        Padding="0,3"
+        BindingContext="{Reference This}"
+        ColumnDefinitions="Auto, Auto"
+        RowDefinitions="22"
+        ColumnSpacing="8">
+        <Border
+            Padding="0"
+            BackgroundColor="{Binding CheckBoxBackgroundColor}"
+            HeightRequest="{Binding Size}"
+            Stroke="{Binding BorderColor}"
+            StrokeShape="RoundRectangle 2,2,2,2"
+            WidthRequest="{Binding Size}">
+            <Image
+                Margin="0"
+                HeightRequest="{Binding CheckBoxSize}"
+                WidthRequest="{Binding CheckBoxSize}">
+                <Image.Source>
+                    <FontImageSource
+                        FontFamily="{StaticResource FaRegular}"
+                        Glyph="{x:Static constants:FaGlyph.Check}"
+                        Size="{Binding CheckBoxSize}"
+                        Color="{StaticResource Gray100}" />
+                </Image.Source>
+                <Image.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsChecked}"
+                        TargetType="Image"
+                        Value="False">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </Image.Triggers>
+            </Image>
+        </Border>
+        <Label
+            Grid.Column="1"
+            FontFamily="{StaticResource FontMedium}"
+            FontSize="{Binding FontSize}"
+            HorizontalOptions="Start"
+            HorizontalTextAlignment="Start"
+            Text="{Binding Title}"
+            TextColor="{Binding TextColor}"
+            VerticalOptions="Center"
+            VerticalTextAlignment="Center" />
+        <Button
+            Grid.ColumnSpan="2"
+            BackgroundColor="Transparent"
+            Clicked="CheckBox_Clicked"
+            TextColor="Transparent" />
+    </Grid>
+</ContentView>

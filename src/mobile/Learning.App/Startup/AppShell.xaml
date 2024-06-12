@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Learning.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:constants="clr-namespace:Learning.App.Constants"
+    xmlns:startup="clr-namespace:Learning.App.Pages.Startup"
+    xmlns:accountManager="clr-namespace:Learning.App.Pages.AccountManagement"
+    Title="BTS"
+    Shell.FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <Tab Title="Home">
+            <ShellContent ContentTemplate="{DataTemplate startup:PlaygroundPage}"/>
+        </Tab>
+        <Tab Title="Login">
+            <ShellContent ContentTemplate="{DataTemplate accountManager:LoginPage}"/>
+        </Tab>
+    </TabBar>
+</Shell>

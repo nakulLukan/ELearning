@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Learning.App.Resources.Styles.Fonts">
+    <x:String x:Key="FontBold">RobotoBold</x:String>
+    <x:String x:Key="FontMedium">RobotoMedium</x:String>
+    <x:String x:Key="FontRegular">RobotoRegular</x:String>
+
+    <x:String x:Key="FaBrands">FaBrands</x:String>
+    <x:String x:Key="FaRegular">FaRegular</x:String>
+    <x:String x:Key="FaSolid">FaSolid</x:String>
+
+
+</ResourceDictionary>

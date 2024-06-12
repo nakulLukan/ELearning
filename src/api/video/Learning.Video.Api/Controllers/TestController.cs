@@ -10,6 +10,6 @@ public class TestController : ControllerBase
     [HttpGet("user-info")]
     public async Task<IActionResult> GetUserInfo()
     {
-        return Ok(User.Claims.ToList());
+        return Ok(User.Identity.IsAuthenticated);
     }
 }

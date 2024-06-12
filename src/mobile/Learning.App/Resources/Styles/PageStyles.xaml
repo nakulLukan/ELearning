@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    x:Class="Learning.App.Resources.Styles.PageStyles"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:styles="clr-namespace:Learning.App.Resources.Styles"
+    xmlns:constants="clr-namespace:Learning.App.Constants">
+
+    <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <styles:Colors/>
+            <styles:Fonts/>
+        </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+    <ControlTemplate x:Key="NavTitleViewTemplate">
+        <Grid BindingContext="{Binding Source={RelativeSource TemplatedParent}}" ColumnDefinitions="36,*,Auto">
+
+            <Grid Grid.Column="0" IsVisible="{TemplateBinding BindingContext.IsBackButtonVisible}">
+                <Image
+                    HorizontalOptions="Start"
+                    Source="{FontImage {x:Static constants:FaGlyph.AngleLeft},
+                                       FontFamily={StaticResource FaRegular},
+                                       Size=24,
+                                       Color={StaticResource Gray600}}"
+                    VerticalOptions="Center" />
+                <Button
+                    BackgroundColor="Transparent"
+                    Command="{TemplateBinding BindingContext.NavigateBackCommand}"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand" />
+            </Grid>
+
+            <Label
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Margin="36,0,36,0"
+                FontFamily="{StaticResource FontRegular}"
+                FontSize="16"
+                HorizontalOptions="Center"
+                LineBreakMode="TailTruncation"
+                MaxLines="1"
+                Text="{TemplateBinding BindingContext.Title}"
+                TextColor="{StaticResource Gray600}"
+                VerticalOptions="Center" />
+
+            <Grid Grid.Column="2">
+                <ContentView Content="{TemplateBinding BindingContext.ToolbarView}" />
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+
+
+    <ControlTemplate x:Key="ShellNavTitleViewTemplate">
+        <Grid BindingContext="{Binding Source={RelativeSource TemplatedParent}}" ColumnDefinitions="*,Auto">
+            <Label
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Margin="36,0,36,0"
+                FontFamily="{StaticResource FontRegular}"
+                FontSize="16"
+                HorizontalOptions="Start"
+                LineBreakMode="TailTruncation"
+                MaxLines="1"
+                Text="{TemplateBinding BindingContext.Title}"
+                TextColor="{StaticResource Gray600}"
+                VerticalOptions="Center" />
+            <Grid Grid.Column="1">
+                <ContentView Content="{TemplateBinding BindingContext.ToolbarView}" />
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

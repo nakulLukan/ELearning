@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<controls:AppControlBase
+    x:Class="Learning.App.Controls.AppInputs.AppEntry"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Learning.App.Controls.AppInputs"
+    xmlns:constants="clr-namespace:Learning.App.Constants"
+    x:Name="This"
+    x:DataType="controls:AppEntry">
+    <ContentView.Triggers>
+        <DataTrigger
+            Binding="{Binding State, Source={x:Reference This}}"
+            TargetType="controls:AppEntry"
+            Value="Error">
+            <Setter Property="BackgroundColor" Value="{StaticResource TertiaryRed50}" />
+            <Setter Property="BorderColor" Value="{StaticResource TertiaryRed500}" />
+            <Setter Property="CaptionColor" Value="{StaticResource TertiaryRed600}" />
+            <Setter Property="RightIcon" Value="{x:Static constants:FaGlyph.CircleXmark}" />
+        </DataTrigger>
+    </ContentView.Triggers>
+    <VerticalStackLayout BindingContext="{x:Reference This}">
+        <!--  Title  -->
+        <Label
+            Margin="0,0,0,4"
+            FontFamily="{StaticResource FontMedium}"
+            FontSize="14"
+            Text="{Binding Title}"
+            TextColor="{StaticResource Gray600}" />
+        <!--  Entry  -->
+        <Border
+            BackgroundColor="{Binding BackgroundColor}"
+            HeightRequest="40"
+            Stroke="{Binding BorderColor}"
+            StrokeShape="RoundRectangle 4,4,4,4"
+            StrokeThickness="1">
+            <Grid
+                Padding="12,0"
+                ColumnDefinitions="Auto,*,Auto"
+                ColumnSpacing="8">
+                <Image
+                    Margin="0"
+                    HeightRequest="12"
+                    IsVisible="{Binding LeftIcon, Converter={StaticResource NullOrEmptyToBoolConverter}}"
+                    WidthRequest="12">
+                    <Image.Source>
+                        <FontImageSource
+                            FontFamily="{StaticResource FaRegular}"
+                            Glyph="{Binding LeftIcon}"
+                            Size="12"
+                            Color="{StaticResource Gray500}" />
+                    </Image.Source>
+                </Image>
+                <controls:AppEntryBase
+                    x:Name="appEntryBase"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    FontFamily="{StaticResource FontRegular}"
+                    FontSize="14"
+                    HeightRequest="40"
+                    IsPassword="{Binding IsPassword}"
+                    IsReadOnly="{Binding IsReadOnly}"
+                    Keyboard="{Binding Keyboard}"
+                    Placeholder="{Binding Placeholder}"
+                    PlaceholderColor="{StaticResource Gray300}"
+                    PropertyChanged="EntryBase_PropertyChanged"
+                    ReturnType="Next"
+                    Text="{Binding Text}"
+                    TextColor="{StaticResource Gray600}"
+                    VerticalOptions="Center"
+                    VerticalTextAlignment="Center">
+                    <controls:AppEntryBase.Triggers>
+                        <DataTrigger
+                            Binding="{Binding LeftIcon, Converter={StaticResource NullOrEmptyToBoolConverter}}"
+                            TargetType="controls:AppEntryBase"
+                            Value="True">
+                            <Setter Property="Grid.Column" Value="1" />
+                            <Setter Property="Grid.ColumnSpan" Value="1" />
+                        </DataTrigger>
+                    </controls:AppEntryBase.Triggers>
+                </controls:AppEntryBase>
+                <!--  Icon Tray  -->
+                <HorizontalStackLayout Grid.Column="2" Spacing="4">
+                    <ImageButton
+                        Padding="5"
+                        Clicked="PasswordEyeIcon_Tapped"
+                        IsVisible="{Binding IsPassword, Mode=OneWay}">
+                        <ImageButton.Source>
+                            <FontImageSource
+                                x:Name="passwordIcon"
+                                FontFamily="{StaticResource FaSolid}"
+                                Glyph="{x:Static constants:FaGlyph.Eye}"
+                                Size="14"
+                                Color="{StaticResource Gray600}" />
+                        </ImageButton.Source>
+                    </ImageButton>
+                    <Image IsVisible="{Binding RightIcon, Converter={StaticResource NullOrEmptyToBoolConverter}}">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="{StaticResource FaSolid}"
+                                Glyph="{Binding RightIcon}"
+                                Size="12"
+                                Color="{StaticResource TertiaryRed600}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+        <!--  Caption  -->
+        <Label
+            x:Name="caption"
+            Margin="0,4,0,0"
+            FontFamily="{StaticResource FontRegular}"
+            FontSize="14"
+            IsVisible="False"
+            LineBreakMode="TailTruncation"
+            TextColor="{Binding CaptionColor}">
+            <Label.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference caption}, Path=Text, Converter={StaticResource NullOrEmptyToBoolConverter}}"
+                    TargetType="Label"
+                    Value="True">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+    </VerticalStackLayout>
+</controls:AppControlBase>

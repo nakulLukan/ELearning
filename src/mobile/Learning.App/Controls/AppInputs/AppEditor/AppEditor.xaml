@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<controls:AppControlBase
+    x:Class="Learning.App.Controls.AppInputs.AppEditor"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:constants="clr-namespace:Learning.App.Constants"
+    xmlns:controls="clr-namespace:Learning.App.Controls.AppInputs"
+    x:Name="This"
+    x:DataType="controls:AppEditor">
+    <ContentView.Triggers>
+        <DataTrigger
+            Binding="{Binding State, Source={x:Reference This}}"
+            TargetType="controls:AppEditor"
+            Value="Error">
+            <Setter Property="BackgroundColor" Value="{StaticResource TertiaryRed50}" />
+            <Setter Property="BorderColor" Value="{StaticResource TertiaryRed500}" />
+            <Setter Property="CaptionColor" Value="{StaticResource TertiaryRed600}" />
+            <Setter Property="RightIcon" Value="{x:Static constants:FaGlyph.CircleXmark}" />
+        </DataTrigger>
+    </ContentView.Triggers>
+    <VerticalStackLayout BindingContext="{x:Reference This}">
+        <!--  Title  -->
+        <Label
+            Margin="0,0,0,4"
+            FontFamily="{StaticResource FontMedium}"
+            FontSize="14"
+            Text="{Binding Title}"
+            TextColor="{StaticResource BlueGray600}" />
+        <!--  Entry  -->
+        <Border
+            Padding="{OnPlatform '0',
+                                 iOS='0,10'}"
+            BackgroundColor="{Binding BackgroundColor}"
+            Stroke="{Binding BorderColor}"
+            StrokeShape="RoundRectangle 4,4,4,4"
+            StrokeThickness="1">
+            <Grid
+                Padding="12,0"
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="8">
+                <controls:AppEditorBase
+                    x:Name="appEditorBase"
+                    Grid.Column="0"
+                    AutoSize="{Binding AutoSize}"
+                    FontFamily="{StaticResource FontRegular}"
+                    FontSize="14"
+                    IsReadOnly="{Binding IsReadOnly}"
+                    Keyboard="{Binding Keyboard}"
+                    MaximumHeightRequest="{Binding MaxGrowHeight}"
+                    Placeholder="{Binding Placeholder}"
+                    PlaceholderColor="{StaticResource Gray300}"
+                    PropertyChanged="EntryBase_PropertyChanged"
+                    Text="{Binding Text}"
+                    TextColor="{StaticResource Gray600}"
+                    VerticalOptions="Center"
+                    VerticalTextAlignment="Center" />
+                <!--  Icon Tray  -->
+                <HorizontalStackLayout Grid.Column="1" Spacing="4">
+                    <Image IsVisible="{Binding RightIcon, Converter={StaticResource NullOrEmptyToBool}}">
+                        <Image.Source>
+                            <FontImageSource
+                                FontFamily="{StaticResource FaSolid}"
+                                Glyph="{Binding RightIcon}"
+                                Size="12"
+                                Color="{StaticResource TertiaryRed600}" />
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+        <!--  Caption  -->
+        <Label
+            x:Name="caption"
+            Margin="0,4,0,0"
+            FontFamily="{StaticResource FontRegular}"
+            FontSize="14"
+            IsVisible="False"
+            LineBreakMode="TailTruncation"
+            TextColor="{Binding CaptionColor}">
+            <Label.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference caption}, Path=Text, Converter={StaticResource NullOrEmptyToBoolConverter}}"
+                    TargetType="Label"
+                    Value="True">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+    </VerticalStackLayout>
+</controls:AppControlBase>

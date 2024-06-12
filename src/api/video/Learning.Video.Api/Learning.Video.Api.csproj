@@ -11,7 +11,7 @@
     <PackageReference Include="Serilog" Version="3.1.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
   </ItemGroup>
@@ -20,6 +20,10 @@
     <ProjectReference Include="..\..\..\shared\Learning.Shared.Application\Learning.Shared.Application.csproj" />
     <ProjectReference Include="..\..\..\shared\Learning.Shared.Common\Learning.Shared.Common.csproj" />
     <ProjectReference Include="..\..\..\shared\Learning.Shared.Infrastructure\Learning.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>
