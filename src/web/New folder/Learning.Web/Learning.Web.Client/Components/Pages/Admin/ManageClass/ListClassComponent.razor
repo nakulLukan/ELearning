@@ -1,0 +1,112 @@
+﻿@using Learning.Business.Dto.Core.ClassDivision
+@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Requests.Core.Course
+@inherits AppBaseComponent
+<MudDataGrid Items="@Elements" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense
+              Hover RowClass="cursor-pointer" Loading="_isLoading" >
+         <ToolBarContent>
+             <MudText Typo="Typo.h6"><b>Classes</b></MudText>
+             <MudSpacer />
+             <MudTextField @bind-Value="_searchString" Placeholder="Enter Name or Code" Adornment="Adornment.Start" Immediate
+                       AdornmentIcon="@Icons.Material.Filled.Search"
+                       IconSize="Size.Medium" Class="mt-0" OnKeyDown="@OnEnterPressed" Clearable
+                       OnClearButtonClick="OnClear"></MudTextField>
+
+     </ToolBarContent>
+     <Columns>
+         <PropertyColumn Property="x => x.ClassName" Title="Class Name" />
+         <PropertyColumn Property="x => x.ShortCode" Title="Class Code" />
+         <PropertyColumn Property="x => x.CourseName" Title="Course Name" />
+         <PropertyColumn Property="x => x.CourseCode" Title="Course Code" />
+         <PropertyColumn Property="@(x => GetStatus(x))" Title="Status" />
+         <PropertyColumn Property="x=>x.CreatedOn" Title="Created On" />
+         <PropertyColumn Property="x=>x.Description" Title="Description" />
+     </Columns>
+     <PagerContent>
+         <div class="d-flex flex-column align-center">
+             <MudPagination Class="pa-4"
+                            Color="Color.Primary" Count="_classCount" Size="Size.Small" SelectedChanged="@(async (x) => await OnPageSelected(x))" />
+         </div>
+     </PagerContent>
+     <NoRecordsContent>
+         <NoRecordsComponent />
+     </NoRecordsContent>
+ </MudDataGrid>
+ @code {
+    [Parameter]
+    public bool RefreshData { get; set; }
+    private bool refreshData;
+
+    private string _searchString = "";
+    private string _lastSearchString = "";
+
+    private int _classCount;
+    private int _selectedPage = 1;
+    private const int _pageSize = 10;
+
+    private List<ClassDivisionListItemDto> Elements = new();
+
+    string GetStatus(ClassDivisionListItemDto item) => item.IsEnabled ? "Enabled" : "Disabled";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadClasses();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (RefreshData != refreshData)
+        {
+            refreshData = RefreshData;
+            await LoadClasses();
+        }
+    }
+
+    private async Task LoadClasses()
+    {
+        ChangeToLoadingState();
+        var response = (await Mediator.Send(new ClassDivisionsQuery()
+            {
+                SearchValue = _searchString,
+                Skip = GetPageSkipValue(_selectedPage, _pageSize),
+                Take = _pageSize
+            }));
+
+        Elements = response.Data;
+        _classCount = GetNumberOfPages(response.TotalRecords, _pageSize);
+        _selectedPage = 1;
+        ChangeToLoadedState();
+    }
+
+    private async Task OnEnterPressed(KeyboardEventArgs eventArg)
+    {
+        if (eventArg.Code == "Enter")
+        {
+            await OnSearch();
+        }
+    }
+
+    private async Task OnSearch()
+    {
+        if (_lastSearchString == _searchString)
+        {
+            return;
+        }
+
+        await LoadClasses();
+        _lastSearchString = _searchString;
+    }
+
+    private async Task OnClear()
+    {
+        _searchString = _lastSearchString = string.Empty;
+        await LoadClasses();
+    }
+
+    private async Task OnPageSelected(int selectedPage)
+    {
+        _selectedPage = selectedPage;
+        await LoadClasses();
+    }
+}

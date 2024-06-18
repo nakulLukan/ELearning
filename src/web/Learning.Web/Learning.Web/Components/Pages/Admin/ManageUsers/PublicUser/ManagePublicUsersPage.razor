@@ -1,0 +1,92 @@
+﻿@page "/Admin/Manage/PublicUsers"
+@using Learning.Business.Dto.Users
+@using Learning.Business.Requests.Users.PublicUser
+@using Learning.Web.Components.Layouts
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor.Utilities
+
+@layout AdminLayout
+@inherits AppBaseComponent
+@attribute [Authorize(PolicyConstant.SuperAdminPolicy)]
+
+<MudDataGrid @ref=_dataGrid T="PublicUserListItemDto" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense
+             Hover RowClass="cursor-pointer" Loading="@_isLoading" ServerData="LoadUsers" Style="height: 100%"
+             Filterable=false SortMode="SortMode.None" FixedFooter Height="calc(100% - 130px)" Striped>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6"><b>Public Users</b></MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="@SearchString" Lines="1" MaxLines=1 InputType=InputType.Email
+                      Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
+                      AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
+                      IconSize="Size.Medium" Class="mt-0" Clearable AutoGrow
+                      OnClearButtonClick="OnClear"></MudTextField>
+        <MudButton Variant="Variant.Outlined" Class="ml-2" OnClick="OnSearch">Search</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Index" Title="Code" Sortable="true" />
+        <PropertyColumn Property="x => x.FirstName" Title="First Name" Sortable="true" />
+        <PropertyColumn Property="x => x.LastName" Title="Last Name" />
+        <PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
+        <PropertyColumn Property="@(context=> context.IsContactNumberVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
+        <PropertyColumn Property="x => x.EmailAddress" Title="Email Address" Sortable=true />
+        <PropertyColumn Property="@(context=> context.IsEmailAddressVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
+        <PropertyColumn Property="x => x.AccountCreatedOn" Title="Joined On" Sortable="true" />
+        <PropertyColumn Property="@(context=> context.IsActive ? "Active" : "In-Active")" Title="Account Status" />
+        <TemplateColumn Title="Action">
+            <CellTemplate>
+                <MudButton Variant="Variant.Text" Size="Size.Small">Edit</MudButton>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <LoadingContent>
+        Loading...
+    </LoadingContent>
+    <NoRecordsContent>
+        <NoRecordsComponent />
+    </NoRecordsContent>
+    <PagerContent>
+        <MudDataGridPager T="PublicUserListItemDto" />
+    </PagerContent>
+</MudDataGrid>
+ @code {
+    [SupplyParameterFromQuery(Name = "Search")]
+    public string SearchString { get; set; }
+
+    List<PublicUserListItemDto> _elements = new();
+    MudDataGrid<PublicUserListItemDto> _dataGrid;
+    GridState<PublicUserListItemDto> _gridState;
+    private int _usersCount;
+
+    private string _lastSearchString = "";
+
+    private async Task<GridData<PublicUserListItemDto>> LoadUsers(GridState<PublicUserListItemDto> gridState)
+    {
+        _gridState = gridState;
+        var sortBy = gridState.SortDefinitions.FirstOrDefault();
+        var response = (await Mediator.Send(new PublicUserListQuery()
+            {
+                Skip = gridState.PageSize * gridState.Page,
+                Take = gridState.PageSize,
+                SortBy = sortBy?.SortBy ?? string.Empty,
+                IsDescending = sortBy?.Descending ?? false,
+                EmailOrNameFilter = SearchString,
+            }));
+        return new GridData<PublicUserListItemDto>
+            {
+                TotalItems = response.TotalRecords,
+                Items = response.Data
+            };
+    }
+
+    private async Task OnSearch()
+    {
+        await _dataGrid.ReloadServerData();
+        _lastSearchString = SearchString;
+    }
+
+    private async Task OnClear()
+    {
+        SearchString = _lastSearchString = string.Empty;
+        await OnSearch();
+    }
+}

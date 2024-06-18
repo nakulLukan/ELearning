@@ -1,0 +1,193 @@
+﻿@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Subject.ManageSubject
+@using Learning.Business.Dto.Master.Lookup
+@using Learning.Business.Requests.Core.Subject
+@using Learning.Business.Requests.Master.Subscription
+@using Learning.Shared.Common.Enums
+@using Learning.Shared.Common.Extensions
+@inherits AppBaseComponent
+
+<MudPaper Elevation="0" Outlined Class="pa-4 pl-0">
+     <MudStack Row Spacing="10" Justify="Justify.SpaceBetween">
+         <MudStack Spacing="1">
+             <MudText Typo="Typo.overline">Price</MudText>
+             <div>
+                 <MudText Class="d-inline"><b>@(GetActualPrice())</b> </MudText>
+                 <MudText Typo="Typo.body2" Class="d-inline"><del>@GetOriginalPrice()</del></MudText>
+                <MudText Typo="Typo.body2" Color=Color.Error Class="d-inline"><b>@GetDiscountPercentage()</b></MudText>
+            </div>
+        </MudStack>
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.overline">Subscription Type</MudText>
+            <MudText>@GetSubscriptionType()</MudText>
+            </MudStack>
+            <div class="d-flex flex-column justify-center">
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" OnClick="@(()=> _showUpdateSubscriptionDialog = true)"></MudIconButton>
+            </div>
+        </MudStack>
+    </MudPaper>
+
+    <MudDialog IsVisible=_showUpdateSubscriptionDialog Options="DialogOptionConstant.MediumWidth">
+        <DialogContent>
+            <MudForm @ref=_updateSubscriptionDetailForm Model="@model" Validation="@updateSubscriptionValidator.ValidateValue" ValidationDelay="0">
+                <MudCard Elevation="0" Style="min-width: 500px">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Subscription Details</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudTextField Label="Price" Class="mt-3" Variant="Variant.Outlined" T="float?"
+                                      @bind-Value="model.OriginalPrice" For="@(() => model.OriginalPrice)" AdornmentIcon="@Icons.Material.Filled.CurrencyRupee" Adornment="Adornment.Start" />
+                        <MudTextField Label="Discounted Price" Class="mt-3" Variant="Variant.Outlined" T="float?" AdornmentIcon="@Icons.Material.Filled.CurrencyRupee" Adornment="Adornment.Start"
+                                      @bind-Value="model.DiscountedPrice" For="@(() => model.DiscountedPrice)" />
+                        <MudDivider DividerType="DividerType.Middle" Class="mt-3" />
+                        <div class="d-flex gap-2">
+                            <MudItem xs="6">
+                                <MudSelect T="SubscriptionExpiryType?" Class="mt-3" Label="Subscription Type" Variant="Variant.Outlined"
+                                           AnchorOrigin="Origin.BottomCenter" @bind-Value="@model.SubscriptionType"
+                                           For="@(()=> model.SubscriptionType)">
+                                    <MudSelectItem T="SubscriptionExpiryType?" Value="null" />
+                                    @foreach (var subscriptionExpiryLookup in _subscriptionExpiryLookups)
+                                {
+                                    <MudSelectItem T="SubscriptionExpiryType?" Value="@((SubscriptionExpiryType?)subscriptionExpiryLookup.Id)">@subscriptionExpiryLookup.Value</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+
+                        <MudItem xs="6">
+                            @if (model.SubscriptionType == SubscriptionExpiryType.RelativeExpiry)
+                            {
+                                <MudNumericField Label="Valid For (days)" Class="mt-3" Variant="Variant.Outlined" T="short?"
+                                                 @bind-Value="model.NumOfDays" For="@(() => model.NumOfDays)" Min="1" Step="1" HideSpinButtons />
+
+                            }
+                            @if (model.SubscriptionType == SubscriptionExpiryType.AbsoluteExpiry)
+                            {
+                                <MudDatePicker Class="mt-1" Label="Expires On" @bind-Date="@model.ExpiryAbsoluteDate" AnchorOrigin=Origin.CenterRight TransformOrigin=Origin.CenterRight
+                                               Variant="Variant.Outlined" MinDate="DateTime.Now" DateFormat="yyyy-MMM-dd"
+                                               For="@(()=> model.ExpiryAbsoluteDate)" />
+                            }
+
+                            @if (model.SubscriptionType == SubscriptionExpiryType.Yearly)
+                            {
+                                <MudDatePicker Class="mt-1" Label="Expires On (each year)" @bind-Date="@model.ExpiryDate" AnchorOrigin=Origin.CenterRight TransformOrigin=Origin.CenterRight
+                                               Variant="Variant.Outlined" OpenTo="OpenTo.Month" FixYear="2021" DateFormat="dd/MMM" TitleDateFormat="dd/MMM"
+                                               For="@(()=> model.ExpiryDate)" DisableToolbar=true />
+                            }
+
+                        </MudItem>
+                    </div>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton OnClick="@(()=> _showUpdateSubscriptionDialog = false)">Cancel</MudButton>
+                    <MudSpacer />
+                    <AppProgressButton IsProgressing="_isLoading"
+                                       Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"
+                                       OnClick="OnValidSubmit">Update</AppProgressButton>
+                </MudCardActions>
+            </MudCard>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+@code {
+
+    [Parameter]
+    public int? SubjectId { get; set; }
+
+    SubjectSubscriptionDetailDto subscriptionDetails = new();
+    UpdateSubjectSubscriptionDto model = new();
+    UpdateSubjectSubscriptionDetailCommandValidator updateSubscriptionValidator = new();
+    MudForm _updateSubscriptionDetailForm;
+
+    bool _showUpdateSubscriptionDialog = false;
+
+    List<LookupSelectDto> _subscriptionExpiryLookups = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadSubscriptionDetails();
+        _subscriptionExpiryLookups = await Mediator.Send(new SubscriptionExpirySelectQuery());
+        StateHasChanged();
+    }
+
+    private async Task LoadSubscriptionDetails()
+    {
+        if (!SubjectId.HasValue)
+        {
+            return;
+        }
+        subscriptionDetails = await Mediator.Send(new SubjectSubscriptionDetailQuery()
+            {
+                SubjectId = SubjectId.Value
+            });
+    }
+
+    private string GetActualPrice()
+    {
+        return subscriptionDetails.DiscountedPrice.HasValue ? subscriptionDetails.DiscountedPrice.ToCurrency() : UIConstant.NoDataIndicator;
+    }
+
+    private string GetOriginalPrice()
+    {
+        if (subscriptionDetails.DiscountedPrice == subscriptionDetails.OriginalPrice)
+        {
+            return string.Empty;
+        }
+
+        return subscriptionDetails.OriginalPrice.ToCurrency();
+    }
+
+    private string GetDiscountPercentage()
+    {
+        if (subscriptionDetails.DiscountPerc.HasValue)
+        {
+            return subscriptionDetails.DiscountPerc.Value.ToString("0.") + "%" + " OFF";
+        }
+
+        return string.Empty;
+    }
+
+    private string GetSubscriptionType()
+    {
+        if (string.IsNullOrEmpty(subscriptionDetails.SubscriptionType))
+        {
+            return "-";
+        }
+
+        return subscriptionDetails.SubscriptionType;
+    }
+
+    private async Task OnValidSubmit()
+    {
+        await _updateSubscriptionDetailForm.Validate();
+        if (!_updateSubscriptionDetailForm.IsValid)
+        {
+            return;
+        }
+        model.SubjectSubscriptionId = subscriptionDetails.Id;
+        await AppMediator.Send(new UpdateSubjectSubscriptionDetailCommand()
+            {
+                DiscountedPrice = model.DiscountedPrice,
+                ExpiryAbsoluteDate = model.ExpiryAbsoluteDate,
+                ExpiryDate = model.ExpiryDate,
+                NumOfDays = model.NumOfDays,
+                OriginalPrice = model.OriginalPrice,
+                SubjectSubscriptionId = model.SubjectSubscriptionId,
+                SubscriptionType = model.SubscriptionType,
+                SubjectId = SubjectId.Value
+            })
+            .OnSuccess(async data =>
+            {
+                ToastService.Success("Subscription details updated successfully");
+                _showUpdateSubscriptionDialog = false;
+                await LoadSubscriptionDetails();
+                Refresh();
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+            });
+    }
+}

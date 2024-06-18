@@ -1,0 +1,273 @@
+﻿@page "/video/test/{SubjectId:int?}"
+@using Learning.Business.Contracts.HttpContext
+@using Learning.Business.Dto.VideoPlayback
+@using Learning.Business.Requests.VideoPlayback
+@using static Learning.Web.Components.Utility.DashPlayer
+@inject IRequestContext RequestContext;
+@inherits AppBaseComponent
+<style>
+    .video-container {
+        overflow: clip;
+        position: relative;
+        padding: 0px;
+        height: @Height
+    }
+
+    .video-drawer {
+        background: #23292F;
+        color: white;
+    }
+
+    .video-drawer-header {
+        width: 100%;
+        background: #23292F;
+        color: white;
+    }
+
+    .playlist-lesson-selected {
+        background: #1000004d;
+    }
+
+    .playlist-lesson-indicator {
+        width: 20px;
+    }
+
+</style>
+<div class="video-container">
+    <MudDrawerContainer Style="background:black; height: 100%;">
+        <MudDrawer @bind-Open="@openStart" Anchor="Anchor.Left" Elevation="0"
+                   Variant="@DrawerVariant.Persistent" ClipMode="DrawerClipMode.Docked"
+                   Class="video-drawer">
+            <MudDrawerHeader Class="pa-0">
+                <div class="d-flex justify-space-between border-b-2 video-drawer-header">
+                    <MudText Class="align-self-center pl-3" Typo="Typo.h6">Contents</MudText>
+                    <MudIconButton Color="Color.Inherit" Class="align-self-center" Icon="@Icons.Material.Filled.Close" OnClick="ToggleStartDrawer"></MudIconButton>
+                </div>
+
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudList T="string" Clickable="true">
+                    @foreach (var chapter in _playlist.Chapters)
+                    {
+                        <MudListItem Text="@chapter.ChapterName" Expanded>
+                            <NestedList>
+                                @foreach (var lesson in chapter.Lessons)
+                                {
+                                    <MudListItem Value="@lesson.LessonId" Class="@GetLessonListItemClass(lesson)"
+                                                 OnClick="@(() => LoadSelectedLesson(lesson.LessonId))">
+                                        <div class="d-flex flex-grow-1 gap-2">
+                                            <div class="flex-none playlist-lesson-indicator">
+                                                @if (lesson.IsLocked)
+                                            {
+                                                <MudIcon Icon="@Icons.Material.TwoTone.Lock" Size="Size.Small" />
+                                            }
+                                        </div>
+                                        <div class="flex-1">
+                                            <MudText Typo=Typo.subtitle2 Class="m-auto" GutterBottom=false>@lesson.LessonName</MudText>
+                                            <MudText Typo=Typo.caption Class="m-auto" GutterBottom=false Color="Color.Tertiary">@lesson.Duration</MudText>
+                                        </div>
+                                        <div class="flex-none playlist-lesson-indicator">
+                                            @if (lesson.HasCompleted)
+                                            {
+                                                <MudIcon Icon="@Icons.Material.Filled.CheckCircleOutline" Size="Size.Small" Color="Color.Success" />
+                                            }
+                                        </div>
+
+                                    </div>
+                                </MudListItem>
+                                }
+                            </NestedList>
+                        </MudListItem>
+                    }
+                </MudList>
+
+            </MudNavMenu>
+
+        </MudDrawer>
+        <div class="d-flex justify-center" Style="height: 100%">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="ToggleStartDrawer" Color="Color.Inherit"
+                           Style="position:absolute; z-index: 999; left:16px; top: 16px;"></MudIconButton>
+            @if (ShowBuy)
+            {
+                <MudPaper Width="100%" Height="100%" Class="d-flex justify-center align-content-center"
+                          Style="background: transparent">
+                    <MudStack Style="margin: auto">
+                        <MudText Align="Align.Center" Typo="Typo.h6">
+                            Course Not Purchased
+                        </MudText>
+                        <Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent ShowBuy=true
+                                                                                                            SubjectCode="@_playlist.SubjectCode"></Learning.Web.Client.Components.Pages.Subjects.SubjectDetail.SubjectBuyNowComponent>
+                    </MudStack>
+
+                </MudPaper>
+            }
+            else if (!_isLoading && !string.IsNullOrEmpty(_mpdFileUrl))
+            {
+                <DashPlayer @ref=_dashPlayer AutoLoad=true
+                            Options="options"
+                            VideoUrl="@_mpdFileUrl"
+                            OnPlaybackEnded="OnPlaybackEnded"></DashPlayer>
+            }
+            else
+            {
+                <MudPaper Width="100%" Height="100%" Class="d-flex justify-center align-content-center"
+                          Style="background: transparent">
+                    <MudPaper Style="margin: auto;background: transparent" Class="pa-4">
+                        <MudProgressCircular Class="text-white" Indeterminate="true" />
+                    </MudPaper>
+                </MudPaper>
+            }
+
+
+        </div>
+    </MudDrawerContainer>
+</div>
+
+@code {
+    [Parameter]
+    public int? SubjectId { get; set; }
+
+    [Parameter]
+    public bool ShowBuy { get; set; }
+
+    [Parameter]
+    public int? SelectedLesson { get; set; }
+    public EventCallback<int?> SelectedLessonChanged { get; set; }
+
+    [Parameter]
+    public string Height { get; set; } = "500px";
+
+    DashPlayer _dashPlayer;
+    private string _mpdFileUrl = string.Empty;
+
+    bool openStart = true;
+    const string _lessonItemClass = "pl-3 pr-1";
+
+    DashPlayerOptions options = new DashPlayerOptions
+        {
+            FastSwitchEnabled = true,
+            ScheduleWhilePaused = false
+        };
+
+    SubjectPlaylistDto _playlist = new();
+
+    protected override void OnInitialized()
+    {
+        if (!SelectedLessonChanged.HasDelegate)
+        {
+            SelectedLessonChanged = EventCallback.Factory.Create<int?>(this, LoadSelectedLesson);
+        }
+    }
+
+    void ToggleStartDrawer()
+    {
+        openStart = !openStart;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadGetPlaylistDetails();
+    }
+
+    public async Task LoadGetPlaylistDetails()
+    {
+        if (!SubjectId.HasValue) return;
+        _playlist = await Mediator.Send(new GetSubjectPlaylistQuery()
+            {
+                SubjectId = SubjectId.Value
+            });
+
+        SelectedLesson ??= _playlist.Chapters.FirstOrDefault()?.Lessons?.FirstOrDefault()?.LessonId;
+        ChangeSelectedVideoValue(SelectedLesson);
+        StateHasChanged();
+    }
+
+    private void ChangeSelectedVideoValue(int? videoId)
+    {
+        SelectedLesson = videoId;
+        SelectedLessonChanged.InvokeAsync(SelectedLesson);
+    }
+
+    private async Task LoadSelectedLesson(int? selectedVideoId)
+    {
+        ChangeToLoadingState();
+        SelectedLesson = selectedVideoId;
+        if (!selectedVideoId.HasValue)
+        {
+            return;
+        }
+
+        var response = await Mediator.Send(new VideoManifestQuery
+            {
+                VideoId = selectedVideoId.Value
+            });
+        if (response.Data.Status == Shared.Common.Enums.VideoPlaybackStatus.VideoNotFound)
+        {
+            ShowBuy = false;
+        }
+        else if (response.Data.Status == Shared.Common.Enums.VideoPlaybackStatus.NotSubscribed)
+        {
+            ShowBuy = true;
+        }
+        else
+        {
+            _mpdFileUrl = response.Data.ManifestUrl;
+            ShowBuy = false;
+        }
+        ChangeToLoadedState();
+    }
+
+    private string GetLessonListItemClass(ContentLessonListItemDto lessonItem)
+    {
+        if (SelectedLesson != null && lessonItem.LessonId == SelectedLesson.Value)
+        {
+            return _lessonItemClass + " playlist-lesson-selected ";
+        }
+
+        return _lessonItemClass;
+    }
+
+    private async Task OnPlaybackEnded()
+    {
+        bool nextLessonFound = false;
+        for (int i = 0; i < _playlist.Chapters.Count; i++)
+        {
+            for (int j = 0; j < _playlist.Chapters[i].Lessons.Count; j++)
+            {
+                var lesson = _playlist.Chapters[i].Lessons[j];
+                if (lesson.LessonId == SelectedLesson.Value)
+                {
+                    nextLessonFound = true;
+                    if (j + 1 < _playlist.Chapters[i].Lessons.Count)
+                    {
+                        ChangeSelectedVideoValue(_playlist.Chapters[i].Lessons[j + 1].LessonId);
+                    }
+                    else
+                    {
+                        if (i + 1 < _playlist.Chapters.Count)
+                        {
+                            if (_playlist.Chapters[i + 1].Lessons.Any())
+                            {
+                                ChangeSelectedVideoValue(_playlist.Chapters[i + 1].Lessons[0].LessonId);
+                            }
+                        }
+                        PlaylistEnded();
+                    }
+
+                    break;
+                }
+            }
+
+            if (nextLessonFound)
+            {
+                break;
+            }
+        }
+    }
+
+    private void PlaylistEnded()
+    {
+
+    }
+}

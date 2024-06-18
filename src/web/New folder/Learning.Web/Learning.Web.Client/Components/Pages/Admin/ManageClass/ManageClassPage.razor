@@ -1,0 +1,18 @@
+﻿@page "/admin/classes"
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveAuto
+@attribute [Authorize(Policy = PolicyConstant.AdminPolicy)]
+
+@layout AdminLayout
+<MudGrid>
+    <MudItem xs="12" lg="4">
+        <AddClassComponent OnClassAdded="OnClassAdded"></AddClassComponent>
+    </MudItem>
+    <MudItem xs="12" lg="8">
+        <ListClassComponent RefreshData=refreshData/>
+    </MudItem >
+</MudGrid>
+@code {
+    private bool refreshData = false;
+    void OnClassAdded() => refreshData = !refreshData;
+}

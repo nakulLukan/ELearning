@@ -1,23 +1,18 @@
 ﻿using Learning.Business.Contracts.HttpContext;
-using Learning.Shared.Common.Constants;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 
 namespace Learning.Web.Client.Impl.HttpContext;
 
 public class RequestContext : IRequestContext
 {
     private readonly AuthenticationStateProvider _authStateProvider;
-    private AuthenticationState _authState;
 
-    /// <summary>
-    /// Application request context.
-    /// </summary>
-    /// <param name="authStateProvider"></param>
     public RequestContext(AuthenticationStateProvider authStateProvider)
     {
         _authStateProvider = authStateProvider;
     }
+
+    private AuthenticationState _authState;
 
     private async Task Init()
     {
@@ -37,7 +32,7 @@ public class RequestContext : IRequestContext
         var isAdmin = false;
         if (isAuth)
         {
-            isAdmin = bool.Parse(_authState.User.Claims.First(x => x.Type == ClaimConstant.IsAdminClaim).Value);
+            isAdmin = await IsAdmin();
         }
 
         return (isAuth, isAdmin);
@@ -46,14 +41,14 @@ public class RequestContext : IRequestContext
     public async Task<bool> IsAdmin()
     {
         if (!await IsAuthenticated()) return false;
-        var isAdminClaim = _authState.User.Claims.FirstOrDefault(x => x.Type == ClaimConstant.IsAdminClaim)?.Value;
-        return bool.Parse(isAdminClaim);
+        var isAdminClaim = !string.IsNullOrEmpty(_authState.User.Claims.FirstOrDefault(x => x.Type == "custom:role")?.Value);
+        return isAdminClaim;
     }
 
     public async Task<string> GetUserId()
     {
         await Init();
-        var userIdClaim = _authState.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier);
+        var userIdClaim = _authState.User.Claims.First(x => x.Type == "cognito:username");
         return userIdClaim.Value;
     }
 }

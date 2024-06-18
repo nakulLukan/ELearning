@@ -1,0 +1,55 @@
+﻿@inherits AppBaseComponent
+@using Learning.Business.Dto.Core.Course;
+@using Learning.Business.Requests.Core.Course
+@using Learning.Business.Requests.Core.Subject
+@using Learning.Shared.Common.Extensions
+@inject NavigationManager NavigationManager;
+
+<style>
+    .new-course-card:hover {
+        background: #E0E0E0;
+    }
+</style>
+<div>
+
+    <MudText Typo="Typo.body2" Class="d-block mb-1"> <b>New Courses</b></MudText>
+    <MudPaper Class="d-flex flex-nowrap gap-3 overflow-auto py-0 justify-start" Elevation="4">
+        @if (_isLoading)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="250px" Width="100%" />
+        }
+        @foreach (var item in Elements)
+        {
+            <MudCard Style="width: 250px;" Class="flex-none d-inline-flex flex-column cursor-pointer new-course-card"
+                     @onclick="@(() => OnNewCourseClick(item.SubjectCode))">
+                <MudCardMedia Image="@item.ImgSrc" Height="70" />
+                <MudCardContent Style="height: 150px;" Class="d-flex-grow-1">
+                    <MudText Typo="Typo.h5">@item.SubjectName</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Surface"> <b>@item.CourseName @(" > ") @item.ClassName</b></MudText>
+                    <div style=" overflow: scroll; height: 83px; scrollbar-width: none;">
+                        <MudText Typo="Typo.body2" Style="text-overflow: ellipsis; overflow: hidden">@item.SubjectDescription</MudText>
+                        </div>
+                    </MudCardContent>
+                    <MudCardActions Class="px-5">
+                        <MudText Typo="Typo.body1" Color="Color.Dark" Class="d-inline"><b>@item.DiscountedPrice.ToCurrency()</b> <MudText Typo="Typo.body2" Class="d-inline" Color="Color.Default"><s>@item.Price</s></MudText> </MudText>
+                </MudCardActions>
+            </MudCard>
+        }
+    </MudPaper>
+</div>
+@code {
+    private List<NewCourseCardItemDto> Elements = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        ChangeToLoadingState();
+        Elements = await Mediator.Send(new LatestSubjectsQuery());
+        ChangeToLoadedState();
+    }
+
+    private void OnNewCourseClick(string subjectCode)
+    {
+        NavigationManager.NavigateTo($"course/{subjectCode}");
+    }
+}

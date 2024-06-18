@@ -1,0 +1,13 @@
+﻿@page "/admin"
+@using Learning.Web.Components.Layouts
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@attribute [Authorize(PolicyConstant.SuperAdminPolicy)]
+@layout AdminLayout
+
+@code {
+    void OnClick()
+    {
+        
+    }
+}

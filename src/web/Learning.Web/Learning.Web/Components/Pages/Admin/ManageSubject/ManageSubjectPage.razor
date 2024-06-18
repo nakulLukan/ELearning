@@ -1,0 +1,19 @@
+﻿@page "/admin/subjects"
+@using Learning.Web.Components.Layouts
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveAuto
+@attribute [Authorize(PolicyConstant.SuperAdminPolicy)]
+
+@layout AdminLayout
+<MudGrid>
+    <MudItem xs="12" lg="4">
+        <AddSubjectComponent OnSubjectAdded="OnSubjectAdded"></AddSubjectComponent>
+    </MudItem>
+    <MudItem xs="12" lg="8">
+        <ListSubjectComponent RefreshData=refreshData/>
+    </MudItem >
+</MudGrid>
+@code {
+    private bool refreshData = false;
+    void OnSubjectAdded() => refreshData = !refreshData;
+}

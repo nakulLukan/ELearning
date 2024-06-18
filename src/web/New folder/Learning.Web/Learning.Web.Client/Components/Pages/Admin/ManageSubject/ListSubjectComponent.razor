@@ -1,0 +1,122 @@
+﻿@using Learning.Business.Dto.Core.ClassDivision
+@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Course
+@using Learning.Business.Requests.Core.Subject.ManageSubject
+@inject NavigationManager NavigationManager
+@inherits AppBaseComponent
+<MudDataGrid Items="@Elements" T="SubjectListItemDto" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense=true
+              Hover RowClass="cursor-pointer" Loading="_isLoading" RowClick="OnRowClick" ColumnResizeMode="ResizeMode.Container" Striped>
+         <ToolBarContent>
+             <MudText Typo="Typo.h6"><b>Subjects</b></MudText>
+             <MudSpacer />
+             <MudTextField @bind-Value="_searchString" Placeholder="Enter Name or Code" Adornment="Adornment.Start" Immediate
+                       AdornmentIcon="@Icons.Material.Filled.Search"
+                       IconSize="Size.Medium" Class="mt-0" OnKeyDown="@OnEnterPressed" Clearable
+                       OnClearButtonClick="OnClear"></MudTextField>
+
+     </ToolBarContent>
+     <Columns>
+         <PropertyColumn Property="x => x.SubjectName" Title="Subject Name"/>
+         <PropertyColumn Property="x => x.ShortCode" Title="Subject Code" />
+         <PropertyColumn Property="x => x.ClassName" Title="Class Name" />
+         <PropertyColumn Property="x => x.ClassCode" Title="Class Code" />
+         <PropertyColumn Property="x => x.CourseName" Title="Course Name" />
+         <PropertyColumn Property="x => x.CourseCode" Title="Course Code" />
+         <PropertyColumn Property="@(x => GetStatus(x))" Title="Status" />
+         <PropertyColumn Property="x=>x.CreatedOn" Title="Created On" />
+         <PropertyColumn Property="x=>x.Description" Title="Description" CellClass="app-mud-data-grid-cell" />
+     </Columns>
+     <PagerContent>
+         <div class="d-flex flex-column align-center">
+             <MudPagination Class="pa-4"
+                            Color="Color.Primary" Count="_classCount" Size="Size.Small" SelectedChanged="@(async (x) => await OnPageSelected(x))" />
+         </div>
+     </PagerContent>
+     <NoRecordsContent>
+         <NoRecordsComponent />
+     </NoRecordsContent>
+ </MudDataGrid>
+ @code {
+    [Parameter]
+    public bool RefreshData { get; set; }
+    private bool refreshData;
+
+    private string _searchString = "";
+    private string _lastSearchString = "";
+
+    private int _classCount;
+    private int _selectedPage = 1;
+    private const int _pageSize = 10;
+
+    private List<SubjectListItemDto> Elements = new();
+
+    string GetStatus(SubjectListItemDto item) => item.IsEnabled ? "Enabled" : "Disabled";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadSubjects();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (RefreshData != refreshData)
+        {
+            refreshData = RefreshData;
+            await LoadSubjects();
+        }
+    }
+
+    private async Task LoadSubjects()
+    {
+        ChangeToLoadingState();
+        var response = (await Mediator.Send(new SubjectQuery()
+            {
+                SearchValue = _searchString,
+                Skip = GetPageSkipValue(_selectedPage, _pageSize),
+                Take = _pageSize,
+            }));
+
+        Elements = response.Data;
+        _classCount = GetNumberOfPages(response.TotalRecords, _pageSize);
+        _selectedPage = 1;
+        ChangeToLoadedState();
+    }
+
+    private async Task OnEnterPressed(KeyboardEventArgs eventArg)
+    {
+        if (eventArg.Code == "Enter")
+        {
+            await OnSearch();
+        }
+    }
+
+    private async Task OnSearch()
+    {
+        if (_lastSearchString == _searchString)
+        {
+            return;
+        }
+
+        await LoadSubjects();
+        _lastSearchString = _searchString;
+    }
+
+    private async Task OnClear()
+    {
+        _searchString = _lastSearchString = string.Empty;
+        await LoadSubjects();
+    }
+
+    private async Task OnPageSelected(int selectedPage)
+    {
+        _selectedPage = selectedPage;
+        await LoadSubjects();
+    }
+
+    private void OnRowClick(DataGridRowClickEventArgs<SubjectListItemDto> item)
+    {
+        NavigationManager.NavigateTo($"admin/subjects/{item.Item.SubjectId}");
+    } 
+}

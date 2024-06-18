@@ -1,0 +1,28 @@
+﻿@page "/admin/subjects/{SubjectId:int}"
+@using Learning.Business.Dto.Core.Lesson
+@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Subject
+@using Learning.Web.Components.Layouts
+@using Learning.Web.Components.Pages.Admin.ManageLesson
+@using Microsoft.AspNetCore.Authorization
+@layout AdminLayout
+@rendermode InteractiveAuto
+@attribute [Authorize(PolicyConstant.SuperAdminPolicy)]
+
+<MudContainer>
+    <MudGrid>
+        <MudItem md="7">
+            <SubjectDetailComponent SubjectId="SubjectId" />
+        </MudItem>
+        <MudItem md="5">
+            <MudStack>
+                <ListChaptersAndLessonsComponent SubjectId="SubjectId" />
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int? SubjectId { get; set; }
+}

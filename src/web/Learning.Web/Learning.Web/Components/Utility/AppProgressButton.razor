@@ -1,0 +1,52 @@
+﻿@using MudBlazor
+<MudButton Disabled=IsProgressing
+           ButtonType="@ButtonType"
+           Variant="@Variant"
+           Color="Color"
+           StartIcon="@StartIcon"
+           Size="@Size"
+           OnClick="OnClick"
+           Class="@Class">
+    @if (IsProgressing)
+    {
+        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+        <MudText Class="ms-2">@ProcessingText</MudText>
+    }
+    else
+    {
+        <MudText>@ChildContent</MudText>
+    }
+</MudButton>
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string ProcessingText { get; set; } = "Processing";
+
+    [Parameter]
+    public ButtonType ButtonType { get; set; }
+
+    [Parameter]
+    public Variant Variant { get; set; }
+
+    [Parameter]
+    public Color Color { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    [Parameter]
+    public bool IsProgressing { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public string StartIcon { get; set; }
+
+    [Parameter]
+    public Size Size { get; set; }
+}

@@ -1,0 +1,109 @@
+﻿@using Learning.Business.Dto.Core.ClassDivision
+@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Course
+@using Learning.Business.Requests.Core.Subject.ManageSubject
+@using Learning.Domain.Master
+@using Learning.Shared.Common.Enums
+@using Learning.Web.Client.Extensions;
+@using Learning.Web.Components.Pages.Admin.ManageClass
+@using Learning.Web.Components.Pages.Admin.ManageCourse
+@using Learning.Web.Components.Pages.Master
+@inherits AppBaseComponent
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit" FormName="add-subject">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardHeader>
+                    <MudText Typo="Typo.h5">Add new subject</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <CourseSelectComponent For="@(()=> model.CourseId)" ValueChanged="OnCourseChanged" />
+                    <ClassSelectComponent For="@(()=> model.ClassId)" CourseId="@model.CourseId" @bind-Value="model.ClassId" Class="mt-3" />
+                    <MudTextField Label="Subject Name" Class="mt-3" Variant="Variant.Outlined"
+                                  @bind-Value="model.SubjectName" For="@(() => model.SubjectName)" />
+                    <MudTextField Label="Short Code" Class="mt-3" Variant="Variant.Outlined"
+                                  @bind-Value="model.ShortCode" For="@(() => model.ShortCode)" />
+                    <MudTextField Label="Description" Class="mt-3" Lines="3" MaxLines="4" Variant="Variant.Outlined"
+                                  @bind-Value="model.Description" For="@(() => model.Description)" />
+
+
+                    <LookupSelectComponent For="()=> model.SubjectGroupLookupId" @bind-Value="@model.SubjectGroupLookupId" LookupMaster="@LookupMasterEnum.SubjectGroup"
+                                           Label="Subject Parent Category">
+                    </LookupSelectComponent>
+
+                    <MudStack Row Class="mt-3">
+                        <MudCheckBox @bind-Value="@model.IsActive" Size="Size.Medium" Color="Color.Primary">@(model.IsActive ? "Enabled" : "Disabled")</MudCheckBox>
+                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".png, .jpg, .jpeg">
+                            <ActivatorContent>
+                                <MudFab HtmlTag="label"
+                                        Color="Color.Surface"
+                                        StartIcon="@Icons.Material.TwoTone.Image"
+                                        Label="@_chooseThumbnailText"Size="Size.Small" IconSize="Size.Small" />
+                            </ActivatorContent>
+                        </MudFileUpload>
+                    </MudStack>
+
+                </MudCardContent>
+                <MudCardActions>
+                    <AppProgressButton ButtonType="ButtonType.Submit" IsProgressing="_isLoading"
+                                       Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add Subject</AppProgressButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+@code {
+
+    [Parameter]
+    public EventCallback OnSubjectAdded { get; set; }
+
+    AddSubjectDto model = new();
+
+    private const string _chooseThumbnailDefaultText = "Choose Thumbnail";
+    private string _chooseThumbnailText = _chooseThumbnailDefaultText;
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        ChangeToLoadingState();
+        await AppMediator.Send(new AddSubjectCommand
+            {
+                Description = model.Description,
+                IsActive = model.IsActive,
+                ShortCode = model.ShortCode,
+                ClassId = model.ClassId,
+                SubjectGroupLookupId = model.SubjectGroupLookupId,
+                SubjectName = model.SubjectName,
+                ThumbnailData = model.ThumbnailData
+            })
+            .OnSuccess(data =>
+            {
+                ToastService.Success("New subject added");
+                ChangeToLoadedState();
+                model = new();
+                Refresh();
+                InvokeAsync(OnSubjectAdded.InvokeAsync);
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+                ChangeToLoadedState();
+            });
+    }
+
+    private void OnCourseChanged(int? courseId)
+    {
+        model.CourseId = courseId;
+    }
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        _chooseThumbnailText = file.Name;
+        using MemoryStream ms = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(ms);
+        model.ThumbnailData = ms.ToArray();
+        StateHasChanged();
+    }
+}

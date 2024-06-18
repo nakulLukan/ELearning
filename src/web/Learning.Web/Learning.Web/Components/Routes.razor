@@ -1,11 +1,6 @@
-﻿@using Learning.Web.Client.Components.Layouts
-<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
+﻿<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-            <NotAuthorized>
-                <RedirectToLogin />
-            </NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Client.Layout.MainLayout)"/>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>

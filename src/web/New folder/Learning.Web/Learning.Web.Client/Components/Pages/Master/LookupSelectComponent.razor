@@ -1,0 +1,49 @@
+﻿@using System.Linq.Expressions;
+@using Learning.Business.Dto.Master.Lookup
+@using Learning.Business.Requests.Master.Lookup
+@using Learning.Shared.Common.Enums
+
+<MudSelect Label="@Label" AnchorOrigin="Origin.BottomCenter" @bind-Value="@Value" For="For" Variant="Variant.Outlined">
+    <MudSelectItem T="int?" Value="default(int?)">Select</MudSelectItem>
+    @foreach (var lookupValue in lookupDetails)
+    {
+        <MudSelectItem T="int?" Value="lookupValue.Id">@lookupValue.Value</MudSelectItem>
+    }
+</MudSelect>
+@code {
+    List<LookupSelectDto> lookupDetails = new();
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public LookupMasterEnum LookupMaster { get; set; }
+
+    private int? _value;
+    [Parameter]
+    public int? Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<int?> ValueChanged { get; set; }
+
+    [Parameter]
+    [Category("Validation")]
+    public Expression<Func<int?>> For { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        lookupDetails = await Mediator.Send(new LookupSelectQuery()
+            {
+                LookupMasterInternalName = LookupMaster.ToString()
+            });
+    }
+}

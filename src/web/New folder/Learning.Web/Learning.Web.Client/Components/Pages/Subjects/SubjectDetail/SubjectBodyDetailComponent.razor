@@ -1,0 +1,68 @@
+﻿@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Requests.Core.Subject
+@using Learning.Shared.Common.Extensions
+@if (_details != null)
+{
+    <MudGrid Class="mt-4">
+        <MudItem md="3" Class="d-none d-md-flex flex-column">
+            <MudStack>
+                <MudImage Src="@_details.ThumbnailUrl" Fluid Height="164"></MudImage>
+                 <SubjectBuyNowComponent SubjectCode="@_details.SubjectCode" ShowBuy=@(!_details.HasPurchased)
+                                         Disabled="_details.IsInvalidSubscription" />
+                 <MudDivider DividerType="DividerType.Middle" Light />
+                 <MudStack>
+                     <MudText Typo="Typo.body2">Duration: <b>@_details.TotalDuration</b></MudText>
+                    <MudText Typo="Typo.body2">Updated: <b>@_details.LastUpdatedOn</b></MudText>
+                </MudStack>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12" md="9">
+            <MudStack>
+                <MudText Typo="Typo.caption" Class="px-1 py-2 grey lighten-2 d-inline">
+                    <b>@_details.CourseName</b> / <b>@_details.ClassName</b>
+                </MudText>
+                <MudText Typo="Typo.h2">@_details.SubjectName</MudText>
+                    @if (!_details.HasPurchased)
+                {
+
+                    <div>
+                        <MudText Typo="Typo.h4" Class="d-inline">@_details.DiscountedPrice.ToCurrency()</MudText>
+                            <MudText Typo="Typo.h5" Class="d-inline"><s>@_details.Price</s></MudText>
+                    </div>
+                }
+                <SubjectBuyNowComponent Disabled="_details.IsInvalidSubscription"
+                                        SubjectCode="@_details.SubjectCode" Class="d-lg-none" Style="width: 175px" ShowBuy=@(!_details.HasPurchased) />
+                @if (_details.IsInvalidSubscription)
+                {
+                    <MudText Typo="Typo.h5" Color="Color.Error"><b>@_details.InvalidSubscriptionMessage</b></MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">@(_details.HasPurchased ? "Subscription Ends On" : "Subscription Validity"): <b class="text-green green-text darken-4">@_details.Validity</b></MudText>
+                }
+                    <MudText Typo="Typo.body2">@_details.SubjectDescription</MudText>
+
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+}
+@code {
+    [Parameter]
+    [EditorRequired]
+    public int? SubjectId { get; set; }
+
+    private SubjectDetailViewDto _details;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        if (!SubjectId.HasValue) return;
+
+        _details = await Mediator.Send(new SubjectDetailViewByIdQuery()
+            {
+                SubjectId = SubjectId.Value
+            });
+        StateHasChanged();
+    }
+}

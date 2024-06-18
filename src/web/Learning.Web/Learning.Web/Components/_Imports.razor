@@ -1,14 +1,24 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
-@using Microsoft.AspNetCore.Components.Authorization
+@using Learning.Web.Client.Contracts.Events
+@using Learning.Web.Client.Contracts.Presentation
+@using MediatR
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
-@using static Microsoft.AspNetCore.Components.Web.RenderMode
-@using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
 @using Learning.Web
 @using Learning.Web.Client
 @using Learning.Web.Components
+@using Microsoft.AspNetCore.Authorization
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 @using MudBlazor
 @using Learning.Web.Client.Constants
+@using Learning.Web.Client.Extensions
+@using Learning.Web.Components.Utility
+@using Learning.Web.Constants
+
+@inject IMediator Mediator;
+@inject IAppMediator AppMediator;
+@inject IToastService ToastService;
