@@ -1,0 +1,12 @@
+﻿.active-link-class{
+    background-color: red;
+}
+
+.mud-appbar {
+    background-color: #F5F5F5 !important;
+}
+
+.mud-appbar > .logo{
+    height: 42px;
+    width: auto;
+}

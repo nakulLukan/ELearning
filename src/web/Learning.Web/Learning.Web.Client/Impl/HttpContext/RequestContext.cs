@@ -1,4 +1,5 @@
 ﻿using Learning.Business.Contracts.HttpContext;
+using Learning.Shared.Common.Constants;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Learning.Web.Client.Impl.HttpContext;
@@ -41,14 +42,21 @@ public class RequestContext : IRequestContext
     public async Task<bool> IsAdmin()
     {
         if (!await IsAuthenticated()) return false;
-        var isAdminClaim = !string.IsNullOrEmpty(_authState.User.Claims.FirstOrDefault(x => x.Type == "custom:role")?.Value);
+        var isAdminClaim = !string.IsNullOrEmpty(_authState.User.Claims.FirstOrDefault(x => x.Type == ClaimConstant.AwsRoleClaim)?.Value);
         return isAdminClaim;
     }
 
     public async Task<string> GetUserId()
     {
         await Init();
-        var userIdClaim = _authState.User.Claims.First(x => x.Type == "cognito:username");
+        var userIdClaim = _authState.User.Claims.First(x => x.Type == ClaimConstant.AwsUserNameClaim);
         return userIdClaim.Value;
+    }
+
+    public async Task<string> GetUserRole()
+    {
+        await Init();
+        var userRole = _authState.User.Claims.First(x => x.Type == ClaimConstant.AwsRoleClaim);
+        return userRole.Value;
     }
 }

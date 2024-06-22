@@ -2,6 +2,7 @@
 using Learning.Web.Client.Impl.HttpContext;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 
 namespace Learning.Web.Client;
 
@@ -13,6 +14,9 @@ internal static class ServiceRegistry
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
+
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddMudServices();
     }
 
     public static void RegisterAppServices(this WebAssemblyHostBuilder builder)

@@ -1,0 +1,31 @@
+﻿@page "/empty"
+@using Learning.Business.Contracts.HttpContext
+@using Learning.Business.Requests.Master.Lookup
+@rendermode InteractiveAuto
+@inject IRequestContext RequestContext
+<h3>EmptySample</h3>
+<h1 class="text-muted">Render @(OperatingSystem.IsBrowser() ? "Wasm" : "Server")</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <h1 class="text-muted">Username: @UserName</h1>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Not authorized</h1>
+    </NotAuthorized>
+</AuthorizeView>
+<button @onclick="Test">Test</button>
+@code {
+    private string UserName { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        StateHasChanged();
+    }
+
+    private async Task Test()
+    {
+        UserName = (await RequestContext.GetUserId()).ToString();
+        StateHasChanged();
+    }
+}

@@ -6,8 +6,9 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudDrawerContainer Class="mud-height-full">
-        <MudDrawer @bind-Open="@_drawerOpen" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
+    <MudDrawerContainer >
+        <MudDrawer @bind-Open="@_drawerOpen" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true"
+                   Class="admin-nav-bar ">
             <AppAdminNavMenu />
         </MudDrawer>
         <MudMainContent Class="app-mud-layout-content overflow-y-scroll h-100 pt-4">

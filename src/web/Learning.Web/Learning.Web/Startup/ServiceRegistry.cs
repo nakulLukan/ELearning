@@ -3,9 +3,9 @@ using Learning.Business.Contracts.HttpContext;
 using Learning.Infrastructure;
 using Learning.Shared.Common.Constants;
 using Learning.Web.Client.Constants;
-using Learning.Web.Client.Contracts.Events;
+using Learning.Web.Contracts.Events;
 using Learning.Web.Client.Contracts.Presentation;
-using Learning.Web.Client.Impl.Events;
+using Learning.Web.Impl.Events;
 using Learning.Web.Client.Impl.HttpContext;
 using Learning.Web.Impl.Presentation;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -156,6 +156,9 @@ public static class ServiceRegistry
         });
         #endregion
 
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddControllersWithViews();
+        builder.Services.AddAntiforgery();
         RegisterAppServices(builder);
     }
 

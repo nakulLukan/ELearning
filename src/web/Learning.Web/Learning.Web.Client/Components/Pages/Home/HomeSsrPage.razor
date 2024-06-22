@@ -1,0 +1,11 @@
+﻿@page "/"
+<ExamNotificationComponent></ExamNotificationComponent>
+@code {
+    public int Count { get; set; }
+
+    void ClickCounter()
+    {
+        Count++;
+        StateHasChanged();
+    }
+}

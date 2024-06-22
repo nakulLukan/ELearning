@@ -9,18 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Pages\PublicUser\UserHomePage.razor" />
+    <None Include="Components\Pages\PublicUser\UserHomePage.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.6" />
+    <PackageReference Include="MudBlazor" Version="7.0.0-rc.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\Learning.Shared.Application\Learning.Shared.Application.csproj" />
     <ProjectReference Include="..\..\Learning.Business\Learning.Business.csproj" />
     <ProjectReference Include="..\..\Learning.Shared\Learning.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 
