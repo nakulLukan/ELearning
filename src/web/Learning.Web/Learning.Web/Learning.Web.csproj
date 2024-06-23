@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>b50ae487-92d3-466e-a385-1aee654c1564</UserSecretsId>
+    <RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
 
   <ItemGroup>
