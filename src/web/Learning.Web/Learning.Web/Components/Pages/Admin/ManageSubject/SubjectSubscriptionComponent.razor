@@ -27,7 +27,7 @@
         </MudStack>
     </MudPaper>
 
-    <MudDialog IsVisible=_showUpdateSubscriptionDialog Options="DialogOptionConstant.MediumWidth">
+    <MudDialog Visible=_showUpdateSubscriptionDialog Options="DialogOptionConstant.MediumWidth">
         <DialogContent>
             <MudForm @ref=_updateSubscriptionDetailForm Model="@model" Validation="@updateSubscriptionValidator.ValidateValue" ValidationDelay="0">
                 <MudCard Elevation="0" Style="min-width: 500px">

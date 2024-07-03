@@ -5,7 +5,7 @@
 <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
            Class="my-3" OnClick="@(() => OpenDialog(null))">Add Chapter</MudButton>
 
-<MudDialog IsVisible=_addChapterDialog Options="DialogOptionConstant.SmallWidth">
+<MudDialog Visible=_addChapterDialog Options="DialogOptionConstant.SmallWidth">
     <DialogContent>
         <EditForm Model="@model" OnValidSubmit="OnValidSubmit" FormName="add-chapter">
             <DataAnnotationsValidator />

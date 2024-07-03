@@ -1,1 +1,1 @@
-﻿dotnet ef migrations add InitialApplicationDbMigration -c ApplicationDbContext -o Persistence/Migrations/ --startup-project ../Learning.Web/Learning.Web
+﻿dotnet ef migrations add <SCRIPT_NAME> -c ApplicationDbContext -o Persistence/Migrations/ --startup-project ../Learning.Web/Learning.Web

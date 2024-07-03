@@ -19,6 +19,34 @@ public interface IFileStorage
         CancellationToken cancellationToken);
 
     /// <summary>
+    /// Uploads the file to the public storage.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="fileName"></param>
+    /// <param name="filePath"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<(string SignedUrl, string RelativePath)> UploadFileToPublic(
+        byte[] file,
+        string fileName,
+        string filePath,
+        CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Uploads the file to the private storage.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="fileName"></param>
+    /// <param name="filePath"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<(string SignedUrl, string RelativePath)> UploadFileToPrivate(
+        byte[] file,
+        string fileName,
+        string filePath,
+        CancellationToken cancellationToken);
+
+    /// <summary>
     /// Uploads the file to the storage.
     /// </summary>
     /// <param name="fileStream"></param>
@@ -52,7 +80,7 @@ public interface IFileStorage
     /// </summary>
     /// <param name="fullFilePath"></param>
     /// <returns></returns>
-    public Task<bool> DeleteFile(string fullFilePath);
+    public Task<bool> DeleteFileAsync(string fullFilePath);
 
     /// <summary>
     /// Get file details under a given path
@@ -68,4 +96,11 @@ public interface IFileStorage
     /// <param name="fileName"></param>
     /// <returns></returns>
     public string GetObjectUrl(string relativePath, string fileName);
+
+    /// <summary>
+    /// Get object url
+    /// </summary>
+    /// <param name="relativePath"></param>
+    /// <returns></returns>
+    public string GetObjectUrl(string relativePath);
 }

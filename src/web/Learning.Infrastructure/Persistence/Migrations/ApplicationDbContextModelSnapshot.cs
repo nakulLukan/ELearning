@@ -17,7 +17,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -322,6 +322,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ClassId");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.HasIndex("SubjectGroupLookupId");
 
                     b.ToTable("Subjects");
@@ -455,6 +458,46 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.ToTable("ApplicationUserOtherDetails");
                 });
 
+            modelBuilder.Entity("Learning.Domain.Master.Attachment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTimeOffset?>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTimeOffset?>("LastUpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RelativePath")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Attachments");
+                });
+
             modelBuilder.Entity("Learning.Domain.Master.LookupMaster", b =>
                 {
                     b.Property<int>("Id")
@@ -567,6 +610,73 @@ namespace Learning.Infrastructure.Persistence.Migrations
                             LookupMasterId = 1,
                             Order = 1
                         });
+                });
+
+            modelBuilder.Entity("Learning.Domain.Notification.ExamNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTimeOffset?>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("DisplayInHomePage")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("GovtLink")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageRelativePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImportantPoints")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTimeOffset?>("LastUpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NotificationTitle")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<long?>("PdfFileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly?>("ValidTill")
+                        .HasColumnType("date");
+
+                    b.Property<long?>("VideoId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PdfFileId")
+                        .IsUnique();
+
+                    b.HasIndex("VideoId")
+                        .IsUnique();
+
+                    b.ToTable("ExamNotifications");
                 });
 
             modelBuilder.Entity("Learning.Domain.Subscription.SubjectSubscriptionDetail", b =>
@@ -856,6 +966,21 @@ namespace Learning.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("LookupMaster");
+                });
+
+            modelBuilder.Entity("Learning.Domain.Notification.ExamNotification", b =>
+                {
+                    b.HasOne("Learning.Domain.Master.Attachment", "PdfFile")
+                        .WithOne()
+                        .HasForeignKey("Learning.Domain.Notification.ExamNotification", "PdfFileId");
+
+                    b.HasOne("Learning.Domain.Master.Attachment", "Video")
+                        .WithOne()
+                        .HasForeignKey("Learning.Domain.Notification.ExamNotification", "VideoId");
+
+                    b.Navigation("PdfFile");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("Learning.Domain.Subscription.SubjectSubscriptionDetail", b =>

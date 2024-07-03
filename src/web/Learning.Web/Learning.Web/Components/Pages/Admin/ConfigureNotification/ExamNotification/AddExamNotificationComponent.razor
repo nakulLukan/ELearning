@@ -1,0 +1,153 @@
+﻿@using Learning.Business.Dto.Notifications.ExamNotification
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Shared.Application.Contracts.Storage
+@using Learning.Shared.Common.Constants
+@inherits AppBaseComponent
+@inject IFileStorage FileStorage
+
+<EditForm Model="@model"
+          OnValidSubmit="OnValidSubmit"
+          FormName="add-exam-notification">
+    <DataAnnotationsValidator />
+    <MudCard Elevation="0">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6"><b>Create Exam Notification</b></MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudStack Spacing="2">
+                <AppTextField Label="Notification Title"
+                              @bind-Value="model.Title"
+                              For="@(() => model.Title)" />
+                <AppTextField Label="Description"
+                              @bind-Value="model.Description"
+                              For="@(() => model.Description)"
+                              Lines="5" />
+                <AppDatePicker Label="Valid Till"
+                               MinDate="DateTime.Today"
+                               @bind-Date="model.ValidTill"
+                               For="@(()=>model.ValidTill)" />
+                <AppTextField Label="Important Points."
+                              @bind-Value="model.ImportantPoints"
+                              For="(()=> model.ImportantPoints)"
+                              Lines="5"
+                              AutoGrow>
+
+                </AppTextField>
+                <MudCheckBox Label="Display at 'Home' page"
+                             @bind-Value="model.DisplayInHomePage" />
+                <AppTextField Label="Govt Url"
+                              @bind-Value="model.GovtLink"
+                              For="@(()=>model.GovtLink)"
+                              InputMode="InputMode.url"></AppTextField>
+                <MudFileUpload T="IBrowserFile"
+                               For="(()=> model.ImageFile)"
+                               @bind-Files="model.ImageFile"
+                               Accept=".png, .jpeg" MaximumFileCount="1">
+
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Text"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload">Upload Image</MudButton>
+                        <MudText Typo="Typo.caption">@model.ImageFile?.Name</MudText>
+                    </ActivatorContent>
+                </MudFileUpload>
+                <MudFileUpload T="IBrowserFile"
+                               For="(()=> model.PdfFile)"
+                               @bind-Files="model.PdfFile"
+                               Accept=".pdf" MaximumFileCount="1">
+
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Text"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload">Upload PDF</MudButton>
+                        <MudText Typo="Typo.caption">@model.PdfFile?.Name</MudText>
+                    </ActivatorContent>
+                </MudFileUpload>
+                <MudFileUpload T="IBrowserFile"
+                               For="(()=> model.Video)"
+                               @bind-Files="model.Video"
+                               Accept=".mp4" MaximumFileCount="1">
+
+                    <ActivatorContent>
+                        <MudButton Variant="Variant.Text"
+                                   Size="Size.Small"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload">Upload Video</MudButton>
+                        <MudText Typo="Typo.caption">@model.Video?.Name</MudText>
+                    </ActivatorContent>
+                </MudFileUpload>
+            </MudStack>
+        </MudCardContent>
+        <MudCardActions>
+            <AppProgressButton ButtonType="ButtonType.Submit" IsProgressing="_isLoading"
+                               Size="Size.Large"
+                               Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Create</AppProgressButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+@code {
+    [Parameter]
+    public EventCallback<int> OnExamNotificationCreated { get; set; }
+
+    AddExamNotificationDto model = new();
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        ChangeToLoadingState();
+        await AppMediator.Send(new AddExamNotificationCommand
+            {
+                Description = model.Description,
+                DisplayInHomePage = model.DisplayInHomePage,
+                ImageFile = new Shared.Common.Dto.File.FileStreamData(model.ImageFile.OpenReadStream(), model.ImageFile.Name, model.ImageFile.Size),
+                Title = model.Title,
+                ValidTill = model.ValidTill,
+                GovtLink = model.GovtLink,
+                ImportantPoints = model.ImportantPoints,
+            })
+            .OnSuccess(async notificationId =>
+            {
+                ToastService.Success("New exam notification created.");
+                try
+                {
+                    if (model.Video != null)
+                    {
+                        await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
+                            {
+                                ExamNotificationId = notificationId,
+                                File = new(model.Video.OpenReadStream(10_000_000), model.Video.Name, model.Video.Size),
+                                IsPdf = false
+                            });
+
+                        ToastService.Success("Video uploaded successfully.");
+                    }
+
+                    if (model.PdfFile != null)
+                    {
+                        await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
+                            {
+                                ExamNotificationId = notificationId,
+                                File = new Shared.Common.Dto.File.FileStreamData(model.PdfFile.OpenReadStream(5_000_000), model.PdfFile.Name, model.PdfFile.Size),
+                                IsPdf = true
+                            });
+                        ToastService.Success("Pdf uploaded successfully.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Error(ex.Message);
+                }
+
+                await InvokeAsync(() => OnExamNotificationCreated.InvokeAsync(notificationId));
+                model = new();
+                ChangeToLoadedState();
+                Refresh();
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+                ChangeToLoadedState();
+            });
+    }
+}

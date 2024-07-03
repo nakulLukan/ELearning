@@ -1,0 +1,64 @@
+﻿@using Learning.Shared.Common.Extensions
+<div>
+    <MudFileUpload T="IBrowserFile"
+                   FilesChanged="BrowserFileChanged"
+                   Accept="@Accept" MaximumFileCount="1">
+
+        <ActivatorContent>
+            <MudButton Variant="Variant.Text"
+                       Size="Size.Small"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.CloudUpload">@Label</MudButton>
+            @if (!string.IsNullOrEmpty(FileNameDisplay))
+            {
+                <MudText Typo="Typo.caption">@FileNameDisplay</MudText>
+            }
+        </ActivatorContent>
+    </MudFileUpload>
+
+    @if (!string.IsNullOrEmpty(ErrorText))
+    {
+        <MudText Typo="Typo.caption" Color="Color.Error">@ErrorText</MudText>
+    }
+</div>
+@code {
+    [Parameter]
+    public IBrowserFile? File { get; set; }
+
+    [Parameter]
+    public EventCallback<IBrowserFile> FileChanged { get; set; }
+
+    [Parameter]
+    public string Accept { get; set; } = "*";
+
+    [Parameter]
+    public string Label { get; set; } = "Upload";
+
+    [Parameter]
+    public string? FileNameDisplay { get; set; }
+
+    [Parameter]
+    public bool IsRequired { get; set; }
+
+    [Parameter]
+    public long MaxSize { get; set; }
+
+    public string? ErrorText { get; set; }
+
+    private void BrowserFileChanged(IBrowserFile browserFile)
+    {
+        File = browserFile;
+        FileChanged.InvokeAsync(File);
+        FileNameDisplay = browserFile?.Name;
+
+        if (browserFile?.Size > MaxSize)
+        {
+            ErrorText = $"Maximum file size is {MaxSize.ToFileSizeString()}";
+        }
+        else
+        {
+            ErrorText = string.Empty;
+        }
+        StateHasChanged();
+    }
+}

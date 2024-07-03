@@ -1,0 +1,120 @@
+﻿@page "/admin/notification/exam-notifications/{examNotificationId:int}"
+@using Learning.Business.Dto.Notifications.ExamNotification
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Shared.Common.Constants
+@using Learning.Web.Components.Layouts
+@using Learning.Shared.Common.Extensions;
+@layout AdminLayout
+@inherits AppBaseComponent
+<MudContainer Class="mt-5">
+    <MudStack>
+        <MudStack Row>
+            <MudText Typo="Typo.h6">Exam Notification</MudText>
+            <MudButton StartIcon="@Icons.Material.Rounded.Edit" Href="@($"/admin/notification/exam-notifications/{ExamNotificationId}/edit")">Edit</MudButton>
+        </MudStack>
+        <MudDivider />
+        <MudGrid>
+            <MudItem xs="12" md="4">
+                <MudStack Spacing="0">
+                    <MudImage Fluid="true" Style="max-height: 300px;width: 100%;" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@_examNotificationDetail.ImageAbsPath" Alt="Exam notification display image" />
+                    <MudDivider></MudDivider>
+                    <MudText Typo="Typo.caption" Class="mt-2">Updated on: @_examNotificationDetail.LastUpdatedOn</MudText>
+                    <MudText Typo="Typo.caption" Class="mt-1">Created on: @_examNotificationDetail.CreatedOn</MudText>
+                </MudStack>
+            </MudItem>
+
+            <MudItem xs="12" md="8">
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.body1"><b>Title</b></MudText>
+                    <MudText Typo="Typo.body1">@_examNotificationDetail.Title</MudText>
+
+                    <MudText Typo="Typo.body1" Class="mt-3"><b>Description</b></MudText>
+                    <MudText Typo="Typo.body1">@_examNotificationDetail.Description</MudText>
+
+                    <MudText Typo="Typo.body1" Class="mt-3"><b>Valid Till</b></MudText>
+                    <MudText Typo="Typo.body1">@_examNotificationDetail.ValidTill</MudText>
+
+                    <MudText Typo="Typo.body1" Class="mt-3"><b>Display at 'Home' page?</b></MudText>
+                    <MudText Typo="Typo.body1">@_examNotificationDetail.DisplayInHomePage</MudText>
+
+                    <MudText Typo="Typo.body1" Class="mt-3"><b>Exam Link</b></MudText>
+                    <MudLink Typo="Typo.body1" Href="@_examNotificationDetail.GovtLink"
+                    Target="_blank">@_examNotificationDetail.GovtLink</MudLink>
+
+                    <MudStack Row
+                              Class="mt-3">
+
+                        @if (_examNotificationDetail.PdfFile != null)
+                        {
+                            <MudNavLink Icon="@Icons.Material.Filled.FileDownload"
+                                        Target="_blank"
+                                        Href="@_examNotificationDetail.PdfFile.Source">@($"{_examNotificationDetail.PdfFile.FileName} ({_examNotificationDetail.PdfFile.FileSize.ToFileSizeString()})")</MudNavLink>
+
+                        }
+
+                        @if (_examNotificationDetail.VideoFile != null)
+                        {
+                            <MudNavLink Icon="@Icons.Material.Filled.VideoFile"
+                                        Target="_blank"
+                                        Href="@_examNotificationDetail.VideoFile.Source">
+                                @($"{_examNotificationDetail.VideoFile.FileName} ({_examNotificationDetail.VideoFile.FileSize.ToFileSizeString()})")
+                            </MudNavLink>
+                        }
+                    </MudStack>
+
+                    <MudText Typo="Typo.body1" Class="mt-3"><u><b>Important points to be noted</b></u></MudText>
+                    <ol>
+                        @foreach (var point in _examNotificationDetail.ImportantPoints)
+                        {
+                            <li>
+                                <MudText Typo="Typo.body1">@point</MudText>
+                            </li>
+                        }
+                    </ol>
+
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudStack>
+</MudContainer>
+@code {
+
+    [Parameter]
+    public int ExamNotificationId { get; set; }
+
+    private AdminExamNotificationDetailDto _examNotificationDetail = new()
+        {
+            Description = string.Empty,
+            GovtLink = string.Empty,
+            ImageAbsPath = string.Empty,
+            Title = string.Empty,
+        };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await AppMediator.Send(new AdminExamNotificationByIdQuery()
+            {
+                ExamNotificationId = ExamNotificationId
+            })
+            .OnSuccess(data =>
+            {
+                _examNotificationDetail = new AdminExamNotificationDetailDto
+                    {
+                        Description = data.Description,
+                        GovtLink = data.GovtLink,
+                        ImageAbsPath = data.ImageAbsPath,
+                        Title = data.Title,
+                        CreatedOn = data.CreatedOn.ToLocalDateTimeString(),
+                        LastUpdatedOn = data.LastUpdatedOn.ToLocalDateTimeString(),
+                        DisplayInHomePage = data.DisplayInHomePage ? "Yes" : "No",
+                        ExamNotificationId = data.ExamNotificationId,
+                        PdfFile = data.PdfFile,
+                        VideoFile = data.VideoFile,
+                        ValidTill = data.ValidTill.HasValue ? data.ValidTill.Value.ToLocalDateFormatedString() : "Never Expires",
+                        ImportantPoints = data.ImportantPoints?.Split("\n") ?? [],
+                    };
+                Refresh();
+            });
+    }
+}

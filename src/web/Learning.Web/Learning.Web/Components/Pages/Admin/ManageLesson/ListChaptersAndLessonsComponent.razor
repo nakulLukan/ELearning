@@ -6,10 +6,10 @@
 <MudStack>
     <AddChapterComponent @ref=_addChapterComponent SubjectId="SubjectId" OnChapterAdded="LoadLessons"></AddChapterComponent>
     <MudPaper Class="pl-2 m-1 ">
-        <MudList T="string" Clickable="true">
+        <MudList T="string" ReadOnly="false">
             @foreach (var chapter in _chapters)
             {
-                <MudListItem Text="@chapter.ChapterName" InitiallyExpanded=true>
+                <MudListItem Text="@chapter.ChapterName" Expanded=true>
                     <NestedList>
                         @foreach (var lesson in chapter.Lessons)
                         {
@@ -26,7 +26,7 @@
                                 </div>
                             </MudListItem>
                         }
-                        <MudListItem DisableRipple=true>
+                        <MudListItem Ripple=false>
                             <MudButtonGroup Variant="Variant.Outlined">
                                 <MudButton Color="Color.Success" OnClick="(()=> OnAddChapterClicked(chapter.ChapterId))" Size="Size.Small">Add Chapter</MudButton>
                                 <MudButton Color="Color.Success" OnClick="@(x=> OnAddLessonClick(chapter.ChapterId))" Size="Size.Small">Add Lesson</MudButton>

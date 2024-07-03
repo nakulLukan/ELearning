@@ -1,0 +1,194 @@
+﻿@page "/admin/notification/exam-notifications/{examNotificationId:int}/edit"
+@using Learning.Business.Dto.Notifications.ExamNotification
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Shared.Common.Constants
+@using Learning.Web.Client.Components.Controls.Input
+@using Learning.Web.Client.DataAnotationValidators
+@using Learning.Web.Client.Models.General
+@using Learning.Web.Components.Layouts
+@using Learning.Shared.Common.Extensions;
+@using System.ComponentModel.DataAnnotations
+@layout AdminLayout
+@inherits AppBaseComponent
+
+<MudContainer >
+    <EditForm Model="@_model"
+              OnValidSubmit="OnValidSubmit"
+              FormName="edit-exam-notification">
+        <DataAnnotationsValidator />
+        <MudCard Elevation="0" Class="mb-5">
+            <MudCardHeader>
+                <MudText Typo="Typo.h6"><b>Edit Exam Notification</b></MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudStack Spacing="2">
+                    <AppTextField Label="Notification Title"
+                                  @bind-Value="_model.Title"
+                                  For="@(() => _model.Title)" />
+                    <AppTextField Label="Description"
+                                  @bind-Value="_model.Description"
+                                  For="@(() => _model.Description)"
+                                  Lines="5" />
+                    <AppDatePicker Label="Valid Till"
+                                   MinDate="DateTime.Today"
+                                   @bind-Date="_model.ValidTill"
+                                   For="@(()=>_model.ValidTill)" />
+                    <AppTextField Label="Important Points."
+                                  @bind-Value="_model.ImportantPoints"
+                                  For="(()=> _model.ImportantPoints)"
+                                  Lines="5"
+                                  AutoGrow>
+
+                    </AppTextField>
+                    <MudCheckBox Label="Display at 'Home' page"
+                                 @bind-Value="_model.DisplayInHomePage" />
+                    <AppTextField Label="Govt Url"
+                                  @bind-Value="_model.GovtLink"
+                                  For="@(()=>_model.GovtLink)"
+                                  InputMode="InputMode.url"></AppTextField>
+                    <AppFileUpload FileChanged=@(file=> _model.ImageFile.File = file ?? null)
+                                   FileNameDisplay="@_model.ImageFile.Name"
+                                   MaxSize="1_000_000"
+                                   IsRequired
+                                   Label="Upload Image"
+                                   Accept=".png, .jpeg, .jpg"></AppFileUpload>
+                    <AppFileUpload FileChanged=@(file=> _model.PdfFile.File = file ?? null)
+                                   FileNameDisplay="@_model.PdfFile.Name"
+                                   MaxSize="5_000_000"
+                                   Label="Upload PDF"
+                                   Accept=".pdf"></AppFileUpload>
+
+                    <AppFileUpload FileChanged=@(file=> _model.Video.File = file ?? null)
+                                   FileNameDisplay="@_model.Video.Name"
+                                   MaxSize="10_000_000"
+                                   Label="Upload Video"
+                                   Accept=".mp4"></AppFileUpload>
+
+                </MudStack>
+            </MudCardContent>
+            <MudCardActions>
+                <AppProgressButton ButtonType="ButtonType.Submit" IsProgressing="_isLoading"
+                                   Size="Size.Large"
+                                   Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Update Exam Notification</AppProgressButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int ExamNotificationId { get; set; }
+
+    ExamNotificationEditModel _model = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadExamNotification();
+    }
+
+    private async Task LoadExamNotification()
+    {
+        await AppMediator.Send(new AdminExamNotificationByIdQuery()
+            {
+                ExamNotificationId = ExamNotificationId
+            })
+        .OnSuccess(data =>
+        {
+            _model = new ExamNotificationEditModel
+                {
+                    Description = data.Description,
+                    DisplayInHomePage = data.DisplayInHomePage,
+                    GovtLink = data.GovtLink,
+                    Id = data.ExamNotificationId,
+                    ImportantPoints = data.ImportantPoints,
+                    ImageFile = new BrowserFile("display picture", 0),
+                    PdfFile = new BrowserFile(data.PdfFile.FileName, data.PdfFile.FileSize),
+                    Title = data.Title,
+                    ValidTill = data.ValidTill.HasValue ? data.ValidTill.Value.ToDateTime(TimeOnly.MinValue) : null,
+                    Video = new BrowserFile(data.VideoFile.FileName, data.VideoFile.FileSize)
+                };
+
+            Refresh();
+        })
+        .OnError(err =>
+        {
+            ToastService.Error(err.Message);
+        });
+    }
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        ChangeToLoadingState();
+        var request = new EditExamNotificationCommand
+            {
+                ExamNotificationId = ExamNotificationId,
+                Description = _model.Description,
+                DisplayInHomePage = _model.DisplayInHomePage,
+                Title = _model.Title,
+                ValidTill = _model.ValidTill,
+                GovtLink = _model.GovtLink,
+                ImportantPoints = _model.ImportantPoints,
+            };
+        if (_model.ImageFile.File != null)
+        {
+            request.ImageFile = new Shared.Common.Dto.File.FileStreamData(_model.ImageFile.File.OpenReadStream(), _model.ImageFile.Name, _model.ImageFile.Size);
+        }
+        await AppMediator.Send(request)
+            .OnSuccess(async notificationId =>
+            {
+                ToastService.Success("Exam notification updated.");
+                try
+                {
+                    if (_model.Video?.File != null)
+                    {
+                        await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
+                            {
+                                ExamNotificationId = notificationId,
+                                File = new(_model.Video.File.OpenReadStream(10_000_000), _model.Video.Name, _model.Video.Size),
+                                IsPdf = false
+                            });
+
+                        ToastService.Success("Video uploaded successfully.");
+                    }
+
+                    if (_model.PdfFile?.File != null)
+                    {
+                        await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
+                            {
+                                ExamNotificationId = notificationId,
+                                File = new Shared.Common.Dto.File.FileStreamData(_model.PdfFile.File.OpenReadStream(5_000_000), _model.PdfFile.Name, _model.PdfFile.Size),
+                                IsPdf = true
+                            });
+                        ToastService.Success("Pdf uploaded successfully.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ToastService.Error(ex.Message);
+                }
+
+                await LoadExamNotification();
+                ChangeToLoadedState();
+                Refresh();
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+                ChangeToLoadedState();
+            });
+    }
+
+    private class ExamNotificationEditModel : AddEditExamNotificationRequestDto
+    {
+        public int Id { get; set; }
+
+        public BrowserFile ImageFile { get; set; } = new();
+
+        [MaxFileSize(5_000_000)]
+        public BrowserFile PdfFile { get; set; } = new();
+
+        [MaxFileSize(10_000_000)]
+        public BrowserFile Video { get; set; } = new();
+    }
+}

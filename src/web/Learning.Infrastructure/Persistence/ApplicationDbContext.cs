@@ -10,6 +10,7 @@ using Learning.Domain.Content;
 using Learning.Infrastructure.Data.Seeder.MigrationSeeder;
 using Learning.Business.Impl.Data;
 using Learning.Domain.Subscription;
+using Learning.Domain.Notification;
 namespace Learning.Infrasture.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbContext
@@ -56,6 +57,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
 
     public DbSet<LookupMaster> LookupMasters { get; set; }
     public DbSet<LookupValue> LookupValues { get; set; }
+    public DbSet<Attachment> Attachments { get; set; }
 
     public DbSet<Chapter> Chapters { get; set; }
     public DbSet<Lesson> Lessons { get; set; }
@@ -67,4 +69,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
 
     public DbSet<SubjectSubscriptionDetail> SubjectSubscriptionDetails { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
+
+    public DbSet<ExamNotification> ExamNotifications { get; set; }
 }

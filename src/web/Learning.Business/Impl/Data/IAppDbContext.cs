@@ -2,6 +2,7 @@
 using Learning.Domain.Core;
 using Learning.Domain.Identity;
 using Learning.Domain.Master;
+using Learning.Domain.Notification;
 using Learning.Domain.Subscription;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -15,6 +16,7 @@ public interface IAppDbContext
 
     public DbSet<LookupMaster> LookupMasters { get; set; }
     public DbSet<LookupValue> LookupValues { get; set; }
+    public DbSet<Attachment> Attachments { get; set; }
 
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<Chapter> Chapters { get; set; }
@@ -26,6 +28,8 @@ public interface IAppDbContext
 
     public DbSet<SubjectSubscriptionDetail> SubjectSubscriptionDetails { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
+
+    public DbSet<ExamNotification> ExamNotifications { get; set; }
 
     public void ClearChanges();
 

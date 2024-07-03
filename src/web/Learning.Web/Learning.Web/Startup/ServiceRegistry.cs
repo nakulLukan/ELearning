@@ -1,12 +1,14 @@
 ﻿using Learning.Business;
 using Learning.Business.Contracts.HttpContext;
+using Learning.Business.Contracts.Persistence;
 using Learning.Infrastructure;
 using Learning.Shared.Common.Constants;
 using Learning.Web.Client.Constants;
-using Learning.Web.Contracts.Events;
 using Learning.Web.Client.Contracts.Presentation;
-using Learning.Web.Impl.Events;
 using Learning.Web.Client.Impl.HttpContext;
+using Learning.Web.Contracts.Events;
+using Learning.Web.Impl.Events;
+using Learning.Web.Impl.Persistence;
 using Learning.Web.Impl.Presentation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -167,6 +169,8 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IToastService, ToastService>();
         builder.Services.AddScoped<IAppMediator, AppMediator>();
         builder.Services.AddScoped<IRequestContext, RequestContext>();
+
+        builder.Services.AddSingleton<IAppCache, IAppMemoryCache>();
     }
 
 

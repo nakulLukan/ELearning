@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Learning.Shared.Application.Contracts.Storage;
+using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Dto.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -19,6 +20,50 @@ public class AwsStorage : IFileStorage
         _client = InitialiseAwsClient(configuration);
         _bucketName = configuration["Aws:S3:BucketName"];
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Uploads the file to the public storage.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="fileName"></param>
+    /// <param name="filePath"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<(string SignedUrl, string RelativePath)> UploadFileToPublic(
+        byte[] file,
+        string fileName,
+        string filePath,
+        CancellationToken cancellationToken)
+    {
+        if (!filePath.StartsWith(StoragePathConstant.PUBLIC))
+        {
+            filePath = $"{StoragePathConstant.PUBLIC}/{filePath}";
+        }
+
+        return UploadFile(file, fileName, filePath, cancellationToken);
+    }
+
+    /// <summary>
+    /// Uploads the file to the private storage.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="fileName"></param>
+    /// <param name="filePath"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task<(string SignedUrl, string RelativePath)> UploadFileToPrivate(
+        byte[] file,
+        string fileName,
+        string filePath,
+        CancellationToken cancellationToken)
+    {
+        if (!filePath.StartsWith(StoragePathConstant.PRIVATE))
+        {
+            filePath = $"{StoragePathConstant.PRIVATE}/{filePath}";
+        }
+
+        return UploadFile(file, fileName, filePath, cancellationToken);
     }
 
     /// <summary>
@@ -125,7 +170,7 @@ public class AwsStorage : IFileStorage
         return signedUrl;
     }
 
-    public async Task<bool> DeleteFile(string fullFilePath)
+    public async Task<bool> DeleteFileAsync(string fullFilePath)
     {
         var response = await _client.DeleteObjectAsync(new()
         {
@@ -144,7 +189,21 @@ public class AwsStorage : IFileStorage
     /// <returns></returns>
     public string GetObjectUrl(string relativePath, string fileName)
     {
+        if (!relativePath.StartsWith(StoragePathConstant.PUBLIC))
+        {
+            relativePath = $"{StoragePathConstant.PUBLIC}/{relativePath}";
+        }
         return $"https://{_bucketName}.s3.{_region}.amazonaws.com/{relativePath}/{fileName}";
+    }
+
+    /// <summary>
+    /// Get object url
+    /// </summary>
+    /// <param name="relativePath"></param>
+    /// <returns></returns>
+    public string GetObjectUrl(string relativePath)
+    {
+        return GetObjectUrl(Path.GetDirectoryName(relativePath), Path.GetFileName(relativePath));
     }
 
     /// <summary>

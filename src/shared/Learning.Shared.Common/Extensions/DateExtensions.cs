@@ -66,7 +66,7 @@ public static class DateExtensions
     {
         return dateTime.ToOffset(_timeZone.BaseUtcOffset).ToString(format);
     }
-    
+
     /// <summary>
     /// Returns date string with specified format
     /// </summary>
@@ -98,5 +98,10 @@ public static class DateExtensions
     public static string ToTimeString(this TimeSpan timeSpan)
     {
         return DateTime.Today.Add(timeSpan).ToString("hh\\:mm tt");
+    }
+
+    public static DateOnly? ToDateOnly(this DateTime? dateTime)
+    {
+        return dateTime.HasValue ? DateOnly.FromDateTime(dateTime.Value) : null;
     }
 }

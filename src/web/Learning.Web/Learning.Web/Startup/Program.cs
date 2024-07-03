@@ -1,11 +1,12 @@
 using Learning.Web;
 using Learning.Web.Components;
+using Learning.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.RegisterServices();
 var app = builder.Build();
-
+await app.RunMigrationAsync();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

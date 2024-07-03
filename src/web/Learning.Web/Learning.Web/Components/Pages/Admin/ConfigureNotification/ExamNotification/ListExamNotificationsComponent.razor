@@ -1,0 +1,73 @@
+﻿@using Learning.Business.Dto.Notifications.ExamNotification
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Shared.Common.Constants
+@using Learning.Shared.Common.Extensions
+@inject NavigationManager NavigationManager
+
+@inherits AppBaseComponent
+
+<AppDataGrid T="ExamNotificationsListItemDto"
+             Items="@Elements"
+             Virtualize="true"
+             Groupable="false"
+             Bordered
+             ShowMenuIcon="false"
+             FixedHeader="true"
+             Dense
+             Hover
+             Striped
+             RowClass="cursor-pointer"
+             Loading="_isLoading"
+             Elevation="0"
+             RowClick="@OnExamNotificationClicked">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6"><b>Exam Notifications</b></MudText>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="@(x => $"#{x.Id}")"
+                        Title="Reference"
+                        Filterable="false"
+                        Sortable="false" />
+        <PropertyColumn Property="x => x.Title"
+                        Title="Title" />
+        <PropertyColumn Property="@(x => x.DisplayInHomePage ? "Yes" : "No")"
+                        Title="Display Home Page"
+                        Sortable="false" />
+        <PropertyColumn Property="@(x => x.ValidTill.HasValue ? x.ValidTill.Value.ToLocalDateFormatedString(DateFormats.DisplayDateFormat) : "-")"
+                        Title="Valid Till" />
+        <PropertyColumn Property="@(x => x.CreatedOn.ToLocalDateTimeString())"
+                        Title="Created On" />
+    </Columns>
+    <NoRecordsContent>
+        <NoRecordsComponent />
+    </NoRecordsContent>
+</AppDataGrid>
+@code {
+    private List<ExamNotificationsListItemDto> Elements = new();
+    private int _examNotificationsCount = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadExamNotifications();
+    }
+
+    public async Task RefreshList()
+    {
+        await LoadExamNotifications();
+    }
+
+    private async Task LoadExamNotifications()
+    {
+        ChangeToLoadingState();
+        var response = (await Mediator.Send(new GetAllExamNotificationsQuery()));
+
+        Elements = response;
+        ChangeToLoadedState();
+    }
+
+    private void OnExamNotificationClicked(DataGridRowClickEventArgs<ExamNotificationsListItemDto> selectedItem)
+    {
+        NavigationManager.NavigateTo($"/admin/notification/exam-notifications/{selectedItem.Item.Id}");
+    }
+}
