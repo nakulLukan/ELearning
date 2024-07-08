@@ -6,7 +6,7 @@
 
 @inherits AppBaseComponent
 
-<AppDataGrid T="ExamNotificationsListItemDto"
+<AppMudDataGrid T="ExamNotificationsListItemDto"
              Items="@Elements"
              Virtualize="true"
              Groupable="false"
@@ -41,7 +41,7 @@
     <NoRecordsContent>
         <NoRecordsComponent />
     </NoRecordsContent>
-</AppDataGrid>
+</AppMudDataGrid>
 @code {
     private List<ExamNotificationsListItemDto> Elements = new();
     private int _examNotificationsCount = 0;

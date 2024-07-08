@@ -11,7 +11,7 @@
 @layout AdminLayout
 @inherits AppBaseComponent
 
-<MudContainer >
+<MudContainer>
     <EditForm Model="@_model"
               OnValidSubmit="OnValidSubmit"
               FormName="edit-exam-notification">
@@ -22,47 +22,47 @@
             </MudCardHeader>
             <MudCardContent>
                 <MudStack Spacing="2">
-                    <AppTextField Label="Notification Title"
-                                  @bind-Value="_model.Title"
-                                  For="@(() => _model.Title)" />
-                    <AppTextField Label="Description"
-                                  @bind-Value="_model.Description"
-                                  For="@(() => _model.Description)"
-                                  Lines="5" />
-                    <AppDatePicker Label="Valid Till"
-                                   MinDate="DateTime.Today"
-                                   @bind-Date="_model.ValidTill"
-                                   For="@(()=>_model.ValidTill)" />
-                    <AppTextField Label="Important Points."
-                                  @bind-Value="_model.ImportantPoints"
-                                  For="(()=> _model.ImportantPoints)"
-                                  Lines="5"
-                                  AutoGrow>
+                    <AppMudTextField Label="Notification Title"
+                                     @bind-Value="_model.Title"
+                                     For="@(() => _model.Title)" />
+                    <AppMudTextField Label="Description"
+                                     @bind-Value="_model.Description"
+                                     For="@(() => _model.Description)"
+                                     Lines="5" />
+                    <AppMudDatePicker Label="Valid Till"
+                                      MinDate="DateTime.Today"
+                                      @bind-Date="_model.ValidTill"
+                                      For="@(()=>_model.ValidTill)" />
+                    <AppMudTextField Label="Important Points."
+                                     @bind-Value="_model.ImportantPoints"
+                                     For="(()=> _model.ImportantPoints)"
+                                     Lines="5"
+                                     AutoGrow>
 
-                    </AppTextField>
+                    </AppMudTextField>
                     <MudCheckBox Label="Display at 'Home' page"
                                  @bind-Value="_model.DisplayInHomePage" />
-                    <AppTextField Label="Govt Url"
-                                  @bind-Value="_model.GovtLink"
-                                  For="@(()=>_model.GovtLink)"
-                                  InputMode="InputMode.url"></AppTextField>
-                    <AppFileUpload FileChanged=@(file=> _model.ImageFile.File = file ?? null)
-                                   FileNameDisplay="@_model.ImageFile.Name"
-                                   MaxSize="1_000_000"
-                                   IsRequired
-                                   Label="Upload Image"
-                                   Accept=".png, .jpeg, .jpg"></AppFileUpload>
-                    <AppFileUpload FileChanged=@(file=> _model.PdfFile.File = file ?? null)
-                                   FileNameDisplay="@_model.PdfFile.Name"
-                                   MaxSize="5_000_000"
-                                   Label="Upload PDF"
-                                   Accept=".pdf"></AppFileUpload>
+                    <AppMudTextField Label="Govt Url"
+                                     @bind-Value="_model.GovtLink"
+                                     For="@(()=>_model.GovtLink)"
+                                     InputMode="InputMode.url"></AppMudTextField>
+                    <AppMudFileUpload FileChanged=@(file=> _model.ImageFile.File = file ?? null)
+                                      FileNameDisplay="@_model.ImageFile.Name"
+                                      MaxSize="1_000_000"
+                                      IsRequired
+                                      Label="Upload Image"
+                                      Accept=".png, .jpeg, .jpg"></AppMudFileUpload>
+                    <AppMudFileUpload FileChanged=@(file=> _model.PdfFile.File = file ?? null)
+                                      FileNameDisplay="@_model.PdfFile.Name"
+                                      MaxSize="5_000_000"
+                                      Label="Upload PDF"
+                                      Accept=".pdf"></AppMudFileUpload>
 
-                    <AppFileUpload FileChanged=@(file=> _model.Video.File = file ?? null)
-                                   FileNameDisplay="@_model.Video.Name"
-                                   MaxSize="10_000_000"
-                                   Label="Upload Video"
-                                   Accept=".mp4"></AppFileUpload>
+                    <AppMudFileUpload FileChanged=@(file=> _model.Video.File = file ?? null)
+                                      FileNameDisplay="@_model.Video.Name"
+                                      MaxSize="50_000_000"
+                                      Label="Upload Video"
+                                      Accept=".mp4"></AppMudFileUpload>
 
                 </MudStack>
             </MudCardContent>
@@ -103,10 +103,10 @@
                     Id = data.ExamNotificationId,
                     ImportantPoints = data.ImportantPoints,
                     ImageFile = new BrowserFile("display picture", 0),
-                    PdfFile = new BrowserFile(data.PdfFile.FileName, data.PdfFile.FileSize),
+                    PdfFile = data.PdfFile != null ? new BrowserFile(data.PdfFile.FileName, data.PdfFile.FileSize) : new(),
                     Title = data.Title,
                     ValidTill = data.ValidTill.HasValue ? data.ValidTill.Value.ToDateTime(TimeOnly.MinValue) : null,
-                    Video = new BrowserFile(data.VideoFile.FileName, data.VideoFile.FileSize)
+                    Video = data.VideoFile != null ? new BrowserFile(data.VideoFile.FileName, data.VideoFile.FileSize) : new()
                 };
 
             Refresh();
@@ -145,7 +145,7 @@
                         await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
                             {
                                 ExamNotificationId = notificationId,
-                                File = new(_model.Video.File.OpenReadStream(10_000_000), _model.Video.Name, _model.Video.Size),
+                                File = new(_model.Video.File.OpenReadStream(50_000_000), _model.Video.Name, _model.Video.Size),
                                 IsPdf = false
                             });
 
@@ -188,7 +188,7 @@
         [MaxFileSize(5_000_000)]
         public BrowserFile PdfFile { get; set; } = new();
 
-        [MaxFileSize(10_000_000)]
+        [MaxFileSize(50_000_000)]
         public BrowserFile Video { get; set; } = new();
     }
 }

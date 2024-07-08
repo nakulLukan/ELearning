@@ -1,57 +1,62 @@
-﻿@using Learning.Web.Client.Models.Home
-@rendermode InteractiveAuto
-<MudCarousel Class="mud-width-full" TData="ExamNotificationDto" Style="height:300px">
+﻿@using Learning.Business.Requests.Notifications.ExamNotification
+@using MediatR
+@inject IMediator Mediator
 
-    @foreach (var notification in _examNotifications)
-    {
-        <MudCarouselItem Transition="Transition.Slide" >
-            <MudGrid Style="height: 100%; background-color: orangered" Class="align-center">
-                <MudItem xs="2"></MudItem>
-                <MudItem md="3">
-                    <MudImage Src="@notification.ImagePath"></MudImage>
-                </MudItem>
-                <MudItem md="3">
-                    <MudStack>
-                        <MudText Typo="Typo.h6">
-                            @notification.Title
-                        </MudText>
-                        <MudText>
-                            @notification.Description
-                        </MudText>
-                    </MudStack>
-                </MudItem>
-                <MudItem md="2">
-                    <MudButton Href="@("/exam-notification/" + @notification.ExamNotificationId)" Class="">APPLY NOW</MudButton>
-                </MudItem>
-                <MudItem xs="2"></MudItem>
-            </MudGrid>
-        </MudCarouselItem>
-    }
-</MudCarousel>
+<div id="exam-notififcation-carousel" class="carousel slide" data-ride="carousel" data-interval="5000">
+    <ol class="carousel-indicators">
+        @foreach (var notification in _examNotifications)
+        {
+            string activeClass = _examNotifications.IndexOf(notification) == 0 ? "active" : string.Empty;
+            <li data-target="#exam-notififcation-carousel"
+                data-slide-to="@_examNotifications.IndexOf(notification)"
+                class="@activeClass"></li>
+        }
+    </ol>
+    <div class="carousel-inner">
+        @foreach (var notification in _examNotifications)
+        {
+            string activeClass = _examNotifications.IndexOf(notification) == 0 ? "active" : string.Empty;
+            <div class="carousel-item @activeClass">
+                <MudImage Class="d-block w-100"
+                          Src="@notification.ImagePath"
+                          Alt="Exam-Notification"
+                          ObjectFit="ObjectFit.Cover"></MudImage>
+                <div class="carousel-caption">
+                    <MudPaper Class="p-4" Elevation="5">
+                        <MudText Typo="Typo.h6"> @notification.Title</MudText>
+                        <MudText Typo="Typo.caption">@notification.Description</MudText>
+                        <MudButton Class="d-block mt-4 "
+                                   Href="@($"/exam-notifications/{notification.ExamNotificationId}/apply")"
+                                   Color="Color.Primary">APPLY NOW</MudButton>
+                    </MudPaper>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
 
 @code {
-    private List<ExamNotificationDto> _examNotifications = new()
+    private List<ExamNotificationDto> _examNotifications = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        new()
-        {
-            Title = "SOLDIER (G.D)",
-            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-            ExamNotificationId = 1,
-            ImagePath = "/assets/images/sample_1.png"
-        },
-        new()
-        {
-            Title = "SOLDIER TRADESMAN",
-            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-            ExamNotificationId = 2,
-            ImagePath = "/assets/images/sample_1.png"
-        },
-        new()
-        {
-            Title = "SOLDIER (G.D) WOMAN MILITARY POLICE",
-            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-            ExamNotificationId = 3,
-            ImagePath = "/assets/images/sample_1.png"
-        }
-    };
+        var examNotifications = await Mediator.Send(new ActiveHomepageExamNotificationsQuery());
+        _examNotifications = examNotifications.Select(x => new ExamNotificationDto
+            {
+                Description = x.Description,
+                ExamNotificationId = x.NotificationId,
+                ImagePath = x.ImagePath,
+                Title = x.Title,
+            }).ToList();
+    }
+
+
+    public class ExamNotificationDto
+    {
+        public required int ExamNotificationId { get; set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }
+        public required string ImagePath { get; set; }
+    }
 }

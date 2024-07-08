@@ -4,10 +4,17 @@ namespace Learning.Shared.Constants;
 
 public static class RegexExpConst
 {
+    #region General
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralDescription = "^[A-Za-z 0-9.,\n']+$";
     public const string GeneralDescriptionMessage = "Please enter a value containing only letters, numbers, comma, newline, apostrophe and dots.";
     
     public const string GeneralInValidUrlMessage = "Please enter a valid URL";
+
+    [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralEmailAddress = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+    public const string GeneralEmailAddressMessage = "Please enter a valid email address";
+
+    #endregion General
+
 
     #region Master
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string LookupValue = "^[A-Za-z 0-9]+$";

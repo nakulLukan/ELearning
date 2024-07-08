@@ -2,9 +2,9 @@
 
 namespace Learning.Web.Client.Components.Controls;
 
-public class AppTextField<T> : MudTextField<T>
+public class AppMudTextField<T> : MudTextField<T>
 {
-    public AppTextField()
+    public AppMudTextField()
     {
         Variant = Variant.Outlined;
         Margin = Margin.Dense;

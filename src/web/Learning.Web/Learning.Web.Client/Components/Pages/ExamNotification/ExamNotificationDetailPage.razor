@@ -1,0 +1,110 @@
+﻿@page "/exam-notifications/{ExamNotificationId:int}/apply"
+@using Learning.Business.Dto.Notifications.ExamNotification
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using MediatR
+@inject IMediator Mediator
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-10">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudStack Spacing="4">
+                <MudImage Class="d-md-none rounded-lg mud-elevation-5"
+                          ObjectFit="ObjectFit.Cover"
+                          Src="@_detail.ImageAbsPath"></MudImage>
+
+                <MudText Typo="Typo.h2" Class="d-none d-sm-flex"><b>@_detail.Title</b></MudText>
+                <MudText Typo="Typo.h4" Class="d-sm-none"><b>@_detail.Title</b></MudText>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudStack>
+                @if (_detail.ValidTill.HasValue)
+                {
+                    <MudText  Style="border-left: 2px solid black; background-color: beige" Class="pa-3">Last Date: <b>@_detail.ValidTill.Value.ToShortDateString()</b></MudText>
+                }
+                <MudText >@_detail.Description</MudText>
+                @if (_detail.ImportantPoints != null)
+                {
+                    <MudText  Class="mt-5"><u><b>Important points to be noted</b></u></MudText>
+                    <ol>
+                        @foreach (var point in _detail.ImportantPoints)
+                        {
+                            <li>
+                                <MudText >@point</MudText>
+                            </li>
+                        }
+                    </ol>
+                }
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudStack Spacing="3" Class="mb-5">
+                <MudText Typo="Typo.h6"><b>See what other's say about us</b></MudText>
+                <MudPaper Style="border-radius: 15px; overflow:hidden; background-color: black" Elevation="5">
+                    <video src="@_detail.VideoAbsUrl"
+                           style="width: -webkit-fill-available; width: -moz-available; max-height: 400px; background-color: black"
+                           loop
+                           preload="metadata"
+                           controls
+                           controlsList="nodownload noremoteplayback noplaybackrate"
+                           disablePictureInPicture />
+                </MudPaper>
+
+                <MudPaper Elevation="5" Class="pa-5 mt-5" Style="border-radius: 15px; background-color: #F5F5F5">
+                    <MudGrid Spacing="5">
+                        @if (!string.IsNullOrEmpty(_detail.PdfFileAbsUrl))
+                        {
+                            <MudItem xs="12" sm="6">
+                                <MudButton FullWidth
+                                           StartIcon="@Icons.Material.Filled.Download"
+                                           Href="@_detail.PdfFileAbsUrl"
+                                           Color="Color.Surface"
+                                           Target="_blank"><b>Download Now</b></MudButton>
+                            </MudItem>
+                        }
+                        <MudItem xs="12" sm="6">
+                            <MudButton StartIcon="@Icons.Material.Filled.Send"
+                                       FullWidth
+                                       Href="@_detail.GovtLink"
+                                       Variant="Variant.Filled"
+                                       Target="_blank"
+                                       Style="background-color: #000000e3; color: white"><b>Apply</b></MudButton>
+                        </MudItem>
+
+                    </MudGrid>
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12">
+
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public int ExamNotificationId { get; set; }
+
+    private ActiveExamNotificationDetailDto _detail = new()
+        {
+            Description = string.Empty,
+            GovtLink = string.Empty,
+            ImageAbsPath = string.Empty,
+            Title = string.Empty,
+            VideoAbsUrl = string.Empty,
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _detail = await Mediator.Send(new ActiveExamNotificationDetailByIdQuery()
+                {
+                    ExamNotificationId = ExamNotificationId
+                });
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/error");
+        }
+    }
+}

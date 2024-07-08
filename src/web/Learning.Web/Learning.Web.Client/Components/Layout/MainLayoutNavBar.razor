@@ -1,13 +1,41 @@
-﻿<MudAppBar Fixed="false" Elevation="0">
-    <MudLink Href="/" Color="Color.Primary" Typo="Typo.caption">
-        <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" />BTS Academy
-    </MudLink>
-    <MudSpacer />
-    <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
-        <MudNavLink Href="/exam-notifications">Exam Notifications</MudNavLink>
-        <MudNavLink Href="/courses">Courses</MudNavLink>
-        <MudNavLink Href="/quiz">Quiz</MudNavLink>
-        <MudNavLink Href="/contacts">Contacts</MudNavLink>
-        <MudNavLink Href="/about">About</MudNavLink>
-    </MudStack>
+﻿@rendermode InteractiveAuto
+
+<MudAppBar WrapContent Gutters="false">
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+        <MudButton Href="/">
+            <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1"><b>@UIConstant.AppName</b></MudText>
+        </MudButton>
+
+        <MudSpacer />
+        <MudButton Href="/exam-notifications" >Exam Notifications</MudButton>
+        <MudButton Href="/quiz" Target="_parent">Quiz</MudButton>
+        <MudButton Href="/contacts" Target="_parent">Contacts</MudButton>
+        <MudButton Href="/about" Target="_parent">About</MudButton>
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Class="fixed" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
+        <MudSpacer></MudSpacer>
+        <MudButton Href="/" Class="align-self-center">
+            <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1"><b>@UIConstant.AppName</b></MudText>
+        </MudButton>
+        <MudSpacer></MudSpacer>
+    </MudHidden>
 </MudAppBar>
+
+<MudDrawer Class="fixed"
+           Fixed
+           Variant="DrawerVariant.Temporary"
+           @bind-Open=_openDrawer>
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">BTS Academy</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Href="/exam-notifications">Exam Notifications</MudNavLink>
+        <MudNavLink Href="/quiz" Target="_parent">Quiz</MudNavLink>
+        <MudNavLink Href="/contacts" Target="_parent">Contacts</MudNavLink>
+        <MudNavLink Href="/about" Target="_parent">About</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+@code {
+    private bool _openDrawer = false;
+}

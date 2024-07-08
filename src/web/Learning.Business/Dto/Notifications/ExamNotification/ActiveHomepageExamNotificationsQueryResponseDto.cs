@@ -1,6 +1,6 @@
 ﻿namespace Learning.Business.Dto.Notifications.ExamNotification;
 
-public class ActiveExamNotificationsQueryResponseDto
+public class ActiveHomepageExamNotificationsQueryResponseDto
 {
     public int NotificationId { get; set; }
     public required string Title { get; set; }

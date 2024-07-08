@@ -2,9 +2,9 @@
 
 namespace Learning.Web.Client.Components.Controls;
 
-public class AppDatePicker : MudDatePicker
+public class AppMudDatePicker : MudDatePicker
 {
-    public AppDatePicker()
+    public AppMudDatePicker()
     {
         Variant = Variant.Outlined;
         PickerVariant = PickerVariant.Dialog;

@@ -55,6 +55,8 @@ public class EditExamNotificationCommandHandler : IRequestHandler<EditExamNotifi
 
         // Reset cache
         _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsKey);
+        _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsDetailKey);
+
         return new(request.ExamNotificationId);
     }
 

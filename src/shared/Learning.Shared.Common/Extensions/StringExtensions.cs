@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Learning.Shared.Common.Extensions;
 
@@ -12,5 +13,16 @@ public static class StringExtensions
     public static string RemoveEmptyLines(this string str)
     {
         return Regex.Replace(str, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline);
+    }
+
+    public static string ToHumanName(this string str)
+    {
+        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+        // Convert the input string to lowercase
+        string lowerCaseInput = str.ToLower();
+
+        // Use TextInfo.ToTitleCase to convert to Title Case
+        return textInfo.ToTitleCase(lowerCaseInput);
     }
 }

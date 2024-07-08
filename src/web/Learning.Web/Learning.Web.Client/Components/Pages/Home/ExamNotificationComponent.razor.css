@@ -1,0 +1,8 @@
+﻿::deep .mud-image {
+    height: 70vh !important;
+}
+
+::deep .mud-paper {
+    background-color: #fdfdfde8 !important;
+    border-radius: 15px !important;
+}

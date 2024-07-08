@@ -1,11 +1,8 @@
 ﻿@page "/"
-<ExamNotificationComponent></ExamNotificationComponent>
-@code {
-    public int Count { get; set; }
+<MudStack>
 
-    void ClickCounter()
-    {
-        Count++;
-        StateHasChanged();
-    }
+    <ExamNotificationComponent />
+    <Learning.Web.Client.Components.Pages.General.ContactUs.ContactUsComponent></Learning.Web.Client.Components.Pages.General.ContactUs.ContactUsComponent>
+</MudStack>
+@code {
 }

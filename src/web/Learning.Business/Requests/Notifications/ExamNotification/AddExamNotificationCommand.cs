@@ -59,6 +59,7 @@ public class AddExamNotificationCommandHandler : IRequestHandler<AddExamNotifica
         _dbContext.ExamNotifications.Add(newExamNotification);
         await _dbContext.SaveAsync(cancellationToken);
         _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsKey);
+        _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsDetailKey);
         return new(newExamNotification.Id);
     }
 

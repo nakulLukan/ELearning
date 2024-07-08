@@ -4,32 +4,31 @@ using MediatR;
 
 namespace Learning.Business.Requests.Notifications.ExamNotification;
 
-public class ActiveExamNotificationsQuery : IRequest<ExamNotificationCardItemDto[]>
+public class ActiveHomepageExamNotificationsQuery : IRequest<ActiveHomepageExamNotificationsQueryResponseDto[]>
 {
 }
 
-public class ActiveExamNotificationsQueryHandler : IRequestHandler<ActiveExamNotificationsQuery, ExamNotificationCardItemDto[]>
+public class ActiveHomepageExamNotificationsQueryHandler : IRequestHandler<ActiveHomepageExamNotificationsQuery, ActiveHomepageExamNotificationsQueryResponseDto[]>
 {
     private readonly IExamNotificationManager _examNotificationManager;
 
-    public ActiveExamNotificationsQueryHandler(
+    public ActiveHomepageExamNotificationsQueryHandler(
         IExamNotificationManager examNotificationManager)
     {
         _examNotificationManager = examNotificationManager;
     }
 
-    public async Task<ExamNotificationCardItemDto[]> Handle(ActiveExamNotificationsQuery request, CancellationToken cancellationToken)
+    public async Task<ActiveHomepageExamNotificationsQueryResponseDto[]> Handle(ActiveHomepageExamNotificationsQuery request, CancellationToken cancellationToken)
     {
         var examNotifications = await _examNotificationManager.GetAllActiveExamNotifications(cancellationToken);
+
         return (examNotifications ?? [])
-            .OrderByDescending(x => x.ValidTill)
-            .Select(x => new ExamNotificationCardItemDto
+            .Select(x => new ActiveHomepageExamNotificationsQueryResponseDto
             {
                 Title = x.Title,
                 Description = x.Description,
-                ImageAbsPath = x.ImageRelativePath,
-                Id = x.NotificationId,
-                ValidTill = x.ValidTill
+                ImagePath = x.ImageRelativePath,
+                NotificationId = x.NotificationId
             })
             .ToArray();
     }

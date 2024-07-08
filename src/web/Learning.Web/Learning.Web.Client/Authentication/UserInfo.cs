@@ -36,5 +36,5 @@ public sealed class UserInfo
             roleType: RoleClaimType));
 
     private static string GetRequiredClaim(ClaimsPrincipal principal, string claimType) =>
-        principal.FindFirst(claimType)?.Value ?? throw new InvalidOperationException($"Could not find required '{claimType}' claim.");
+        principal.FindFirst(claimType)?.Value ?? string.Empty;
 }

@@ -2,8 +2,8 @@
 .logo {
     height: 48px; /* Adjust the height as needed */
     width: auto;
+    margin-right: 5px;
 }
-
 .mud-primary-text {
     color: white !important;
 }

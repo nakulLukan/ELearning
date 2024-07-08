@@ -1,11 +1,22 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider/>
-<div>
-    <MudLayout>
-        <MainLayoutNavBar />
-        <MudMainContent>
-            @Body
-        </MudMainContent>
-    </MudLayout>
 
-</div>
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MainLayoutNavBar />
+
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

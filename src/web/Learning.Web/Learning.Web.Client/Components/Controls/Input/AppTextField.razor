@@ -1,0 +1,52 @@
+﻿@using System.Linq.Expressions
+@typeparam TValue
+@inherits Editor<string>
+<style>
+    .app-text-field-label {
+        margin:0px;
+        font-size: 12px;
+    }
+
+    .app-text-field-input {
+        height: 34px;
+        padding: 10px;
+        font-size: 14px;
+        border-bottom: 1px solid #123231;
+    }
+
+        .app-text-field-input:focus-visible {
+            outline: none;
+            border-color: blue;
+        }
+
+    .validation-message{
+        color:red;
+        padding-top: 5px;
+        font-size: 12px;
+    }
+</style>
+<MudStack Spacing="0">
+    <label for="@_fieldName" class="app-text-field-label">@Label</label>
+    <InputText class="app-text-field-input"
+               @bind-Value="@Value"></InputText>
+    <ValidationMessage For="For"></ValidationMessage>
+</MudStack>
+@code {
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public Expression<Func<TValue>>? For
+    {
+        get => _for; set
+        {
+            _for = value;
+            _fieldName = FieldIdentifier.Create(_for).FieldName;
+        }
+    }
+    private Expression<Func<TValue>>? _for;
+
+    private string? _fieldName;
+
+}

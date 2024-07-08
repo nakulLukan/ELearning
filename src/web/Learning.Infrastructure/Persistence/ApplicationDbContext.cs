@@ -1,16 +1,16 @@
 
-using Microsoft.EntityFrameworkCore;
+using Learning.Business.Impl.Data;
+using Learning.Domain.Content;
+using Learning.Domain.Core;
 using Learning.Domain.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Learning.Domain.Master;
+using Learning.Domain.Notification;
+using Learning.Domain.Subscription;
+using Learning.Infrastructure.Data.Seeder.MigrationSeeder;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
-using Learning.Domain.Core;
-using Learning.Domain.Content;
-using Learning.Infrastructure.Data.Seeder.MigrationSeeder;
-using Learning.Business.Impl.Data;
-using Learning.Domain.Subscription;
-using Learning.Domain.Notification;
 namespace Learning.Infrasture.Persistence;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbContext
@@ -54,6 +54,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
 
     public DbSet<ApplicationUser> AspNetUsers { get; set; }
     public DbSet<ApplicationUserOtherDetail> ApplicationUserOtherDetails { get; set; }
+    public DbSet<ContactUsRequest> ContactUsRequests { get; set; }
 
     public DbSet<LookupMaster> LookupMasters { get; set; }
     public DbSet<LookupValue> LookupValues { get; set; }

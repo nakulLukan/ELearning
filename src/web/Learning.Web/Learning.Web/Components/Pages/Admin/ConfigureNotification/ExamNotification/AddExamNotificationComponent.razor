@@ -15,30 +15,30 @@
         </MudCardHeader>
         <MudCardContent>
             <MudStack Spacing="2">
-                <AppTextField Label="Notification Title"
+                <AppMudTextField Label="Notification Title"
                               @bind-Value="model.Title"
                               For="@(() => model.Title)" />
-                <AppTextField Label="Description"
+                <AppMudTextField Label="Description"
                               @bind-Value="model.Description"
                               For="@(() => model.Description)"
                               Lines="5" />
-                <AppDatePicker Label="Valid Till"
+                <AppMudDatePicker Label="Valid Till"
                                MinDate="DateTime.Today"
                                @bind-Date="model.ValidTill"
                                For="@(()=>model.ValidTill)" />
-                <AppTextField Label="Important Points."
+                <AppMudTextField Label="Important Points."
                               @bind-Value="model.ImportantPoints"
                               For="(()=> model.ImportantPoints)"
                               Lines="5"
                               AutoGrow>
 
-                </AppTextField>
+                </AppMudTextField>
                 <MudCheckBox Label="Display at 'Home' page"
                              @bind-Value="model.DisplayInHomePage" />
-                <AppTextField Label="Govt Url"
+                <AppMudTextField Label="Govt Url"
                               @bind-Value="model.GovtLink"
                               For="@(()=>model.GovtLink)"
-                              InputMode="InputMode.url"></AppTextField>
+                              InputMode="InputMode.url"></AppMudTextField>
                 <MudFileUpload T="IBrowserFile"
                                For="(()=> model.ImageFile)"
                                @bind-Files="model.ImageFile"

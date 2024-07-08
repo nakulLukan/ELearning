@@ -13,6 +13,7 @@ public interface IAppDbContext
 {
     public DbSet<ApplicationUser> AspNetUsers { get; set; }
     public DbSet<ApplicationUserOtherDetail> ApplicationUserOtherDetails { get; set; }
+    public DbSet<ContactUsRequest> ContactUsRequests { get; set; }
 
     public DbSet<LookupMaster> LookupMasters { get; set; }
     public DbSet<LookupValue> LookupValues { get; set; }

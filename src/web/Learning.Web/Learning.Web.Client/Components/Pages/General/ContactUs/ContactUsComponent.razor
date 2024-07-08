@@ -1,0 +1,95 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Learning.Business.Requests.DataCollection.ContactUsRequest
+@using Learning.Shared.Constants
+@using Learning.Web.Client.Contracts.Presentation
+@using MediatR
+@inject IMediator Mediator;
+<MudContainer MaxWidth="MaxWidth.Small">
+    <EditForm Model="@Model"
+              OnValidSubmit="OnValidSubmit"
+              FormName="ContactUs"
+              Enhance>
+        <DataAnnotationsValidator />
+        <MudPaper>
+            <MudGrid Class="p-4">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h6" Align="Align.Center">CONTACT US</MudText>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <AppTextField Label="Name"
+                                  For="(()=> Model.Name)"
+                                  @bind-Value="@Model.Name"></AppTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <AppTextField Label="Contact Number"
+                                  @bind-Value="@Model.ContactNumber"
+                                  For="(()=> Model.ContactNumber)"></AppTextField>
+                </MudItem>
+                <MudItem xs="12">
+                    <AppTextField Label="Email Address (optional)"
+                                  @bind-Value="@Model.EmailAddress"
+                                  For="(()=> Model.EmailAddress)"></AppTextField>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudStack>
+
+                        @if (_showSuccessAlert)
+                        {
+                            <MudAlert Severity="Severity.Success"
+                                      ContentAlignment="HorizontalAlignment.Center"
+                                      ShowCloseIcon="false"
+                                      Variant="Variant.Filled">We have recieved your request. Thank You!!!</MudAlert>
+
+                        }
+                        <MudButton ButtonType="ButtonType.Submit"
+                                   FullWidth
+                                   Variant="Variant.Filled"
+                                   StartIcon="@Icons.Material.Filled.Save">SUBMIT</MudButton>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </EditForm>
+
+</MudContainer>
+@code {
+    [SupplyParameterFromForm]
+    public ContactUsModel Model { get; set; } = new();
+
+    private bool _showSuccessAlert = false;
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        try
+        {
+            var requestId = await Mediator.Send(new AddContactInformationCommand()
+                {
+                    ContactNumber = Model.ContactNumber,
+                    CountryCode = "+91",
+                    Name = Model.Name,
+                    EmailAddress = Model.EmailAddress,
+                });
+            Model = new();
+            _showSuccessAlert = true;
+            StateHasChanged();
+        }
+        catch { }
+    }
+
+
+    public class ContactUsModel
+    {
+        [Required(ErrorMessage = "'Name' is required.")]
+        [MaxLength(50)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "'Contact Number' is required.")]
+        [Phone]
+        [MaxLength(15)]
+        public string ContactNumber { get; set; } = string.Empty;
+
+        [RegularExpression(RegexExpConst.GeneralEmailAddress, ErrorMessage = RegexExpConst.GeneralEmailAddressMessage)]
+        [MaxLength(200)]
+        public string? EmailAddress { get; set; }
+    }
+}

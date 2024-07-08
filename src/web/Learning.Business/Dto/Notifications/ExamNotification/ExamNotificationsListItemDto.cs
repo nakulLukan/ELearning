@@ -4,9 +4,9 @@ public class ExamNotificationsListItemDto
 {
     public int Id { get; set; }
     public int Index { get; set; }
-    public string Title { get; set; }
-    public bool DisplayInHomePage { get; set; }
-    public string ImageStaticPath { get; set; }
-    public DateOnly? ValidTill { get; set; }
+    public required string Title { get; set; }
+    public required bool DisplayInHomePage { get; set; }
+    public required string ImageStaticPath { get; set; }
+    public required DateOnly? ValidTill { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
 }
