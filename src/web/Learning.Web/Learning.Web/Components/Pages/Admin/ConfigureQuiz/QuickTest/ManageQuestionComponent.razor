@@ -1,0 +1,166 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Learning.Business.Requests.Notifications.ExamNotification
+@inherits AppBaseComponent
+<span>
+    @if (Model == null)
+    {
+        <MudSkeleton Width="100%" Height="300px" />
+    }
+    else
+    {
+        <MudContainer>
+            <EditForm Model="Model" FormName="save-quiz-question" OnValidSubmit="OnSave">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudStack Row>
+                            <span>
+                                <MudNumericField T="int?"
+                                                 InputType="InputType.Number"
+                                                 Variant="Variant.Outlined"
+                                                 Label="Question Number"
+                                                 FullWidth="false"
+                                                 Min="1"
+                                                 @bind-Value="Model.QuestionNumber"
+                                                 ReadOnly
+                                                 For="(()=> Model.QuestionNumber)"></MudNumericField>
+                            </span>
+                            <MudNumericField T="int?"
+                                             InputType="InputType.Number"
+                                             Variant="Variant.Outlined"
+                                             Label="Maximum Time (in seconds)"
+                                             Min="1"
+                                             @bind-Value="Model.TimeLimitInSeconds"
+                                             For="(()=> Model.TimeLimitInSeconds)"></MudNumericField>
+                            <MudNumericField T="int?"
+                                             InputType="InputType.Number"
+                                             Variant="Variant.Outlined"
+                                             Label="Mark"
+                                             Min="1"
+                                             @bind-Value="Model.Mark"
+                                             For="(()=> Model.Mark)"></MudNumericField>
+                        </MudStack>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudStack Row>
+                            <MudTextField T="string"
+                                          InputType="InputType.Text"
+                                          Variant="Variant.Outlined"
+                                          Label="Question"
+                                          Lines="3"
+                                          @bind-Value="Model.Question"
+                                          For="(()=> Model.Question)"></MudTextField>
+                        </MudStack>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudRadioGroup T="int" @bind-Value=Model.CorrectOptionIndex
+                                       For="(()=> Model.CorrectOptionIndex)">
+                            <MudGrid>
+                                @foreach (var option in Model.Options)
+                                {
+                                    <MudItem xs="6">
+                                        <MudRadio Value="@option.OptionOrder"
+                                                  Class="rounded-lg border-2 ml-0 quiz-option"
+                                                  Dense
+                                                  Placement="Placement.Top"
+                                                  Size="Size.Small">
+                                            <OptionConfigureComponent OptionLabel="@GetOptionHeaderTitle(option)"
+                                                                      @bind-AnswerText=@option.AnswerText
+                                                                      @bind-AnswerImage=@option.AnswerImage
+                                                                      ImagePreviewUrl="@option.AnswerImageUrl" />
+                                        </MudRadio>
+                                    </MudItem>
+                                }
+                            </MudGrid>
+
+                        </MudRadioGroup>
+                        <MudDivider Class="my-4" />
+                        <div class="d-flex justify-content-start">
+                            <MudButton Class="mt-2"
+                                       ButtonType="ButtonType.Submit"
+                                       Size="Size.Large"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary">Save</MudButton>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        </MudContainer>
+    }
+</span>
+@code {
+
+    [EditorRequired]
+    [Parameter]
+    public SaveModel? Model { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnQuestionUpdated { get; set; }
+
+    private string GetOptionHeaderTitle(AnswerModel option)
+    {
+        return $"Option {Model.Options.IndexOf(option) + 1}";
+    }
+
+    private async Task OnSave(EditContext context)
+    {
+        await AppMediator.Send(new AddEditQuizQuestionCommand()
+            {
+                CorrectOptionIndex = Model.CorrectOptionIndex,
+                Mark = Model.Mark.Value,
+                Options = Model.Options.Select(x => new Business.Dto.Quiz.QuickTest.AddEditQuizOptionDto
+                {
+                    OptionOrder = x.OptionOrder,
+                    AnswerImage = x.AnswerImage,
+                    AnswerText = x.AnswerText
+                }).ToList(),
+                Question = Model.Question,
+                QuestionId = Model.Id,
+                QuestionNumber = Model.QuestionNumber.Value,
+                QuizConfigurationId = Model.ConfigId,
+                TimeLimitInSeconds = Model.TimeLimitInSeconds.Value,
+            })
+        .OnSuccess(data =>
+        {
+            ToastService.Success($"Question details saved successfully");
+            if (OnQuestionUpdated.HasDelegate)
+            {
+                InvokeAsync(() => OnQuestionUpdated.InvokeAsync(data));
+            }
+            Refresh();
+        })
+        .OnError(err =>
+        {
+            ToastService.Error(err.Message);
+        });
+    }
+
+    public class SaveModel
+    {
+        public required int Id { get; set; }
+
+        public required int? ConfigId { get; set; }
+
+        [Required]
+        public required int? QuestionNumber { get; set; }
+        [Required]
+        public required int? TimeLimitInSeconds { get; set; }
+
+        [Required]
+        public required string? Question { get; set; }
+        [Required]
+        public required int? Mark { get; set; }
+
+        [Range(1, 4, ErrorMessage = "Please choose an option")]
+        public required int CorrectOptionIndex { get; set; }
+        public required List<AnswerModel> Options { get; set; }
+    }
+
+    public class AnswerModel
+    {
+        public required int OptionOrder { get; set; }
+        public required string? AnswerText { get; set; }
+        public required byte[]? AnswerImage { get; set; }
+        public required string? AnswerImageUrl { get; set; }
+    }
+}

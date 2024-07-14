@@ -1,0 +1,98 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Shared.Common.Extensions
+@using Learning.Web.Components.Layouts
+@inherits AppBaseComponent
+
+<div style="background-color: var(--gray-50)">
+    @if (IsInitialized && Model != null)
+    {
+        <EditForm Model="Model"
+                  FormName="update-quiz-global-setting"
+                  OnValidSubmit="SaveGlobalSettings">
+            <DataAnnotationsValidator />
+            <MudStack Class="pa-4" Spacing="4">
+                <MudText><b>Configure quiz overall settings here.</b></MudText>
+
+                <MudTextField Label="Minimum Pass Percentage"
+                              @bind-Value=Model.PassPercentage
+                              InputType="InputType.Number"
+                              For="(()=> Model.PassPercentage)"
+                              ShrinkLabel></MudTextField>
+                <MudTextField Label="Maximum Discount (%)"
+                              @bind-Value=Model.MaxDiscountPercentage
+                              InputType="InputType.Number"
+                              For="(()=> Model.MaxDiscountPercentage)"
+                              ShrinkLabel></MudTextField>
+                <MudText Typo="Typo.caption">Total Questions: @TotalQuestions</MudText>
+                <MudText Typo="Typo.caption">Total Marks: @TotalMarks</MudText>
+                <MudText Typo="Typo.caption">Total Time: @TotalTimeInSeconds.ToDurationString()</MudText>
+                <AppProgressButton Color="Color.Primary" ButtonType="ButtonType.Submit">Save</AppProgressButton>
+            </MudStack>
+        </EditForm>
+    }
+    else
+    {
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="50vh" Width="100%" />
+    }
+</div>
+@code {
+    [EditorRequired]
+    [Parameter]
+    public int TotalQuestions { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public int TotalMarks { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public int TotalTimeInSeconds { get; set; }
+
+    [Parameter]
+    public required QuizSettingsModel Model { get; set; }
+    public QuizSettingsModel? lastModel { get; set; } = null;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (lastModel != Model)
+        {
+            SetInitialized();
+            lastModel = Model;
+        }
+    }
+
+    private async Task SaveGlobalSettings(EditContext context)
+    {
+        await AppMediator.Send(new UpdateQuizGlobalSettingsCommand()
+            {
+                MaximumDiscountPercentage = Model.MaxDiscountPercentage.Value,
+                MinimumPassPercentage = Model.PassPercentage.Value
+            })
+        .OnSuccess((data) =>
+        {
+            ToastService.Success("Quiz configuration updated successfully.");
+        })
+        .OnError(error =>
+        {
+            ToastService.Error(error.Message);
+        });
+    }
+
+
+    public class QuizSettingsModel
+    {
+        [Required]
+        [Range(0, 100)]
+        public float? PassPercentage { get; set; }
+
+        [Required]
+        [Range(0, 100)]
+        public int? MaxDiscountPercentage { get; set; }
+    }
+}

@@ -45,10 +45,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Web", "src\web\Lea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Web.Client", "src\web\Learning.Web\Learning.Web.Client\Learning.Web.Client.csproj", "{90781770-7E54-4D73-8E5E-7D9917D54E6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1", "test\BlazorApp1\BlazorApp1\BlazorApp1.csproj", "{4C08E153-2B84-4E72-B7D1-1A3D9BD51EEE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Client", "test\BlazorApp1\BlazorApp1.Client\BlazorApp1.Client.csproj", "{97C12590-4B73-4982-8DD8-D73758E823AC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,14 +105,6 @@ Global
 		{90781770-7E54-4D73-8E5E-7D9917D54E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90781770-7E54-4D73-8E5E-7D9917D54E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90781770-7E54-4D73-8E5E-7D9917D54E6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C08E153-2B84-4E72-B7D1-1A3D9BD51EEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C08E153-2B84-4E72-B7D1-1A3D9BD51EEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C08E153-2B84-4E72-B7D1-1A3D9BD51EEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C08E153-2B84-4E72-B7D1-1A3D9BD51EEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97C12590-4B73-4982-8DD8-D73758E823AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97C12590-4B73-4982-8DD8-D73758E823AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97C12590-4B73-4982-8DD8-D73758E823AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97C12590-4B73-4982-8DD8-D73758E823AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,8 +129,6 @@ Global
 		{F7FD7B0C-AEB0-40C5-9B62-45325AE37863} = {069DD09B-78AD-435C-B9A4-676D8BD152A5}
 		{938A4648-4543-4D1A-A153-72289CA4B188} = {2D7522F2-9699-401E-BBC7-A3439DDCE32B}
 		{90781770-7E54-4D73-8E5E-7D9917D54E6C} = {2D7522F2-9699-401E-BBC7-A3439DDCE32B}
-		{4C08E153-2B84-4E72-B7D1-1A3D9BD51EEE} = {7646BA47-DCEB-47BA-B422-B78E366DC9AC}
-		{97C12590-4B73-4982-8DD8-D73758E823AC} = {7646BA47-DCEB-47BA-B422-B78E366DC9AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F31B7102-7CC5-4A19-98E7-0E58CBAE84BC}

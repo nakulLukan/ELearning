@@ -13,7 +13,7 @@
             <div class="d-flex flex-wrap gap-5 justify-center">
                 @foreach (var notification in _examNotifications)
                 {
-                    <MudPaper Class="rounded-lg" Style="width: 300px; overflow: hidden; background-color: #F5F5F5" Elevation="5">
+                    <MudPaper Class="rounded-lg" Style="width: 300px; overflow: hidden; background-color: var(--gray-50)" Elevation="5">
                         <MudStack Spacing="0">
 
                             <MudImage Src="@notification.ImageAbsPath" ObjectFit="ObjectFit.Cover">
@@ -21,7 +21,7 @@
                             <div class="text-center">
                                 @if (notification.ValidTill.HasValue)
                                 {
-                                    <MudText Class="relative pa-2 rounded-lg" Style="top: -10px;background-color:#F5F5F5;" Typo="Typo.caption" Align="Align.Center">
+                                    <MudText Class="relative pa-2 rounded-lg" Style="top: -10px;background-color:var(--gray-50)" Typo="Typo.caption" Align="Align.Center">
                                         <b>
                                             @notification.ValidTill?.ToShortDateString()
                                         </b>

@@ -1,0 +1,8 @@
+﻿<div>
+<MudText Typo="Typo.h6" Class="app-title-label"><b>@Title</b></MudText>
+</div>
+@code {
+    [Parameter]
+    [EditorRequired]
+    public required string Title { get; set; }
+}

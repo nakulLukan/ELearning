@@ -18,6 +18,6 @@ body{
 }
 
 .mud-grid-item {
-    height: 100%;
+    height: fit-content;
     overflow-y: auto;
 }

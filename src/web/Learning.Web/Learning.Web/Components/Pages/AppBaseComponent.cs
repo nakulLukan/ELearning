@@ -5,6 +5,7 @@ namespace Learning.Web.Components;
 public class AppBaseComponent : ComponentBase
 {
     protected bool _isLoading;
+    protected bool IsInitialized = false;
 
     protected void ChangeToLoadingState(ref bool isLoading)
     {
@@ -43,5 +44,10 @@ public class AppBaseComponent : ComponentBase
     protected static int GetPageSkipValue(int selectedPage, int pageSize)
     {
         return (selectedPage - 1) * pageSize;
+    }
+
+    protected void SetInitialized()
+    {
+        IsInitialized = true;
     }
 }

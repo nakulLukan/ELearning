@@ -62,14 +62,20 @@
     },
     new()
     {
-        GroupName = "Notification",
+        GroupName = "Home Page",
         MenuItems = [
             new()
             {
                 AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin],
                 MenuName = "Configure Exam Notification",
                 Route = "/admin/notification/exam-notifications",
-            }
+            },
+            new()
+            {
+                AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin],
+                MenuName = "Configure Quiz",
+                Route = "/admin/quiz/configure",
+            },
         ],
     },
     new()

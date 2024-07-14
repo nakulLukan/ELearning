@@ -21,4 +21,5 @@ public class StoragePathConstant
     }
 
     public static string PublicExamNotificationBasePath => $"{PUBLIC}/notfications/exam-notification";
+    public static string QuizOptionImageBasePath(int quizConfigId) => $"{PUBLIC}/quiz/quick_test/configuration_{quizConfigId}";
 }

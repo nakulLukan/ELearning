@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240708180410_QuizTablesAdded")]
+    partial class QuizTablesAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -726,114 +729,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.ToTable("ExamNotifications");
                 });
 
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizConfiguration", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<DateTimeOffset?>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DiscountPercentage")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<DateTimeOffset?>("LastUpdatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<float>("PassPercentage")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuizConfigurations");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizQuestion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Mark")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<int>("QuizConfigurationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TimeLimitInSeconds")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuizConfigurationId");
-
-                    b.ToTable("QuizQuestions");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizQuestionAnswer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<long?>("AnswerImageId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("AnswerText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<int>("AnswerType")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsCorrectAnswer")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("QuizQuestionId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerImageId")
-                        .IsUnique();
-
-                    b.HasIndex("QuizQuestionId");
-
-                    b.ToTable("QuizQuestionAnswers");
-                });
-
             modelBuilder.Entity("Learning.Domain.Subscription.SubjectSubscriptionDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -1138,34 +1033,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Navigation("Video");
                 });
 
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizQuestion", b =>
-                {
-                    b.HasOne("Learning.Domain.Quiz.QuizConfiguration", "QuizConfiguration")
-                        .WithMany("Questions")
-                        .HasForeignKey("QuizConfigurationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("QuizConfiguration");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizQuestionAnswer", b =>
-                {
-                    b.HasOne("Learning.Domain.Master.Attachment", "AnswerImage")
-                        .WithOne()
-                        .HasForeignKey("Learning.Domain.Quiz.QuizQuestionAnswer", "AnswerImageId");
-
-                    b.HasOne("Learning.Domain.Quiz.QuizQuestion", "QuizQuestion")
-                        .WithMany("Answers")
-                        .HasForeignKey("QuizQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AnswerImage");
-
-                    b.Navigation("QuizQuestion");
-                });
-
             modelBuilder.Entity("Learning.Domain.Subscription.SubjectSubscriptionDetail", b =>
                 {
                     b.HasOne("Learning.Domain.Core.Subject", "Subject")
@@ -1279,16 +1146,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Learning.Domain.Master.LookupMaster", b =>
                 {
                     b.Navigation("LookupValues");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizConfiguration", b =>
-                {
-                    b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Quiz.QuizQuestion", b =>
-                {
-                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }

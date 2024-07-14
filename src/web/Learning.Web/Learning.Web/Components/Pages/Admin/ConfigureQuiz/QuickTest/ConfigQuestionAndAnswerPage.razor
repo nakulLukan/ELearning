@@ -1,0 +1,120 @@
+﻿@page "/admin/quiz/configure"
+@using Learning.Business.Dto.Quiz.QuickTest
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Shared.Common.Enums
+@using Learning.Web.Components.Layouts
+@using static Learning.Web.Components.Pages.Admin.ConfigureQuiz.QuickTest.ManageQuestionComponent
+@inherits AppBaseComponent
+@attribute [Authorize]
+@layout AdminLayout
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-4">
+    <MudGrid>
+        <MudItem xs="12">
+            <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Home Page Quiz" />
+            <MudDivider Class="mt-1" />
+        </MudItem>
+        <MudItem xs="8">
+            <ManageQuestionComponent Model="_questionModel" OnQuestionUpdated="RefreshQuestions" />
+        </MudItem>
+        <MudItem xs="4">
+            <MudPaper Elevation="1" Class="ma-3">
+                <QuizGlobalSettingsComponent TotalQuestions="_totalQuestions"
+                                             TotalMarks="_totalMarks"
+                                             TotalTimeInSeconds="_totalTimeInSeconds"
+                                             Model="_globalSettingsModel" />
+            </MudPaper>
+            <MudPaper Elevation="1" Class="ma-3">
+                <MudStack Row
+                          Style="background-color: var(--mud-palette-background-gray)"
+                          AlignItems="AlignItems.Center"
+                          StretchItems="StretchItems.All">
+                    <MudButton StartIcon="@Icons.Material.Filled.SkipPrevious" OnClick="OpenPreviousQuestion">Previous Question</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Filled.SkipNext" OnClick="OpenNextQuestion">Next Question</MudButton>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+@code {
+    QuizGlobalSettingsComponent.QuizSettingsModel? _globalSettingsModel;
+    ManageQuestionComponent.SaveModel? _questionModel;
+    private int _totalQuestions;
+    private int _totalMarks;
+    private int _totalTimeInSeconds;
+
+    private DefaultQuizConfigResponseDto? quizConfiguration;
+    private int currentQuestionNumber;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await LoadQuestions();
+        StateHasChanged();
+    }
+
+    private async Task LoadQuestions()
+    {
+        quizConfiguration = await Mediator.Send(new GetDefaultQuizConfigQuery());
+        _globalSettingsModel = new QuizGlobalSettingsComponent.QuizSettingsModel
+            {
+                PassPercentage = (int?)quizConfiguration.PassPercentage ?? 10,
+                MaxDiscountPercentage = quizConfiguration.MaxDiscountPercentage ?? 10,
+            };
+        OpenSelectedQuestion(currentQuestionNumber > 0 ? currentQuestionNumber : quizConfiguration.Questions?.Min(x => x.Order) ?? 0);
+        _totalQuestions = quizConfiguration.Questions?.Count() ?? 0;
+        _totalMarks = quizConfiguration.Questions?.Sum(x => x.Mark) ?? 0;
+        _totalTimeInSeconds = quizConfiguration.Questions?.Sum(x => x.TimeLimitInSeconds) ?? 0;
+    }
+
+    private void OpenSelectedQuestion(int questionNumber)
+    {
+        currentQuestionNumber = questionNumber;
+        var selectedQuestion = quizConfiguration.Questions?.FirstOrDefault(x => x.Order == questionNumber);
+        _questionModel = new ManageQuestionComponent.SaveModel()
+            {
+                ConfigId = quizConfiguration.QuizId,
+                CorrectOptionIndex = selectedQuestion?.Answers?.FirstOrDefault(x => x.IsCorrectAnswer)?.Order ?? 0,
+                Options = selectedQuestion?.Answers?.OrderBy(x => x.Order).Select(x => new AnswerModel
+                {
+                    AnswerImage = null,
+                    AnswerText = x.AnswerText,
+                    OptionOrder = x.Order,
+                    AnswerImageUrl = x.AnswerImageAbsUrl
+                })?.ToList() ?? Enumerable.Range(1, 4).Select(x => new AnswerModel
+                {
+                    AnswerImage = null,
+                    AnswerText = null,
+                    OptionOrder = x,
+                    AnswerImageUrl = null
+                }).ToList(),
+                Id = selectedQuestion?.Id ?? 0,
+                Question = selectedQuestion?.Question,
+                QuestionNumber = selectedQuestion?.Order ?? currentQuestionNumber,
+                TimeLimitInSeconds = selectedQuestion?.TimeLimitInSeconds,
+                Mark = selectedQuestion?.Mark
+            };
+    }
+
+    private void OpenNextQuestion()
+    {
+        if (currentQuestionNumber > (quizConfiguration.Questions?.Length ?? 0))
+        {
+            return;
+        }
+        OpenSelectedQuestion(currentQuestionNumber + 1);
+    }
+
+    private void OpenPreviousQuestion()
+    {
+        if (currentQuestionNumber <= 1)
+        {
+            return;
+        }
+        OpenSelectedQuestion(currentQuestionNumber - 1);
+    }
+
+    private async Task RefreshQuestions()
+    {
+        await LoadQuestions();
+    }
+}

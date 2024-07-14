@@ -3,6 +3,7 @@ using Learning.Domain.Core;
 using Learning.Domain.Identity;
 using Learning.Domain.Master;
 using Learning.Domain.Notification;
+using Learning.Domain.Quiz;
 using Learning.Domain.Subscription;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -31,6 +32,13 @@ public interface IAppDbContext
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
     public DbSet<ExamNotification> ExamNotifications { get; set; }
+
+    #region Quiz
+    public DbSet<QuizConfiguration> QuizConfigurations { get; set; }
+    public DbSet<QuizQuestion> QuizQuestions { get; set; }
+    public DbSet<QuizQuestionAnswer> QuizQuestionAnswers { get; set; }
+    #endregion
+
 
     public void ClearChanges();
 

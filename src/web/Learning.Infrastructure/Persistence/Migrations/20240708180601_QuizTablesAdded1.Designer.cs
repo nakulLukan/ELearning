@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240708180601_QuizTablesAdded1")]
+    partial class QuizTablesAdded1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -741,8 +744,8 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("DiscountPercentage")
-                        .HasColumnType("integer");
+                    b.Property<float>("DiscountPercentage")
+                        .HasColumnType("real");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -781,13 +784,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Question")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
                     b.Property<int>("QuizConfigurationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TimeLimitInSeconds")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -805,12 +804,14 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long?>("AnswerImageId")
+                    b.Property<int?>("AnswerImageId")
+                        .HasColumnType("integer");
+
+                    b.Property<long?>("AnswerImageId1")
                         .HasColumnType("bigint");
 
                     b.Property<string>("AnswerText")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AnswerType")
                         .HasColumnType("integer");
@@ -826,8 +827,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnswerImageId")
-                        .IsUnique();
+                    b.HasIndex("AnswerImageId1");
 
                     b.HasIndex("QuizQuestionId");
 
@@ -1152,8 +1152,8 @@ namespace Learning.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Learning.Domain.Quiz.QuizQuestionAnswer", b =>
                 {
                     b.HasOne("Learning.Domain.Master.Attachment", "AnswerImage")
-                        .WithOne()
-                        .HasForeignKey("Learning.Domain.Quiz.QuizQuestionAnswer", "AnswerImageId");
+                        .WithMany()
+                        .HasForeignKey("AnswerImageId1");
 
                     b.HasOne("Learning.Domain.Quiz.QuizQuestion", "QuizQuestion")
                         .WithMany("Answers")

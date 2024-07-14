@@ -5,6 +5,7 @@ using Learning.Domain.Core;
 using Learning.Domain.Identity;
 using Learning.Domain.Master;
 using Learning.Domain.Notification;
+using Learning.Domain.Quiz;
 using Learning.Domain.Subscription;
 using Learning.Infrastructure.Data.Seeder.MigrationSeeder;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -72,4 +73,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
     public DbSet<ExamNotification> ExamNotifications { get; set; }
+
+    #region Quiz
+    public DbSet<QuizConfiguration> QuizConfigurations { get; set; }
+    public DbSet<QuizQuestion> QuizQuestions { get; set; }
+    public DbSet<QuizQuestionAnswer> QuizQuestionAnswers { get; set; }
+    #endregion
 }

@@ -1,4 +1,7 @@
-﻿
+﻿:root {
+    --gray-50: #F5F5F5;
+}
+
 .active-link-class {
     background-color: red;
 }
