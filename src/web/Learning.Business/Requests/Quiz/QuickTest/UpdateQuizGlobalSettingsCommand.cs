@@ -10,6 +10,7 @@ public class UpdateQuizGlobalSettingsCommand : IRequest<ResponseDto<int>>
 {
     public required float MinimumPassPercentage { get; set; }
     public required int MaximumDiscountPercentage { get; set; }
+    public required int QuizVersionNumber { get; set; }
     public int? QuizConfigId { get; set; }
 }
 
@@ -30,6 +31,7 @@ public class UpdateQuizGlobalSettingsCommandHandler : IRequestHandler<UpdateQuiz
                 || !request.QuizConfigId.HasValue && x.IsDefault) ?? throw new AppException("Invalid quiz configuration id");
         quizConfig.DiscountPercentage = request.MaximumDiscountPercentage;
         quizConfig.PassPercentage = request.MinimumPassPercentage;
+        quizConfig.VersionNumber = request.QuizVersionNumber;
         quizConfig.LastUpdatedOn = AppDateTime.UtcNow;
 
         await _dbContext.SaveAsync(cancellationToken);

@@ -760,6 +760,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<float>("PassPercentage")
                         .HasColumnType("real");
 
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("QuizConfigurations");
@@ -781,6 +784,10 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Question")
                         .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("QuestionImageRelativePath")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -832,6 +839,42 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.HasIndex("QuizQuestionId");
 
                     b.ToTable("QuizQuestionAnswers");
+                });
+
+            modelBuilder.Entity("Learning.Domain.Subscription.Offer.CouponCode", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset>("CouponCreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CouponUsedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<float>("DiscountPercentage")
+                        .HasColumnType("real");
+
+                    b.Property<DateTimeOffset?>("ExpiresOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("CouponCodes");
                 });
 
             modelBuilder.Entity("Learning.Domain.Subscription.SubjectSubscriptionDetail", b =>

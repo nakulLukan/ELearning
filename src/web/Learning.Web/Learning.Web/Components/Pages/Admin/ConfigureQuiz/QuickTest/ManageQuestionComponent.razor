@@ -16,7 +16,6 @@
                         <MudStack Row>
                             <span>
                                 <MudNumericField T="int?"
-                                                 InputType="InputType.Number"
                                                  Variant="Variant.Outlined"
                                                  Label="Question Number"
                                                  FullWidth="false"
@@ -26,14 +25,12 @@
                                                  For="(()=> Model.QuestionNumber)"></MudNumericField>
                             </span>
                             <MudNumericField T="int?"
-                                             InputType="InputType.Number"
                                              Variant="Variant.Outlined"
                                              Label="Maximum Time (in seconds)"
                                              Min="1"
                                              @bind-Value="Model.TimeLimitInSeconds"
                                              For="(()=> Model.TimeLimitInSeconds)"></MudNumericField>
                             <MudNumericField T="int?"
-                                             InputType="InputType.Number"
                                              Variant="Variant.Outlined"
                                              Label="Mark"
                                              Min="1"
@@ -42,7 +39,7 @@
                         </MudStack>
                     </MudItem>
                     <MudItem xs="12">
-                        <MudStack Row>
+                        <MudStack>
                             <MudTextField T="string"
                                           InputType="InputType.Text"
                                           Variant="Variant.Outlined"
@@ -50,7 +47,32 @@
                                           Lines="3"
                                           @bind-Value="Model.Question"
                                           For="(()=> Model.Question)"></MudTextField>
+                            <MudStack AlignItems="AlignItems.Center" Spacing="2">
+
+                                @if (!string.IsNullOrEmpty(Model.QuestionImageUrl))
+                                {
+                                    <MudImage Src="@Model.QuestionImageUrl"
+                                              Alt="Image preview of the question"
+                                              ObjectFit="ObjectFit.Contain"
+                                              Class="rounded-lg"
+                                              Height="100" />
+                                }
+                                else
+                                {
+                                    <div style="height:100px; width:100px; border: 2px dashed var(--mud-palette-table-lines);">
+                                    </div>
+                                }
+                                <MudFileUpload T="IBrowserFile" FilesChanged="HandleSelected" Accept=".png,.jpeg,.jpg">
+                                    <ActivatorContent>
+                                        <MudButton Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.AddPhotoAlternate">Choose an image</MudButton>
+                                    </ActivatorContent>
+                                </MudFileUpload>
+                            </MudStack>
                         </MudStack>
+                    </MudItem>
+                    <MudItem xs="12">
+                            <MudDivider />
                     </MudItem>
                     <MudItem xs="12">
                         <MudRadioGroup T="int" @bind-Value=Model.CorrectOptionIndex
@@ -117,6 +139,7 @@
                 Question = Model.Question,
                 QuestionId = Model.Id,
                 QuestionNumber = Model.QuestionNumber.Value,
+                QuestionImage = Model.QuestionImage,
                 QuizConfigurationId = Model.ConfigId,
                 TimeLimitInSeconds = Model.TimeLimitInSeconds.Value,
             })
@@ -135,6 +158,22 @@
         });
     }
 
+    private async Task HandleSelected(IBrowserFile file)
+    {
+        if (file == null)
+        {
+            return;
+        }
+        var resizedFile = await file.RequestImageFileAsync(file.ContentType, 128, 128);
+        var bytearray = new byte[resizedFile.Size];
+        using var stream = resizedFile.OpenReadStream();
+        await stream.ReadAsync(bytearray);
+        Model.QuestionImage = bytearray;
+        Model.QuestionImageUrl = $"data:image/png;base64,{Convert.ToBase64String(bytearray)}";
+
+    }
+
+    #region Model
     public class SaveModel
     {
         public required int Id { get; set; }
@@ -148,6 +187,10 @@
 
         [Required]
         public required string? Question { get; set; }
+
+        public required byte[]? QuestionImage { get; set; }
+        public required string? QuestionImageUrl { get; set; }
+
         [Required]
         public required int? Mark { get; set; }
 
@@ -163,4 +206,5 @@
         public required byte[]? AnswerImage { get; set; }
         public required string? AnswerImageUrl { get; set; }
     }
+    #endregion
 }

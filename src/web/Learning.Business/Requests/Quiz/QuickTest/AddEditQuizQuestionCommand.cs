@@ -17,6 +17,7 @@ public class AddEditQuizQuestionCommand : IRequest<ResponseDto<int>>
     public required int? QuizConfigurationId { get; set; }
     public required int QuestionId { get; set; }
     public required string Question { get; set; }
+    public required byte[]? QuestionImage { get; set; }
     public required int Mark { get; set; }
     public required int TimeLimitInSeconds { get; set; }
     public required int QuestionNumber { get; set; }
@@ -45,17 +46,20 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
             .Include(x => x.Questions)
                 .ThenInclude(x => x.Answers)
                     .ThenInclude(x => x.AnswerImage)
-            .FirstOrDefaultAsync(x => (request.QuizConfigurationId.HasValue && x.Id == request.QuizConfigurationId) || (!request.QuizConfigurationId.HasValue && x.IsDefault), cancellationToken);
+            .FirstAsync(x => 
+                (request.QuizConfigurationId.HasValue && x.Id == request.QuizConfigurationId) 
+                    || (!request.QuizConfigurationId.HasValue && x.IsDefault), cancellationToken);
 
         quizConfig.Questions = quizConfig.Questions ?? new();
         var existingQuestion = quizConfig.Questions.FirstOrDefault(x => x.Id == request.QuestionId);
+        string? questionImageRelativePath = await GetQuestionImagePath(request, quizConfig, cancellationToken);
         if (existingQuestion == null)
         {
-            existingQuestion = await CreateNewQuestion(request, quizConfig, cancellationToken);
+            existingQuestion = await CreateNewQuestion(request, quizConfig, questionImageRelativePath, cancellationToken);
         }
         else
         {
-            UpdateQuestion(request, existingQuestion);
+            UpdateQuestion(request, existingQuestion, questionImageRelativePath);
         }
 
         await UpdateOptions(request, existingQuestion, cancellationToken);
@@ -64,13 +68,26 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         return new(existingQuestion.Id);
     }
 
-    private async Task UpdateOptions(AddEditQuizQuestionCommand request, QuizQuestion? existingQuestion, CancellationToken cancellationToken)
+    private async Task<string?> GetQuestionImagePath(AddEditQuizQuestionCommand request, QuizConfiguration quizConfig, CancellationToken cancellationToken)
+    {
+        string? questionImageRelativePath = null;
+        if (request.QuestionImage != null)
+        {
+            string fileRelativePath = StoragePathConstant.QuizOptionImageBasePath(quizConfig.Id);
+            string fileName = $"question_{request.QuestionNumber}.png";
+            questionImageRelativePath = (await _fileStorage.UploadFileToPublic(request.QuestionImage, fileName, fileRelativePath, cancellationToken)).RelativePath;
+        }
+
+        return questionImageRelativePath;
+    }
+
+    private async Task UpdateOptions(AddEditQuizQuestionCommand request, QuizQuestion existingQuestion, CancellationToken cancellationToken)
     {
         foreach (var option in request.Options)
         {
             var order = request.Options.IndexOf(option) + 1;
             var existingAnswer = existingQuestion.Answers.SingleOrDefault(x => x.Order == order);
-            string optionImagePath = null;
+            string optionImagePath = string.Empty;
             if (option.AnswerImage != null)
             {
                 string fileName = $"question_{existingQuestion.Id}_option_{order}.jpg";
@@ -88,7 +105,11 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         }
     }
 
-    private static void UpdateOption(AddEditQuizQuestionCommand request, AddEditQuizOptionDto option, QuizQuestionAnswer? existingAnswer, int order, string optionImagePath)
+    private static void UpdateOption(AddEditQuizQuestionCommand request,
+                                     AddEditQuizOptionDto option,
+                                     QuizQuestionAnswer existingAnswer,
+                                     int order,
+                                     string optionImagePath)
     {
         if (existingAnswer.AnswerText != option.AnswerText)
         {
@@ -112,9 +133,14 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         existingAnswer.IsCorrectAnswer = order == request.CorrectOptionIndex;
     }
 
-    private static QuizQuestionAnswer CreateOption(AddEditQuizQuestionCommand request, QuizQuestion? existingQuestion, AddEditQuizOptionDto option, int order, string optionImagePath)
+    private static QuizQuestionAnswer CreateOption(
+        AddEditQuizQuestionCommand request,
+        QuizQuestion existingQuestion,
+        AddEditQuizOptionDto option,
+        int order,
+        string optionImagePath)
     {
-        QuizQuestionAnswer? existingAnswer = new QuizQuestionAnswer
+        QuizQuestionAnswer existingAnswer = new QuizQuestionAnswer
         {
             Id = 0,
             AnswerText = option.AnswerText,
@@ -135,7 +161,10 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         return existingAnswer;
     }
 
-    private static void UpdateQuestion(AddEditQuizQuestionCommand request, QuizQuestion? existingQuestion)
+    private static void UpdateQuestion(
+        AddEditQuizQuestionCommand request,
+        QuizQuestion existingQuestion,
+        string? questionImageRelativePath)
     {
         if (existingQuestion.Mark != request.Mark)
         {
@@ -154,11 +183,18 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         {
             existingQuestion.Question = request.Question;
         }
+        if (!string.IsNullOrEmpty(questionImageRelativePath))
+        {
+            existingQuestion.QuestionImageRelativePath = questionImageRelativePath;
+        }
     }
 
-    private async Task<QuizQuestion?> CreateNewQuestion(AddEditQuizQuestionCommand request, QuizConfiguration? quizConfig, CancellationToken cancellationToken)
+    private async Task<QuizQuestion> CreateNewQuestion(AddEditQuizQuestionCommand request,
+                                                       QuizConfiguration quizConfig,
+                                                       string? questionImageRelativePath,
+                                                       CancellationToken cancellationToken)
     {
-        QuizQuestion? existingQuestion = new QuizQuestion
+        QuizQuestion existingQuestion = new QuizQuestion
         {
             Id = request.QuestionId,
             Mark = request.Mark,
@@ -166,7 +202,8 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
             Question = request.Question,
             TimeLimitInSeconds = request.TimeLimitInSeconds,
             QuizConfigurationId = quizConfig.Id,
-            Answers = new()
+            QuestionImageRelativePath = questionImageRelativePath,
+            Answers = new(),
         };
         _dbContext.QuizQuestions.Add(existingQuestion);
         await _dbContext.SaveAsync(cancellationToken);

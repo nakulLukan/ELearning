@@ -1,5 +1,9 @@
 ﻿:root {
     --gray-50: #F5F5F5;
+    --red-light-1: #f1e1e1;
+    --green-light-1: #eaf9ea;
+    --green-gray-50: #e2e7e0;
+    --green-gray-200: #c7d9c7;
 }
 
 .active-link-class {
@@ -14,3 +18,12 @@
         height: 42px;
         width: auto;
     }
+
+.mud-main-content {
+    height: 100vh !important;
+}
+
+.mud-button-no-hyperlink:hover {
+    text-decoration:none;
+    color:inherit;
+}

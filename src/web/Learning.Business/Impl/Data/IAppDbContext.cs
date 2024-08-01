@@ -5,6 +5,7 @@ using Learning.Domain.Master;
 using Learning.Domain.Notification;
 using Learning.Domain.Quiz;
 using Learning.Domain.Subscription;
+using Learning.Domain.Subscription.Offer;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -28,8 +29,11 @@ public interface IAppDbContext
 
     public DbSet<Video> Videos { get; set; }
 
+    #region Subscriptions
     public DbSet<SubjectSubscriptionDetail> SubjectSubscriptionDetails { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
+    public DbSet<CouponCode> CouponCodes { get; set; }
+    #endregion
 
     public DbSet<ExamNotification> ExamNotifications { get; set; }
 

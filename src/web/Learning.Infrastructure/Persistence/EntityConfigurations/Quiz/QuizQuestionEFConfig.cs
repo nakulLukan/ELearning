@@ -9,6 +9,7 @@ public class QuizQuestionEFConfig : IEntityTypeConfiguration<Learning.Domain.Qui
     {
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.Question).IsRequired().HasMaxLength(255);
+        builder.Property(x => x.QuestionImageRelativePath).IsRequired(false).HasMaxLength(255);
 
         builder.HasMany(x => x.Answers)
             .WithOne(x => x.QuizQuestion)

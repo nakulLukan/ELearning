@@ -40,6 +40,7 @@ public class GetDefaultQuizConfigQueryHandler : IRequestHandler<GetDefaultQuizCo
                 IsDefault = true,
                 PassPercentage = -1,
                 Questions = null,
+                VersionNumber = 1,
             };
             _dbContext.QuizConfigurations.Add(defaultQuiz);
             await _dbContext.SaveAsync(cancellationToken);
@@ -55,6 +56,7 @@ public class GetDefaultQuizConfigQueryHandler : IRequestHandler<GetDefaultQuizCo
                 Question = x.Question,
                 Mark = x.Mark,
                 Order = x.Order,
+                QuestionImageAbsUrl = !string.IsNullOrEmpty(x.QuestionImageRelativePath) ? _fileStorage.GetObjectUrl(x.QuestionImageRelativePath) : null,
                 TimeLimitInSeconds = x.TimeLimitInSeconds > 0 ? x.TimeLimitInSeconds : null,
                 Answers = x.Answers?.Select(y => new QuizQuestionAnswerConfigResponseDto
                 {
@@ -67,6 +69,7 @@ public class GetDefaultQuizConfigQueryHandler : IRequestHandler<GetDefaultQuizCo
                 })?.ToArray()
             })?.ToArray(),
             QuizId = null,
+            QuizVersionNumber = defaultQuiz.VersionNumber
         };
         return response;
     }

@@ -8,9 +8,9 @@
 
         <MudSpacer />
         <MudButton Href="/exam-notifications" >Exam Notifications</MudButton>
-        <MudButton Href="/quiz" Target="_parent">Quiz</MudButton>
-        <MudButton Href="/contacts" Target="_parent">Contacts</MudButton>
-        <MudButton Href="/about" Target="_parent">About</MudButton>
+        <MudButton Href="/quiz" >Quiz</MudButton>
+        <MudButton Href="/contacts">Contacts</MudButton>
+        <MudButton Href="/about">About</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Class="fixed" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
@@ -31,9 +31,9 @@
     </MudDrawerHeader>
     <MudNavMenu>
         <MudNavLink Href="/exam-notifications">Exam Notifications</MudNavLink>
-        <MudNavLink Href="/quiz" Target="_parent">Quiz</MudNavLink>
-        <MudNavLink Href="/contacts" Target="_parent">Contacts</MudNavLink>
-        <MudNavLink Href="/about" Target="_parent">About</MudNavLink>
+        <MudNavLink Href="/quiz">Quiz</MudNavLink>
+        <MudNavLink Href="/contacts" >Contacts</MudNavLink>
+        <MudNavLink Href="/about" >About</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
 @code {

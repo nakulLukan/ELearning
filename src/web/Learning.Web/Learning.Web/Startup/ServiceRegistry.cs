@@ -1,15 +1,24 @@
-﻿using Learning.Business;
+﻿using Blazored.LocalStorage;
+using Learning.Business;
 using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.Persistence;
 using Learning.Infrastructure;
 using Learning.Shared.Common.Constants;
 using Learning.Web.Client.Constants;
+using Learning.Web.Client.Contracts.Interop;
+using Learning.Web.Client.Contracts.Persistance;
 using Learning.Web.Client.Contracts.Presentation;
+using Learning.Web.Client.Contracts.Services.Quiz;
+using Learning.Web.Client.Contracts.Services.Subscription;
 using Learning.Web.Client.Impl.HttpContext;
+using Learning.Web.Client.Impl.Interop;
+using Learning.Web.Client.Impl.Persistance;
 using Learning.Web.Contracts.Events;
 using Learning.Web.Impl.Events;
 using Learning.Web.Impl.Persistence;
 using Learning.Web.Impl.Presentation;
+using Learning.Web.Services.Quiz;
+using Learning.Web.Services.Subscription;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -28,7 +37,7 @@ public static class ServiceRegistry
     {
         builder.RegisterWebServices(builder.Configuration);
         builder.Services.RegisterInfrastructureServices(builder.Configuration);
-        builder.Services.RegisterBusinessServices(builder.Configuration);
+        builder.Services.RegisterBusinessServices();
     }
 
     private static void RegisterWebServices(this WebApplicationBuilder builder, IConfiguration configuration)
@@ -161,6 +170,7 @@ public static class ServiceRegistry
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllersWithViews();
         builder.Services.AddAntiforgery();
+        builder.Services.AddBlazoredLocalStorage();
         RegisterAppServices(builder);
     }
 
@@ -169,8 +179,12 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IToastService, ToastService>();
         builder.Services.AddScoped<IAppMediator, AppMediator>();
         builder.Services.AddScoped<IRequestContext, RequestContext>();
-
         builder.Services.AddSingleton<IAppCache, IAppMemoryCache>();
+
+        builder.Services.AddScoped<IQuizDataService, QuizDataService>();
+        builder.Services.AddScoped<ICouponCodeDataService, CouponCodeDataService>();
+        builder.Services.AddScoped<IBrowserStorage, BrowserLocalStorage>();
+        builder.Services.AddTransient<IAppJSInterop, AppJSInterop>();
     }
 
 

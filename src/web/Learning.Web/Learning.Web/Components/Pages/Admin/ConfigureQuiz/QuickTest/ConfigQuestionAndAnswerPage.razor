@@ -59,6 +59,7 @@
             {
                 PassPercentage = (int?)quizConfiguration.PassPercentage ?? 10,
                 MaxDiscountPercentage = quizConfiguration.MaxDiscountPercentage ?? 10,
+                QuizVersionNumber = quizConfiguration.QuizVersionNumber
             };
         OpenSelectedQuestion(currentQuestionNumber > 0 ? currentQuestionNumber : quizConfiguration.Questions?.Min(x => x.Order) ?? 0);
         _totalQuestions = quizConfiguration.Questions?.Count() ?? 0;
@@ -91,6 +92,8 @@
                 Question = selectedQuestion?.Question,
                 QuestionNumber = selectedQuestion?.Order ?? currentQuestionNumber,
                 TimeLimitInSeconds = selectedQuestion?.TimeLimitInSeconds,
+                QuestionImage = null,
+                QuestionImageUrl = selectedQuestion?.QuestionImageAbsUrl,
                 Mark = selectedQuestion?.Mark
             };
     }

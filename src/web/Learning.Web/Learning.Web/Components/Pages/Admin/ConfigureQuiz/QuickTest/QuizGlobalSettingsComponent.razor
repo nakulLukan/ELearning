@@ -24,6 +24,11 @@
                               InputType="InputType.Number"
                               For="(()=> Model.MaxDiscountPercentage)"
                               ShrinkLabel></MudTextField>
+                <MudTextField Label="Quiz Version"
+                              @bind-Value=Model.QuizVersionNumber
+                              InputType="InputType.Number"
+                              For="(()=> Model.QuizVersionNumber)"
+                              ShrinkLabel></MudTextField>
                 <MudText Typo="Typo.caption">Total Questions: @TotalQuestions</MudText>
                 <MudText Typo="Typo.caption">Total Marks: @TotalMarks</MudText>
                 <MudText Typo="Typo.caption">Total Time: @TotalTimeInSeconds.ToDurationString()</MudText>
@@ -71,8 +76,9 @@
     {
         await AppMediator.Send(new UpdateQuizGlobalSettingsCommand()
             {
-                MaximumDiscountPercentage = Model.MaxDiscountPercentage.Value,
-                MinimumPassPercentage = Model.PassPercentage.Value
+                MaximumDiscountPercentage = Model.MaxDiscountPercentage ?? throw new ArgumentNullException(),
+                MinimumPassPercentage = Model.PassPercentage ?? throw new ArgumentNullException(),
+                QuizVersionNumber = Model.QuizVersionNumber
             })
         .OnSuccess((data) =>
         {
@@ -94,5 +100,9 @@
         [Required]
         [Range(0, 100)]
         public int? MaxDiscountPercentage { get; set; }
+
+        [Required]
+        [Range(0, 100000)]
+        public int QuizVersionNumber { get; set; }
     }
 }
