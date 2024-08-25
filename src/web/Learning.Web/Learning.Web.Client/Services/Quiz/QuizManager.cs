@@ -1,5 +1,7 @@
 ﻿using Learning.Shared.Common.Utilities;
 using Learning.Shared.Enums;
+using Learning.Web.Client.Constants;
+using Learning.Web.Client.Contracts.Persistance;
 using Learning.Web.Client.Contracts.Services.Quiz;
 using Learning.Web.Client.Dto.Quiz;
 using System.Text.Json;
@@ -8,14 +10,28 @@ namespace Learning.Web.Client.Services.Quiz;
 
 public class QuizManager : IQuizManager
 {
-    private ILogger<QuizManager> _logger;
+    private readonly ILogger<QuizManager> _logger;
+    private readonly IBrowserStorage _browserStorage;
 
-    public QuizManager(ILogger<QuizManager> logger)
+    public QuizManager(ILogger<QuizManager> logger, IBrowserStorage browserStorage)
     {
         _logger = logger;
+        _browserStorage = browserStorage;
     }
 
     private const string encryptionKey = "quiz@1232";
+
+    public async Task<QuizLocalStorageModel> GetQuizModel()
+    {
+        try
+        {
+            return await _browserStorage.Get<QuizLocalStorageModel>(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey) ?? new();
+        }
+        catch
+        {
+            return new QuizLocalStorageModel();
+        }
+    }
 
     public QuizAttempStatusEnum GetQuizStatus(string? encryptedData)
     {
@@ -66,7 +82,7 @@ public class QuizManager : IQuizManager
 
         model.Status = QuizAttempStatusEnum.Completed;
         model.TotalDiscount = (int)Math.Ceiling(((double)model.MarkScored / model.TotalMark) * quizMaxDiscount);
-        model.DiscountCode = CouponCodeGenerator.GenerateCouponCode();
+        model.DiscountCode = "V" + model.QuizVersionNumber + "-" + CouponCodeGenerator.GenerateCouponCode();
         return model;
     }
 

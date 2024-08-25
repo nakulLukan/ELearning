@@ -3,23 +3,24 @@
 @using Learning.Shared.Common.Constants
 @using Learning.Shared.Common.Extensions
 @inject NavigationManager NavigationManager
+@inject IAlertService AlertService
 
 @inherits AppBaseComponent
 
 <AppMudDataGrid T="ExamNotificationsListItemDto"
-             Items="@Elements"
-             Virtualize="true"
-             Groupable="false"
-             Bordered
-             ShowMenuIcon="false"
-             FixedHeader="true"
-             Dense
-             Hover
-             Striped
-             RowClass="cursor-pointer"
-             Loading="_isLoading"
-             Elevation="0"
-             RowClick="@OnExamNotificationClicked">
+                Items="@Elements"
+                Virtualize="true"
+                Groupable="false"
+                Bordered
+                ShowMenuIcon="false"
+                FixedHeader="true"
+                Dense
+                Hover
+                Striped
+                RowClass="cursor-pointer"
+                Loading="_isLoading"
+                Elevation="0"
+                RowClick="@OnExamNotificationClicked">
     <ToolBarContent>
         <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Exam Notification" />
     </ToolBarContent>
@@ -37,6 +38,13 @@
                         Title="Valid Till" />
         <PropertyColumn Property="@(x => x.CreatedOn.ToLocalDateTimeString())"
                         Title="Created On" />
+        <TemplateColumn>
+            <CellTemplate>
+                <div>
+                    <MudIconButton Size="@Size.Small" Color="Color.Error" OnClick="(async ()=> await DeleteNotification(context.Item.Id))" Icon="@Icons.Material.Rounded.Delete"></MudIconButton>
+                </div>
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
     <NoRecordsContent>
         <NoRecordsComponent />
@@ -69,5 +77,26 @@
     private void OnExamNotificationClicked(DataGridRowClickEventArgs<ExamNotificationsListItemDto> selectedItem)
     {
         NavigationManager.NavigateTo($"/admin/notification/exam-notifications/{selectedItem.Item.Id}");
+    }
+
+    private async Task DeleteNotification(int examNotificationId)
+    {
+        if (!await AlertService.DisplayAlert("Confirm Delete", "Are you sure you want to delete this notification?", "Confirm", Client.Enums.AlertTypeEnum.Error))
+        {
+            return;
+        }
+        await AppMediator.Send(new DeleteExamNotificationCommand()
+            {
+                ExamNotificationId = examNotificationId
+            })
+            .OnSuccess(data =>
+            {
+                InvokeAsync(LoadExamNotifications);
+                ToastService.Success("Exam notification deleted successfully");
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+            });
     }
 }

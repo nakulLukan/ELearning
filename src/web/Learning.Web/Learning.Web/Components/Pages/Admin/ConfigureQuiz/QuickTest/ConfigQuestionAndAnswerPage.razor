@@ -5,12 +5,19 @@
 @using Learning.Web.Components.Layouts
 @using static Learning.Web.Components.Pages.Admin.ConfigureQuiz.QuickTest.ManageQuestionComponent
 @inherits AppBaseComponent
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 @layout AdminLayout
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-4">
     <MudGrid>
         <MudItem xs="12">
-            <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Home Page Quiz" />
+            <MudStack Row Justify="Justify.SpaceBetween">
+                <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Home Page Quiz" />
+                @if (_questionModel != null && _questionModel.Id != 0)
+                {
+                    <MudButton EndIcon="@Icons.Material.Rounded.Delete" OnClick="DeleteQuestion">Delete Question</MudButton>
+                }
+            </MudStack>
             <MudDivider Class="mt-1" />
         </MudItem>
         <MudItem xs="8">
@@ -72,7 +79,7 @@
     private void OpenSelectedQuestion(int questionNumber)
     {
         currentQuestionNumber = questionNumber;
-        var selectedQuestion = quizConfiguration.Questions?.FirstOrDefault(x => x.Order == questionNumber);
+        var selectedQuestion = quizConfiguration!.Questions?.FirstOrDefault(x => x.Order == questionNumber);
         _questionModel = new ManageQuestionComponent.SaveModel()
             {
                 ConfigId = quizConfiguration.QuizId,
@@ -102,7 +109,7 @@
 
     private void OpenNextQuestion()
     {
-        if (currentQuestionNumber > (quizConfiguration.Questions?.Length ?? 0))
+        if (currentQuestionNumber > (quizConfiguration!.Questions?.Length ?? 0))
         {
             return;
         }
@@ -121,5 +128,22 @@
     private async Task RefreshQuestions()
     {
         await LoadQuestions();
+    }
+
+    private async Task DeleteQuestion()
+    {
+        await AppMediator.Send(new DeleteQuizQuestionCommand
+            {
+                QuestionId = quizConfiguration!.Questions!.First(x => x.Order == currentQuestionNumber).Id
+            })
+            .OnSuccess(data =>
+            {
+                ToastService.Success("Question deleted successfully");
+                NavigationManager.Refresh(true);
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+            });
     }
 }

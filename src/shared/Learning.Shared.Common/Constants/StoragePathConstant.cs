@@ -20,6 +20,6 @@ public class StoragePathConstant
         return $"{PRIVATE}/subjects/{subjectId}";
     }
 
-    public static string PublicExamNotificationBasePath => $"{PUBLIC}/notfications/exam-notification";
+    public static string PublicExamNotificationBasePath(int examNotificationId) => $"{PUBLIC}/notfications/exam-notification/{examNotificationId}";
     public static string QuizOptionImageBasePath(int quizConfigId) => $"{PUBLIC}/quiz/quick_test/configuration_{quizConfigId}";
 }

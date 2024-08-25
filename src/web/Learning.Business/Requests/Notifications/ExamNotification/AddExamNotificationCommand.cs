@@ -40,12 +40,11 @@ public class AddExamNotificationCommandHandler : IRequestHandler<AddExamNotifica
     public async Task<ResponseDto<int>> Handle(AddExamNotificationCommand request, CancellationToken cancellationToken)
     {
         var userId = await _requestContext.GetUserId();
-        var relativePath = await UploadImageToStorage(request, cancellationToken);
         var newExamNotification = new Domain.Notification.ExamNotification()
         {
             Description = request.Description.Trim(),
             NotificationTitle = request.Title.Trim(),
-            ImageRelativePath = relativePath,
+            ImageRelativePath = string.Empty,
             DisplayInHomePage = request.DisplayInHomePage,
             ValidTill = request.ValidTill.HasValue ? DateOnly.FromDateTime(request.ValidTill.Value) : null,
             CreatedBy = userId,
@@ -58,16 +57,20 @@ public class AddExamNotificationCommandHandler : IRequestHandler<AddExamNotifica
 
         _dbContext.ExamNotifications.Add(newExamNotification);
         await _dbContext.SaveAsync(cancellationToken);
+        var relativePath = await UploadImageToStorage(request, newExamNotification.Id, cancellationToken);
+        newExamNotification.ImageRelativePath = relativePath;
+        await _dbContext.SaveAsync(cancellationToken);
+
         _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsKey);
         _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsDetailKey);
         return new(newExamNotification.Id);
     }
 
-    private async Task<string> UploadImageToStorage(AddExamNotificationCommand request, CancellationToken cancellationToken)
+    private async Task<string> UploadImageToStorage(AddExamNotificationCommand request, int id, CancellationToken cancellationToken)
     {
         using var ms = new MemoryStream();
         await request.ImageFile.Stream.CopyToAsync(ms);
-        var data = await _fileStorage.UploadFileToPublic(ms.ToArray(), request.ImageFile.FileName, StoragePathConstant.PublicExamNotificationBasePath, cancellationToken);
+        var data = await _fileStorage.UploadFileToPublic(ms.ToArray(), request.ImageFile.FileName, StoragePathConstant.PublicExamNotificationBasePath(id), cancellationToken);
         return data.RelativePath;
     }
 }

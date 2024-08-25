@@ -9,15 +9,30 @@
         <MudPaper Elevation="10" Class="rounded-xl pa-10 my-10" Style="background-color: #b7d6ad">
             <MudText Typo="Typo.h1" Align="Align.Center"><b>@Result.Discount%</b></MudText>
         </MudPaper>
-        <div class="gap-3 d-flex flex-column">
             <MudPaper Class="border-dashed border-2  pa-4" Style=@($"border-color: {Colors.Green.Darken4}")
                       Elevation="0">
                 <b>@Result.CouponCode</b>
+                <MudIconButton Icon="@_copyCouponCodeIcon" Size="Size.Small"
+                               Class="mud-typography-caption"
+                               OnClick="CopyToClipboard"></MudIconButton>
             </MudPaper>
-            <MudButton EndIcon="@_copyCouponCodeIcon"
-                       Class="mud-typography-caption"
-                       OnClick="CopyToClipboard">@_copyCouponCodeButtonName</MudButton>
-        </div>
+            
+        <MudGrid Class="pa-2 rounded-lg text-center" Justify="Justify.Center">
+            <MudItem xs="12" >
+                <MudText Typo="Typo.subtitle1"><b><u>Contact Us</u></b></MudText>
+
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudButton Href="https://wa.me/1231231231" Target="_blank" Variant="Variant.Outlined" FullWidth Class="py-4">
+                    <img alt="Chat on WhatsApp" height="32" src="assets/images/icons/whatsapp.svg" class="mx-2" />Chat on WhatsApp
+                    </MudButton>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudButton Href="tel:1234567890" Target="_blank" Variant="Variant.Outlined" FullWidth Class="py-4">
+                    <img alt="Call Us" height="32" src="assets/images/icons/phone_dialer.svg" class="mx-2" />Call Us
+                </MudButton>
+            </MudItem>
+        </MudGrid>
     </MudStack>
 }
 else

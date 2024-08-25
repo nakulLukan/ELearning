@@ -5,6 +5,7 @@ namespace Learning.Web.Client.Contracts.Services.Quiz;
 
 public interface IQuizManager
 {
+    public Task<QuizLocalStorageModel> GetQuizModel();
     public QuizAttempStatusEnum GetQuizStatus(string? encryptedData);
     public byte[] BeginQuiz(string? encryptedData);
 

@@ -4,8 +4,10 @@
 @using Learning.Web.Client.Contracts.Services.DataCollection
 @using Learning.Web.Client.Contracts.Services.Quiz
 @using Learning.Web.Client.Dto.ContactUs
+@using Learning.Web.Client.Dto.Quiz
 @rendermode InteractiveWebAssembly
 @inject IQuizDataService QuizDataService
+@inject IQuizManager QuizManager
 @inject IContactUsDataService ContactUsDataService
 <AppPage BackgroundColor="var(--green-gray-50)">
     <MudContainer>
@@ -64,12 +66,19 @@
                                     <AppTextFieldV2 Label="Email Address (Optional)"
                                                     @bind-Value=@ContactUsModel.EmailAddress
                                                     For="(()=> ContactUsModel.EmailAddress)"></AppTextFieldV2>
-                                    <div class="text-center mt-3">
+                                    <MudStack Class="mt-3" AlignItems="AlignItems.Center" Spacing="4">
                                         <MudButton Class="mud-button-no-hyperlink"
                                                    EndIcon="@Icons.Material.Rounded.ArrowRightAlt"
                                                    Variant="Variant.Outlined"
                                                    ButtonType="ButtonType.Submit"> Submit & Start Quiz</MudButton>
-                                    </div>
+                                        @if (_model != null && _model.Status != Shared.Enums.QuizAttempStatusEnum.NotAttended)
+                                        {
+                                            <MudButton Class="mud-button-no-hyperlink"
+                                                       Variant="Variant.Text"
+                                                       Href="quiz/result"
+                                                       ButtonType="ButtonType.Button"><MudText Typo="Typo.caption"><u>Check your last quiz result here</u></MudText> </MudButton>
+                                        }
+                                    </MudStack>
                                 </MudStack>
                             </EditForm>
                         </MudStack>
@@ -81,9 +90,12 @@
 </AppPage>
 @code {
     QuizMetaDataDto? _quizMetaData;
+    QuizLocalStorageModel? _model;
     ContactUsModel ContactUsModel { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
+        _model = await QuizManager.GetQuizModel();
         var result = await QuizDataService.GetQuizMetaData();
         _quizMetaData = result.Value;
     }

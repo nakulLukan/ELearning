@@ -186,6 +186,7 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IRequestContext, RequestContext>();
         builder.Services.AddSingleton<IAppCache, IAppMemoryCache>();
         builder.Services.AddScoped<IQuizManager, QuizManager>();
+        builder.Services.AddScoped<IAlertService, AlertService>();
 
         builder.Services.AddScoped<IQuizDataService, QuizDataService>();
         builder.Services.AddScoped<IContactUsDataService, ContactUsDataService>();

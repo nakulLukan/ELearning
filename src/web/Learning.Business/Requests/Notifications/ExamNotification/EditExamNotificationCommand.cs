@@ -121,7 +121,7 @@ public class EditExamNotificationCommandHandler : IRequestHandler<EditExamNotifi
 
         using var ms = new MemoryStream();
         await request.ImageFile.Stream.CopyToAsync(ms);
-        var data = await _fileStorage.UploadFileToPublic(ms.ToArray(), request.ImageFile.FileName, StoragePathConstant.PublicExamNotificationBasePath, cancellationToken);
+        var data = await _fileStorage.UploadFileToPublic(ms.ToArray(), request.ImageFile.FileName, StoragePathConstant.PublicExamNotificationBasePath(existingNotification.Id), cancellationToken);
         return data.RelativePath;
     }
 }

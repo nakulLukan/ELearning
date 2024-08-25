@@ -58,7 +58,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        var config = await GetModel();
+        var config = await QuizManager.GetQuizModel();
         quizAttempStatusEnum = config.Status;
 
         _quizMetaData = (await QuizDataService.GetQuizMetaData()).Value;
@@ -130,7 +130,7 @@
         }
         else
         {
-            var config = await GetModel();
+            var config = await QuizManager.GetQuizModel();
             config = QuizManager.FinishQuiz(config, _quizMetaData?.TotalDiscount ?? 0);
             await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
             quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
@@ -144,18 +144,6 @@
             {
                 Console.WriteLine("oops! something went wrong.");
             }
-        }
-    }
-
-    private async Task<QuizLocalStorageModel> GetModel()
-    {
-        try
-        {
-            return await LocalStorage.Get<QuizLocalStorageModel>(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey) ?? new();
-        }
-        catch
-        {
-            return new QuizLocalStorageModel();
         }
     }
 }

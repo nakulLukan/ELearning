@@ -59,7 +59,7 @@ public class UploadExamNotificationPdfOrVideoCommandHandler : IRequestHandler<Up
     {
         using var ms = new MemoryStream();
         await request.File.Stream.CopyToAsync(ms);
-        var data = await _fileStorage.UploadFileToPublic(ms.ToArray(), request.File.FileName, StoragePathConstant.PublicExamNotificationBasePath, cancellationToken);
+        var data = await _fileStorage.UploadFileToPublic(ms.ToArray(), request.File.FileName, StoragePathConstant.PublicExamNotificationBasePath(request.ExamNotificationId), cancellationToken);
         var attachmentRecord = new Attachment()
         {
             FileName = request.File.FileName,

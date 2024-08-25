@@ -3,6 +3,7 @@ using Blazored.LocalStorage;
 using Learning.Shared.Contracts.HttpContext;
 using Learning.Web.Client.Contracts.Interop;
 using Learning.Web.Client.Contracts.Persistance;
+using Learning.Web.Client.Contracts.Presentation;
 using Learning.Web.Client.Contracts.Relay;
 using Learning.Web.Client.Contracts.Services.DataCollection;
 using Learning.Web.Client.Contracts.Services.Quiz;
@@ -52,7 +53,8 @@ internal static class ServiceRegistry
         builder.Services.AddScoped<IBrowserStorage, BrowserLocalStorage>();
         builder.Services.AddTransient<IAppJSInterop, AppJSInterop>();
         builder.Services.AddTransient<IHttpClientService, HttpClientService>();
-        builder.Services.AddSingleton<IQuizManager, QuizManager>();
+        builder.Services.AddScoped<IQuizManager, QuizManager>();
+        builder.Services.AddSingleton<IAlertService, AlertService>();
 
         builder.Services.AddTransient<IQuizDataService, QuizRestDataService>();
         builder.Services.AddTransient<ICouponCodeDataService, CouponCodeRestDataService>();

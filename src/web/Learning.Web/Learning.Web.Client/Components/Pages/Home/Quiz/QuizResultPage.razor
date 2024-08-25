@@ -1,0 +1,60 @@
+﻿@page "/quiz/result"
+@using Blazored.LocalStorage
+@using Learning.Shared.Common.Utilities
+@using Learning.Shared.Dto.Quiz.QuickTest.Public
+@using Learning.Shared.Enums
+@using Learning.Web.Client.Contracts.Persistance
+@using Learning.Web.Client.Contracts.Services.Quiz
+@using Learning.Web.Client.Contracts.Services.Subscription
+@using Learning.Web.Client.Dto.Quiz
+@using Learning.Web.Client.Impl.Persistance
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizResultComponent
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestOptionComponent
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestQuestionComponent
+@rendermode InteractiveWebAssembly
+@inject IQuizManager QuizManager; 
+<AppPage BackgroundColor="var(--green-gray-50)">
+    <MudContainer MaxWidth="MaxWidth.Medium" Style="height: auto">
+        @if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+        {
+            <QuizResultComponent Result="Result" />
+        }
+        else
+        {
+            <QuizPageLoaderComponent />
+        }
+    </MudContainer>
+</AppPage>
+
+@code {
+    QuizAttempStatusEnum quizAttempStatusEnum;
+    ResultModel Result = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var config = await QuizManager.GetQuizModel();
+        quizAttempStatusEnum = config.Status;
+
+        if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
+        {
+            NavigationManager.NavigateTo("quiz");
+        }
+        else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+        {
+            Result.MarkScored = config.MarkScored;
+            Result.MaxScore = config.TotalMark;
+            Result.Discount = config.TotalDiscount;
+            Result.CouponCode = config.DiscountCode;
+        }
+        else
+        {
+            quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
+            Result.MarkScored = 0;
+            Result.MaxScore = config?.TotalMark;
+            Result.Discount = 0;
+            Result.CouponCode = string.Empty;
+        }
+        StateHasChanged();
+    }
+}
