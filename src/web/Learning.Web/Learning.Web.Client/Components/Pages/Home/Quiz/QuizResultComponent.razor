@@ -1,0 +1,59 @@
+﻿@using Learning.Web.Client.Contracts.Interop
+@inject IAppJSInterop JSInterop
+@if (Result.Discount > 0)
+{
+    <MudStack AlignItems="AlignItems.Center">
+        <MudText Typo="Typo.h4"><b>Congratulations!</b></MudText>
+        <MudText Typo="Typo.body1" Align="Align.Center">You scored <b>@Result.MarkScored</b> out of @Result.MaxScore. Just use the code to avail the discount.</MudText>
+
+        <MudPaper Elevation="10" Class="rounded-xl pa-10 my-10" Style="background-color: #b7d6ad">
+            <MudText Typo="Typo.h1" Align="Align.Center"><b>@Result.Discount%</b></MudText>
+        </MudPaper>
+        <div class="gap-3 d-flex flex-column">
+            <MudPaper Class="border-dashed border-2  pa-4" Style=@($"border-color: {Colors.Green.Darken4}")
+                      Elevation="0">
+                <b>@Result.CouponCode</b>
+            </MudPaper>
+            <MudButton EndIcon="@_copyCouponCodeIcon"
+                       Class="mud-typography-caption"
+                       OnClick="CopyToClipboard">@_copyCouponCodeButtonName</MudButton>
+        </div>
+    </MudStack>
+}
+else
+{
+    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Class="h-100">
+        <MudText Typo="Typo.h1"><b>Better luck next time!</b></MudText>
+        <MudText Typo="Typo.body1" Align="Align.Center">
+            You scored <b>@Result.MarkScored</b> out of @Result.MaxScore.
+        </MudText>
+        <MudText Typo="Typo.body1" Align="Align.Center">
+            You can try again after a month and score maximum mark to get the best discount.
+        </MudText>
+
+    </MudStack>
+}
+@code {
+    [Parameter]
+    public required ResultModel Result { get; set; }
+
+    private string _copyCouponCodeButtonName = "Copy Coupon Code";
+    private string _copyCouponCodeIcon = Icons.Material.Rounded.CopyAll;
+    private async Task CopyToClipboard()
+    {
+        if (Result == null) return;
+        await JSInterop.CopyTextToClipboard(Result.CouponCode ?? string.Empty);
+        _copyCouponCodeButtonName = "Copied";
+        _copyCouponCodeIcon = Icons.Material.Rounded.Done;
+    }
+
+    #region Model
+    public class ResultModel
+    {
+        public int? MaxScore { get; set; }
+        public int? MarkScored { get; set; }
+        public int? Discount { get; set; }
+        public string? CouponCode { get; set; }
+    }
+    #endregion
+}

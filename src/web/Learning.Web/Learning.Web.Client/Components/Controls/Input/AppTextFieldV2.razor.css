@@ -1,0 +1,18 @@
+﻿.app-text-field-label ::deep {
+    margin: 0px !important;
+    font-size: 12px !important;
+}
+
+.app-text-field-input ::deep {
+    height: 34px !important;
+    padding: 10px !important;
+    padding-left: 0px !important;
+    font-size: 14px !important;
+    background-color: transparent !important;
+    border-bottom: 1px solid #123231 !important;
+}
+
+.app-text-field-input:focus-visible ::deep {
+    outline: none !important;
+    border-color: var(--mud-palette-primary) !important;
+}

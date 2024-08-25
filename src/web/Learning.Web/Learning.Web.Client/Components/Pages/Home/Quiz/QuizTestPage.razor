@@ -1,0 +1,161 @@
+﻿@page "/quiz/take"
+@using Blazored.LocalStorage
+@using Learning.Shared.Common.Utilities
+@using Learning.Shared.Dto.Quiz.QuickTest.Public
+@using Learning.Shared.Enums
+@using Learning.Web.Client.Contracts.Persistance
+@using Learning.Web.Client.Contracts.Services.Quiz
+@using Learning.Web.Client.Contracts.Services.Subscription
+@using Learning.Web.Client.Dto.Quiz
+@using Learning.Web.Client.Impl.Persistance
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizResultComponent
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestOptionComponent
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestQuestionComponent
+@rendermode InteractiveWebAssembly
+@inject IQuizManager QuizManager
+@inject IBrowserStorage LocalStorage
+@inject IQuizDataService QuizDataService
+@inject ICouponCodeDataService CouponCodeDataService
+<MudDialogProvider />
+<AppPage BackgroundColor="var(--green-gray-50)">
+    <MudContainer MaxWidth="MaxWidth.Medium" Style="height: auto">
+        <MudGrid>
+            <MudItem xs="12">
+                @if (_quizMetaData != null && !Result.MarkScored.HasValue)
+                {
+                    @foreach (var question in _questions)
+                    {
+                        if (_currentQuestionNumer == question.QuestionNumber)
+                        {
+                            <QuizTestQuestionComponent Question="question"
+                                                       TotalQuestions="_quizMetaData.TotalQuestions"
+                                                       IsActiveQuestion="@((question.QuestionNumber == _currentQuestionNumer)|| question.Answered)"
+                                                       OnAnswerSubmit="AnswerSubmitted" />
+                        }
+                    }
+                }
+                else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+                {
+                    <QuizResultComponent Result="Result" />
+                }
+                else
+                {
+                    <QuizPageLoaderComponent />
+                }
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</AppPage>
+
+@code {
+    QuizMetaDataDto? _quizMetaData;
+    List<QuestionDto>? _questions = null;
+    int _currentQuestionNumer = 1;
+
+    QuizAttempStatusEnum quizAttempStatusEnum;
+    ResultModel Result = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var config = await GetModel();
+        quizAttempStatusEnum = config.Status;
+
+        _quizMetaData = (await QuizDataService.GetQuizMetaData()).Value;
+
+        if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
+        {
+            config = InitQuiz();
+            await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
+        }
+        else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+        {
+            Result.MarkScored = config.MarkScored;
+            Result.MaxScore = _quizMetaData?.TotalMarks;
+            Result.Discount = config.TotalDiscount;
+            Result.CouponCode = config.DiscountCode;
+        }
+        else if (_quizMetaData.QuizVersionNumber != config.QuizVersionNumber)
+        {
+            config = InitQuiz();
+            await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
+        }
+        else
+        {
+            quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
+            Result.MarkScored = 0;
+            Result.MaxScore = _quizMetaData?.TotalMarks;
+            Result.Discount = 0;
+            Result.CouponCode = string.Empty;
+        }
+
+        _questions = new List<QuestionDto>(_quizMetaData?.TotalQuestions ?? 0);
+        for (int i = 0; i < _quizMetaData.TotalQuestions; i++)
+        {
+            _questions.Add(new()
+                {
+                    Mark = 0,
+                    Question = string.Empty,
+                    QuestionId = 0,
+                    QuestionImage = null,
+                    QuestionNumber = i + 1,
+                    TimeLimitInSeconds = 0,
+                    Answered = false,
+                    QuizConfigId = _quizMetaData.QuizConfigId
+                });
+        }
+
+        StateHasChanged();
+    }
+
+    private QuizLocalStorageModel InitQuiz()
+    {
+        QuizLocalStorageModel config = new();
+        config.Status = QuizAttempStatusEnum.Started;
+        config.QuizVersionNumber = _quizMetaData.QuizVersionNumber;
+        config.TotalMark = _quizMetaData.TotalMarks;
+        config.CurrentQuestionNumber = 1;
+        config.MarkScored = 0;
+        config.TotalDiscount = 0;
+        config.DiscountCode = null;
+
+        return config;
+    }
+
+    private async Task AnswerSubmitted(int questionNumber)
+    {
+        if (questionNumber < _quizMetaData?.TotalQuestions)
+        {
+            _currentQuestionNumer = questionNumber + 1;
+        }
+        else
+        {
+            var config = await GetModel();
+            config = QuizManager.FinishQuiz(config, _quizMetaData?.TotalDiscount ?? 0);
+            await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
+            quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
+            Result.MaxScore = config.TotalMark;
+            Result.MarkScored = config.MarkScored;
+            Result.Discount = config.TotalDiscount;
+            Result.CouponCode = config.DiscountCode;
+
+            var result = await CouponCodeDataService.SaveCouponCode(config.DiscountCode ?? throw new ArgumentNullException(), config.TotalDiscount);
+            if (result.IsFailed)
+            {
+                Console.WriteLine("oops! something went wrong.");
+            }
+        }
+    }
+
+    private async Task<QuizLocalStorageModel> GetModel()
+    {
+        try
+        {
+            return await LocalStorage.Get<QuizLocalStorageModel>(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey) ?? new();
+        }
+        catch
+        {
+            return new QuizLocalStorageModel();
+        }
+    }
+}

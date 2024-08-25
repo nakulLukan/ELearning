@@ -1,5 +1,5 @@
-﻿using Learning.Business.Contracts.HttpContext;
-using Learning.Shared.Common.Constants;
+﻿using Learning.Shared.Common.Constants;
+using Learning.Shared.Contracts.HttpContext;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Learning.Web.Client.Impl.HttpContext;

@@ -1,0 +1,11 @@
+﻿using Learning.Shared.Common.Dto;
+using Learning.Shared.Dto.DataCollection.ContactUsRequest;
+using Refit;
+
+namespace Learning.Web.Client.Services.WebServices;
+
+public interface IDataCollectionRestService
+{
+    [Post("/api/data-collection/add-contact-info")]
+    public Task<ResponseDto<long>> AddContactInformation([Body] AddContactInformationCommandRequestDto request);
+}

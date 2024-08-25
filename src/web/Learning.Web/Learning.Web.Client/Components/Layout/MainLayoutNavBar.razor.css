@@ -3,6 +3,7 @@
     height: 48px; /* Adjust the height as needed */
     width: auto;
     margin-right: 5px;
+    padding:4px
 }
 .mud-primary-text {
     color: white !important;

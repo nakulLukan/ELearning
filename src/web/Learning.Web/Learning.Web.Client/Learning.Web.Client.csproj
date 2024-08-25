@@ -9,31 +9,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Startup\appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Components\Pages\PublicUser\UserHomePage.razor" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor.SubtleCrypto" Version="6.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.6" />
     <PackageReference Include="MudBlazor" Version="7.0.0" />
+    <PackageReference Include="Refit" Version="7.1.2" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\Learning.Shared.Application\Learning.Shared.Application.csproj" />
-    <ProjectReference Include="..\..\Learning.Business\Learning.Business.csproj" />
     <ProjectReference Include="..\..\Learning.Shared\Learning.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Components\Pages\ExamNotification\ExamNotificationsPage.razor">
+    <Content Update="Components\Controls\Input\AppTextFieldV2.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\Persistence\" />
   </ItemGroup>
 
 

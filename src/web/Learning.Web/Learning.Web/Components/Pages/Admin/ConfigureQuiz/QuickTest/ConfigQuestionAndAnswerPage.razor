@@ -61,7 +61,9 @@
                 MaxDiscountPercentage = quizConfiguration.MaxDiscountPercentage ?? 10,
                 QuizVersionNumber = quizConfiguration.QuizVersionNumber
             };
-        OpenSelectedQuestion(currentQuestionNumber > 0 ? currentQuestionNumber : quizConfiguration.Questions?.Min(x => x.Order) ?? 0);
+
+        // If configuring for first time then set the question number to 1
+        OpenSelectedQuestion(currentQuestionNumber > 0 ? currentQuestionNumber : quizConfiguration.Questions != null && quizConfiguration.Questions.Any() ? quizConfiguration.Questions.Min(x => x.Order) : 1);
         _totalQuestions = quizConfiguration.Questions?.Count() ?? 0;
         _totalMarks = quizConfiguration.Questions?.Sum(x => x.Mark) ?? 0;
         _totalTimeInSeconds = quizConfiguration.Questions?.Sum(x => x.TimeLimitInSeconds) ?? 0;

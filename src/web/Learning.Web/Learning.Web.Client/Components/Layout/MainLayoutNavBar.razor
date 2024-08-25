@@ -1,9 +1,8 @@
 ﻿@rendermode InteractiveAuto
-
 <MudAppBar WrapContent Gutters="false">
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-        <MudButton Href="/">
-            <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1"><b>@UIConstant.AppName</b></MudText>
+        <MudButton Href="/" Class="no-link">
+            <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1" Color="Color.Dark"><b>@UIConstant.AppName</b></MudText>
         </MudButton>
 
         <MudSpacer />
@@ -15,8 +14,8 @@
     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Class="fixed" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
         <MudSpacer></MudSpacer>
-        <MudButton Href="/" Class="align-self-center">
-            <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1"><b>@UIConstant.AppName</b></MudText>
+        <MudButton Href="/" Class="align-self-center no-link">
+            <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1" Color="Color.Dark"><b>@UIConstant.AppName</b></MudText>
         </MudButton>
         <MudSpacer></MudSpacer>
     </MudHidden>

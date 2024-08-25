@@ -2,16 +2,13 @@
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Extensions;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Dto.DataCollection.ContactUsRequest;
 using MediatR;
 
 namespace Learning.Business.Requests.DataCollection.ContactUsRequest;
 
-public class AddContactInformationCommand : IRequest<ResponseDto<long>>
+public class AddContactInformationCommand : AddContactInformationCommandRequestDto, IRequest<ResponseDto<long>>
 {
-    public required string Name { get; set; }
-    public required string CountryCode { get; set; }
-    public required string ContactNumber { get; set; }
-    public string? EmailAddress { get; set; }
 }
 public class AddContactInformationCommandHandler : IRequestHandler<AddContactInformationCommand, ResponseDto<long>>
 {

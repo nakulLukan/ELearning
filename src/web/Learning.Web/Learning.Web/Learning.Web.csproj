@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\Learning.Infrastructure\Learning.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Learning.Shared\Learning.Shared.csproj" />
     <ProjectReference Include="..\Learning.Web.Client\Learning.Web.Client.csproj" />
+    <PackageReference Include="Blazor.SubtleCrypto" Version="6.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="MediatR" Version="12.3.0" />
@@ -27,6 +28,8 @@
     </PackageReference>
 
     <PackageReference Include="MudBlazor" Version="7.0.0" />
+
+    <PackageReference Include="Refit" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>

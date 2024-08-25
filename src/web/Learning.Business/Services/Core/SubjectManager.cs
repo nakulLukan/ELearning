@@ -1,8 +1,8 @@
-﻿using Learning.Business.Contracts.HttpContext;
-using Learning.Business.Impl.Data;
+﻿using Learning.Business.Impl.Data;
 using Learning.Domain.Subscription;
 using Learning.Shared.Common.Extensions;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Contracts.HttpContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

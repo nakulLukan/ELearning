@@ -1,0 +1,225 @@
+﻿@using Blazored.LocalStorage
+@using Learning.Web.Client.Contracts.Persistance
+@using Learning.Web.Client.Contracts.Services.Quiz
+@using Learning.Web.Client.Dto.Quiz
+@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestOptionComponent
+@inject IQuizDataService QuizDataService
+@inject IQuizManager QuizManager
+@inject IBrowserStorage LocalStorageService
+@inject IDialogService DialogService
+
+<style>
+    .mud-radio-button, .mud-ripple-radio {
+        display: none; /* Hides the default radio button */
+    }
+
+    .mud-radio, .mud-radio-content {
+        color: inherit;
+    }
+
+        .mud-radio > .mud-radio-content {
+            color: inherit;
+        }
+</style>
+@if (Question != null && Question.Options != null)
+{
+    <MudStack>
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Start" Spacing="0">
+            <MudText Typo="Typo.h6">Question <b>@Question.QuestionNumber</b></MudText>
+            <QuizTimerComponent @ref=_timerComponent @bind-TimerInSeconds="@Question.TimeLimitInSeconds" />
+        </MudStack>
+        <MudStack Spacing="3" Class="rounded-lg pa-6 text-center gap-2" Elevation="0" Style="background-color: var(--green-gray-200)">
+            <MudText Typo="Typo.h4" Align="Align.Center"><b>@Question.Question</b></MudText>
+            @if (!string.IsNullOrEmpty(Question.QuestionImage))
+            {
+                <div>
+                    <MudImage Class="rounded-lg" Src="@Question.QuestionImage" Height="128"></MudImage>
+                </div>
+            }
+        </MudStack>
+        <MudRadioGroup T="int" @bind-Value="@Question.SelectedOptionOrder"
+                       ReadOnly="@IsOptionLocked()">
+
+            <MudGrid Justify="Justify.Center" Spacing="3">
+                @if (Question.Options != null)
+                {
+                    @foreach (var option in Question.Options)
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudPaper Class="rounded-lg px-4 py-2"
+                                      Style="@GetOptionStyle(option)"
+                                      Outlined>
+                                <MudRadio Value="option.Order" Placement="Placement.End" Class="ma-0 d-flex justify-center pa-3">
+                                    <QuizTestOptionComponent Option="option" />
+                                </MudRadio>
+                            </MudPaper>
+
+                        </MudItem>
+                    }
+                }
+            </MudGrid>
+        </MudRadioGroup>
+        <div class="text-center">
+            <MudButton OnClick="AnswerSubmit"
+                       Variant="Variant.Outlined"
+                       Size="Size.Large"
+                       FullWidth
+                       Class="pa-4"
+                       EndIcon="@Icons.Material.Rounded.Done">@GetNextText()</MudButton>
+        </div>
+
+    </MudStack>
+}
+@code {
+    [EditorRequired]
+    [Parameter]
+    public QuestionDto? Question { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public int TotalQuestions { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnAnswerSubmit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public bool IsActiveQuestion { get; set; }
+    private bool lastIsActiveQuestion = false;
+
+    QuizTimerComponent? _timerComponent = null;
+    const string OptionDefaultStyle = "background-color: var(--mud-palette-background-gray)";
+    readonly string _selectedAnswerStyle = $"background-color: var(--green-gray-200)";
+    // readonly string _correctAnswerColor = $"background-color: {Colors.Green.Lighten1}; color: {Colors.Shades.White}";
+    // readonly string _wrongAnswerColor = $"background-color: {Colors.Red.Lighten1}; color: {Colors.Shades.White}";
+
+    private bool hasSubmitted = false;
+
+    private string GetOptionStyle(OptionDto option)
+    {
+        if (option.Order == Question!.SelectedOptionOrder)
+        {
+            return _selectedAnswerStyle;
+        }
+        else
+        {
+            return OptionDefaultStyle;
+        }
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        if (Question == null || Question.QuestionId == 0)
+        {
+            return;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (lastIsActiveQuestion != IsActiveQuestion)
+        {
+            if (Question != null && Question.QuestionId == 0)
+            {
+                // Reset Question Data
+                Reset();
+                var result = await QuizDataService.GetQuestionByNumber(Question.QuizConfigId, Question.QuestionNumber);
+                if (result.IsFailed)
+                {
+                    return;
+                }
+                var questionData = result.Value;
+                Question.QuestionId = questionData.QuestionId;
+                Question.Question = questionData.Question;
+                Question.Mark = questionData.Mark;
+                Question.QuestionImage = questionData.QuestionImageAbsUrl;
+                Question.TimeLimitInSeconds = questionData.TimeLimitInSeconds;
+
+                Question.Options = questionData.Options.Select(x => new OptionDto
+                    {
+                        IsCorrectAnswer = x.IsCorrectOption,
+                        Option = x.OptionText,
+                        OptionAbsUrl = x.OptionImageAbsUrl,
+                        OptionId = x.OptionId,
+                        Order = x.Order,
+                    }).ToArray();
+            }
+        }
+    }
+
+    private void Reset()
+    {
+        hasSubmitted = false;
+    }
+
+    private async Task AnswerSubmit()
+    {
+        _timerComponent?.Pause();
+        hasSubmitted = true;
+        await MarkUserResponse();
+        _timerComponent?.TurnOff();
+        if (OnAnswerSubmit.HasDelegate && Question != null)
+        {
+            Question.Answered = true;
+            await OnAnswerSubmit.InvokeAsync(Question.QuestionNumber);
+        }
+    }
+
+    private async Task MarkUserResponse()
+    {
+        var config = await LocalStorageService.Get<QuizLocalStorageModel>(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey)
+        ?? throw new ArgumentNullException();
+        var correctOption = Question.Options.First(x => x.IsCorrectAnswer);
+        int score = correctOption.Order == Question.SelectedOptionOrder ? Question.Mark : 0;
+        config = QuizManager.SubmitQuestionScore(config, Question.QuestionNumber, score);
+
+        await LocalStorageService.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
+        var parameters = new DialogParameters<QuizFeedbackAlert>
+            {
+                { x => x.DidChoseCorrectionOption, score > 0 },
+                { x => x.CorrectOption, correctOption},
+            };
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = false,
+                CloseButton = false,
+                BackdropClick = false,
+                FullWidth = false,
+                NoHeader = true
+            };
+        var dialog = await DialogService.ShowAsync<QuizFeedbackAlert>(string.Empty, parameters, options);
+        await dialog.Result;
+    }
+
+    private string GetNextText()
+    {
+        if (hasSubmitted)
+        {
+            return TotalQuestions != Question.QuestionNumber ? "Next Question" : "Finish";
+        }
+        else
+        {
+            return IsOptionLocked() ? "Next Question" : "Confirm";
+        }
+    }
+
+    private bool IsOptionLocked()
+    {
+        return (Question.TimeLimitInSeconds <= 0) || hasSubmitted;
+    }
+    #region Model
+    public class QuestionDto
+    {
+        public required int QuizConfigId { get; set; }
+        public required int QuestionId { get; set; }
+        public required int QuestionNumber { get; set; }
+        public required string Question { get; set; }
+        public required string? QuestionImage { get; set; }
+        public required int Mark { get; set; }
+        public required int TimeLimitInSeconds { get; set; }
+        public bool Answered { get; set; }
+        public int SelectedOptionOrder { get; set; }
+        public OptionDto[]? Options { get; set; }
+    }
+    #endregion
+}

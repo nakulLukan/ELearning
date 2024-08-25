@@ -1,8 +1,8 @@
-﻿using Learning.Business.Contracts.HttpContext;
-using Learning.Business.Dto.VideoPlayback;
+﻿using Learning.Business.Dto.VideoPlayback;
 using Learning.Business.Impl.Data;
 using Learning.Business.Services.Core;
 using Learning.Shared.Common.Extensions;
+using Learning.Shared.Contracts.HttpContext;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

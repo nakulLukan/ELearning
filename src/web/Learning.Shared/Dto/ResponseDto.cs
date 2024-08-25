@@ -1,4 +1,5 @@
 ﻿using Learning.Shared.Enums;
+using System.Text.Json.Serialization;
 
 namespace Learning.Shared.Common.Dto;
 public class ResponseDto<TData>
@@ -11,6 +12,7 @@ public class ResponseDto<TData>
 
     public FormError? FormError { get; set; }
 
+    [JsonConstructor]
     public ResponseDto(TData data)
     {
         Data = data;

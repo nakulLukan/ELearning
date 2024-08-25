@@ -1,5 +1,5 @@
 ﻿using Learning.Business.Contracts.Services.ExamNotification;
-using Learning.Business.Dto.Notifications.ExamNotification;
+using Learning.Shared.Dto.Notifications.ExamNotification;
 using MediatR;
 
 namespace Learning.Business.Requests.Notifications.ExamNotification;

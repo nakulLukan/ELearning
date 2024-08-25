@@ -30,12 +30,15 @@
     <script src="js/main.js" ></script>
 </body>
 
-<script>
-    // window.Blazor.addEventListener("enhancedload", () => {
-    //     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
-    // });
-</script>
 </html>
+<script>
+    window.Blazor.addEventListener("enhancedload", () => {
+        const appPageElement = document.getElementById('appPage');
+        if (appPageElement != null) {
+            appPageElement.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        }
+    });
+</script>
 @code {
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;

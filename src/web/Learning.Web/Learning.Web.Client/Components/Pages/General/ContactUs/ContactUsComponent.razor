@@ -1,9 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
-@using Learning.Business.Requests.DataCollection.ContactUsRequest
 @using Learning.Shared.Constants
+@using Learning.Shared.Dto.DataCollection.ContactUsRequest
 @using Learning.Web.Client.Contracts.Presentation
-@using MediatR
-@inject IMediator Mediator;
+@using Learning.Web.Client.Contracts.Services.DataCollection
+@using Learning.Web.Client.Dto.ContactUs
+@inject IContactUsDataService ContactUsDataService
 <MudContainer MaxWidth="MaxWidth.Small">
     <EditForm Model="@Model"
               OnValidSubmit="OnValidSubmit"
@@ -62,7 +63,7 @@
     {
         try
         {
-            var requestId = await Mediator.Send(new AddContactInformationCommand()
+            var requestId = await ContactUsDataService.AddContactInformation(new AddContactInformationCommandRequestDto()
                 {
                     ContactNumber = Model.ContactNumber,
                     CountryCode = "+91",
@@ -74,22 +75,5 @@
             StateHasChanged();
         }
         catch { }
-    }
-
-
-    public class ContactUsModel
-    {
-        [Required(ErrorMessage = "'Name' is required.")]
-        [MaxLength(50)]
-        public string Name { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "'Contact Number' is required.")]
-        [Phone]
-        [MaxLength(15)]
-        public string ContactNumber { get; set; } = string.Empty;
-
-        [RegularExpression(RegexExpConst.GeneralEmailAddress, ErrorMessage = RegexExpConst.GeneralEmailAddressMessage)]
-        [MaxLength(200)]
-        public string? EmailAddress { get; set; }
     }
 }

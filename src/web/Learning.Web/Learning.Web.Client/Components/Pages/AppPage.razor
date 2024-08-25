@@ -1,0 +1,15 @@
+﻿@using Learning.Web.Client.Contracts.Interop
+@using Learning.Web.Client.Impl.Interop
+@inject NavigationManager Navigation
+@inject IAppJSInterop AppJSInterop
+<div style="background-color: @BackgroundColor; height:100%; padding: inherit; padding-bottom:10px; overflow-y:auto" id="appPage">
+    @ChildContent
+</div>
+@code {
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "var(--green-gray-50)";
+}

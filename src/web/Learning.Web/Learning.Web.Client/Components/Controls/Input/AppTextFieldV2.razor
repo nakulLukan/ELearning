@@ -1,0 +1,22 @@
+﻿@using System.Linq.Expressions
+@typeparam TValue
+@inherits InputBase<string>
+<MudStack Spacing="0">
+    <label for="@Id" class="app-text-field-label"><b>@Label</b></label>
+    <input class="app-text-field-input @CssClass" id="@Id" @bind="@CurrentValue" />
+    <ValidationMessage For="For"></ValidationMessage>
+</MudStack>
+
+@code {
+
+    [Parameter, EditorRequired] public Expression<Func<TValue>> For { get; set; } = default!;
+    [Parameter] public string? Id { get; set; }
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
+}

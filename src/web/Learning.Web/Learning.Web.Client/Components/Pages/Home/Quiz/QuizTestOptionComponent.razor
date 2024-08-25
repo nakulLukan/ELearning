@@ -1,0 +1,25 @@
+﻿@if (!string.IsNullOrEmpty(Option.Option))
+{
+    <MudText Typo="Typo.body2"><b>@Option.Option</b></MudText>
+}
+else if (Option.OptionAbsUrl != null)
+{
+    <MudImage Class="rounded-lg" Src="@Option.OptionAbsUrl" Height="128"></MudImage>
+}
+
+@code {
+    [EditorRequired]
+    [Parameter]
+    public OptionDto? Option { get; set; }
+
+    #region Model
+    public class OptionDto
+    {
+        public required int OptionId { get; set; }
+        public required string? Option { get; set; }
+        public required string? OptionAbsUrl { get; set; }
+        public required int Order { get; set; }
+        public required bool IsCorrectAnswer { get; set; }
+    }
+    #endregion
+}
