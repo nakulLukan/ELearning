@@ -1,8 +1,20 @@
 ﻿::deep .mud-image {
-    height: 70vh !important;
+    height: 40vh !important;
 }
 
 ::deep .mud-paper {
     background-color: #fdfdfde8 !important;
-    border-radius: 15px !important;
+    height: auto;
+}
+@media (min-width: 768px){
+
+    ::deep .carousel-caption {
+        position: absolute;
+        right: 15%;
+        bottom: 0;
+        top:0;
+        left: auto;
+        max-width: 30%;
+        text-align: start;
+    }
 }

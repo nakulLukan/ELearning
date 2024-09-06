@@ -28,7 +28,10 @@ public class RequestContext : IRequestContext
 
     public async Task<(bool IsAuthenticated, bool IsAdmin)> IsLoggedIn()
     {
-        await Init();
+        if (!await IsAuthenticated())
+        {
+            return (false, false);
+        }
         var isAuth = _authState.User.Identity.IsAuthenticated;
         var isAdmin = false;
         if (isAuth)
@@ -48,14 +51,14 @@ public class RequestContext : IRequestContext
 
     public async Task<string> GetUserId()
     {
-        await Init();
+        if (!await IsAuthenticated()) return string.Empty;
         var userIdClaim = _authState.User.Claims.First(x => x.Type == ClaimConstant.AwsUserNameClaim);
         return userIdClaim.Value;
     }
 
     public async Task<string> GetUserRole()
     {
-        await Init();
+        if (!await IsAuthenticated()) return string.Empty;
         var userRole = _authState.User.Claims.First(x => x.Type == ClaimConstant.AwsRoleClaim);
         return userRole.Value;
     }

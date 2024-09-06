@@ -2,7 +2,7 @@
 @using Learning.Web.Client.Impl.Interop
 @inject NavigationManager Navigation
 @inject IAppJSInterop AppJSInterop
-<div style="background-color: @BackgroundColor; height:100%; padding: inherit; padding-bottom:10px; overflow-y:auto" id="appPage">
+<div style="background-color: @BackgroundColor; min-height:100%; padding: inherit; padding-bottom:10px; overflow-y:auto" id="appPage">
     @ChildContent
 </div>
 @code {

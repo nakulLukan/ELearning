@@ -1,5 +1,5 @@
 ﻿@rendermode InteractiveAuto
-<MudAppBar WrapContent Gutters="false">
+<MudAppBar WrapContent Gutters="false" Class="mr-2">
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
         <MudButton Href="/" Class="no-link">
             <img src="assets/images/bts_icon.ico" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1" Color="Color.Dark"><b>@UIConstant.AppName</b></MudText>
@@ -8,8 +8,8 @@
         <MudSpacer />
         <MudButton Href="/exam-notifications" >Exam Notifications</MudButton>
         <MudButton Href="/quiz" >Quiz</MudButton>
-        <MudButton Href="/contacts">Contacts</MudButton>
-        <MudButton Href="/about">About</MudButton>
+        <MudButton Href="/contacts-us">Contact Us</MudButton>
+        <MudButton Href="/about-us">About Us</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Class="fixed" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
@@ -26,13 +26,13 @@
            Variant="DrawerVariant.Temporary"
            @bind-Open=_openDrawer>
     <MudDrawerHeader>
-        <MudText Typo="Typo.h6">BTS Academy</MudText>
+        <MudText Typo="Typo.h6">@UIConstant.AppName</MudText>
     </MudDrawerHeader>
     <MudNavMenu>
         <MudNavLink Href="/exam-notifications">Exam Notifications</MudNavLink>
         <MudNavLink Href="/quiz">Quiz</MudNavLink>
-        <MudNavLink Href="/contacts" >Contacts</MudNavLink>
-        <MudNavLink Href="/about" >About</MudNavLink>
+        <MudNavLink Href="/contact-us" >Contact Us</MudNavLink>
+        <MudNavLink Href="/about-us" >About Us</MudNavLink>
     </MudNavMenu>
 </MudDrawer>
 @code {

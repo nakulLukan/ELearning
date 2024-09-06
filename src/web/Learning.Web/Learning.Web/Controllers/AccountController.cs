@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
         // Construct the Cognito sign-out URL
         var cognitoDomain = _configuration["Oidc:Domain"];
         var clientId = _configuration["Oidc:ClientId"];
-        var signOutRedirectUri = "https://localhost:7001/";
+        var signOutRedirectUri = "https://localhost:5000/";
 
         var cognitoSignOutUrl = $"{cognitoDomain}/logout?client_id={clientId}&logout_uri={signOutRedirectUri}";
 

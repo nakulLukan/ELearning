@@ -2,16 +2,7 @@
 @using MediatR
 @inject IMediator Mediator
 
-<div id="exam-notififcation-carousel" class="carousel slide" data-ride="carousel" data-interval="5000">
-    <ol class="carousel-indicators">
-        @foreach (var notification in _examNotifications)
-        {
-            string activeClass = _examNotifications.IndexOf(notification) == 0 ? "active" : string.Empty;
-            <li data-target="#exam-notififcation-carousel"
-                data-slide-to="@_examNotifications.IndexOf(notification)"
-                class="@activeClass"></li>
-        }
-    </ol>
+<div id="examNotififcationCarousel" class="carousel slide" data-bs-ride="carousel" data-interval="5000">
     <div class="carousel-inner">
         @foreach (var notification in _examNotifications)
         {
@@ -21,8 +12,8 @@
                           Src="@notification.ImagePath"
                           Alt="Exam-Notification"
                           ObjectFit="ObjectFit.Cover"></MudImage>
-                <div class="carousel-caption">
-                    <MudPaper Class="p-4" Elevation="5">
+                <div class="carousel-caption d-flex align-items-center">
+                    <MudPaper Class="p-3">
                         <MudText Typo="Typo.h6"> @notification.Title</MudText>
                         <MudText Typo="Typo.caption">@notification.Description</MudText>
                         <MudButton Class="d-block mt-4 "
@@ -33,7 +24,14 @@
             </div>
         }
     </div>
-
+    <button class="carousel-control-prev" type="button" data-bs-target="#examNotififcationCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#examNotififcationCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 
 @code {
