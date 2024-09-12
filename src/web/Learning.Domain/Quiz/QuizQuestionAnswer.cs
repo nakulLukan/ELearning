@@ -9,7 +9,7 @@ public class QuizQuestionAnswer
     public required string? AnswerText { get; set; }
     public required long? AnswerImageId { get; set; }
     public required int Order { get; set; }
-    public required QuizAnswerType AnswerType { get; set; }
+    public required AnswerType AnswerType { get; set; }
     public required int QuizQuestionId { get; set; }
     public required bool IsCorrectAnswer { get; set; }
 

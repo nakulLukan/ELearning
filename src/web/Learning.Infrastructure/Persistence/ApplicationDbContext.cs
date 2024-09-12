@@ -33,6 +33,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
         );
 
         modelBuilder.SeedData();
+
+        modelBuilder.Entity<ExamNotification>().HasQueryFilter(x => x.IsActive);
+        modelBuilder.Entity<ModelExamConfiguration>().HasQueryFilter(x => x.ExamNotification!.IsActive);
     }
 
     public Task<int> SaveAsync(CancellationToken cancellationToken)
@@ -49,7 +52,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
         if (property.Body is MemberExpression memberExpression)
         {
             string propertyName = memberExpression.Member.Name;
-            entity.GetType().GetProperty(propertyName).SetValue(entity, value, null);
+            entity!.GetType()!.GetProperty(propertyName)!.SetValue(entity, value, null);
             Entry(entity).Property(propertyName).IsModified = true;
         }
     }
@@ -75,11 +78,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
     public DbSet<CouponCode> CouponCodes { get; set; }
     #endregion
-    public DbSet<ExamNotification> ExamNotifications { get; set; }
 
     #region Quiz
     public DbSet<QuizConfiguration> QuizConfigurations { get; set; }
     public DbSet<QuizQuestion> QuizQuestions { get; set; }
     public DbSet<QuizQuestionAnswer> QuizQuestionAnswers { get; set; }
+    #endregion
+
+    #region ExamNotifications
+    public DbSet<ExamNotification> ExamNotifications { get; set; }
+    public DbSet<ModelExamConfiguration> ModelExamConfigurations { get; set; }
+    public DbSet<ModelExamQuestionConfiguration> ModelExamQuestionConfigurations { get; set; }
+    public DbSet<ModelExamAnswerConfiguration> ModelExamAnswerConfigurations { get; set; }
+    public DbSet<ModelExamResult> ModelExamResults { get; set; }
+    public DbSet<ModelExamResultDetail> ModelExamResultDetails { get; set; }
+    public DbSet<ModelExamPurchaseHistory> ModelExamPurchaseHistory { get; set; }
     #endregion
 }

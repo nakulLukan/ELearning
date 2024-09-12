@@ -35,14 +35,21 @@ public interface IAppDbContext
     public DbSet<CouponCode> CouponCodes { get; set; }
     #endregion
 
-    public DbSet<ExamNotification> ExamNotifications { get; set; }
-
     #region Quiz
     public DbSet<QuizConfiguration> QuizConfigurations { get; set; }
     public DbSet<QuizQuestion> QuizQuestions { get; set; }
     public DbSet<QuizQuestionAnswer> QuizQuestionAnswers { get; set; }
     #endregion
 
+    #region ExamNotifications
+    public DbSet<ExamNotification> ExamNotifications { get; set; }
+    public DbSet<ModelExamConfiguration> ModelExamConfigurations { get; set; }
+    public DbSet<ModelExamQuestionConfiguration> ModelExamQuestionConfigurations { get; set; }
+    public DbSet<ModelExamAnswerConfiguration> ModelExamAnswerConfigurations { get; set; }
+    public DbSet<ModelExamResult> ModelExamResults { get; set; }
+    public DbSet<ModelExamResultDetail> ModelExamResultDetails { get; set; }
+    public DbSet<ModelExamPurchaseHistory> ModelExamPurchaseHistory { get; set; }
+    #endregion
 
     public void ClearChanges();
 

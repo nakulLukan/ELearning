@@ -14,6 +14,7 @@ public class ExamNotificationEFConfig : IEntityTypeConfiguration<Learning.Domain
         builder.Property(x => x.ImageRelativePath).IsRequired();
         builder.Property(x => x.GovtLink).IsRequired();
         builder.Property(x => x.ImportantPoints).IsRequired(false).HasMaxLength(1000);
+        builder.Property(x => x.IsActive).IsRequired().HasDefaultValue(true);
 
         builder.HasOne(x => x.Video)
             .WithOne()

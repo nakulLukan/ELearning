@@ -6,10 +6,11 @@
         </MudButton>
 
         <MudSpacer />
-        <MudButton Href="/exam-notifications" >Exam Notifications</MudButton>
-        <MudButton Href="/quiz" >Quiz</MudButton>
+        <MudButton Href="/exam-notifications">Exam Notifications</MudButton>
+        <MudButton Href="/quiz">Quiz</MudButton>
         <MudButton Href="/contacts-us">Contact Us</MudButton>
         <MudButton Href="/about-us">About Us</MudButton>
+        <MudButton Class="ml-4 mr-2" Href="/login">Login</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Class="fixed" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
@@ -31,9 +32,10 @@
     <MudNavMenu>
         <MudNavLink Href="/exam-notifications">Exam Notifications</MudNavLink>
         <MudNavLink Href="/quiz">Quiz</MudNavLink>
-        <MudNavLink Href="/contact-us" >Contact Us</MudNavLink>
-        <MudNavLink Href="/about-us" >About Us</MudNavLink>
+        <MudNavLink Href="/contact-us">Contact Us</MudNavLink>
+        <MudNavLink Href="/about-us">About Us</MudNavLink>
     </MudNavMenu>
+    <MudNavLink Href="/about-us">Login</MudNavLink>
 </MudDrawer>
 @code {
     private bool _openDrawer = false;

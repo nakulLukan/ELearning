@@ -144,7 +144,7 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         {
             Id = 0,
             AnswerText = option.AnswerText,
-            AnswerType = Shared.Common.Enums.QuizAnswerType.Mcq,
+            AnswerType = Shared.Common.Enums.AnswerType.Mcq,
             IsCorrectAnswer = order == request.CorrectOptionIndex,
             AnswerImageId = null,
             Order = order,

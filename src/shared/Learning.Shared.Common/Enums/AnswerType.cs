@@ -1,5 +1,5 @@
 ﻿namespace Learning.Shared.Common.Enums;
-public enum QuizAnswerType
+public enum AnswerType
 {
     Mcq = 1
 }

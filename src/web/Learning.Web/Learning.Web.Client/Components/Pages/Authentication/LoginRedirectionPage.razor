@@ -1,0 +1,11 @@
+﻿@page "/login"
+@attribute [Authorize]
+@rendermode InteractiveAuto
+@code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (!firstRender) return;
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
+}

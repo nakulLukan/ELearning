@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240908161329_ExamNotificationModelExamTables")]
+    partial class ExamNotificationModelExamTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -779,7 +782,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("ModelExamAnswerConfigurations");
+                    b.ToTable("ModelExamAnswerConfiguration");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamConfiguration", b =>
@@ -837,7 +840,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.HasIndex("ExamSolutionVideoId")
                         .IsUnique();
 
-                    b.ToTable("ModelExamConfigurations");
+                    b.ToTable("ModelExamConfiguration");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamPurchaseHistory", b =>
@@ -914,7 +917,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.HasIndex("QuestionImageId")
                         .IsUnique();
 
-                    b.ToTable("ModelExamQuestionConfigurations");
+                    b.ToTable("ModelExamQuestionConfiguration");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamResult", b =>
@@ -957,7 +960,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ExamConfigId");
 
-                    b.ToTable("ModelExamResults");
+                    b.ToTable("ModelExamResult");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamResultDetail", b =>
@@ -985,7 +988,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SelectedAnswerId");
 
-                    b.ToTable("ModelExamResultDetails");
+                    b.ToTable("ModelExamResultDetail");
                 });
 
             modelBuilder.Entity("Learning.Domain.Quiz.QuizConfiguration", b =>
@@ -1464,7 +1467,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Learning.Domain.Notification.ExamNotification", "ExamNotification")
                         .WithMany()
-                        .HasForeignKey("ExamNotificationId");
+                        .HasForeignKey("ExamNotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Learning.Domain.Master.Attachment", "ExamSolutionVideo")
                         .WithOne()
@@ -1481,7 +1486,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Learning.Domain.Notification.ModelExamConfiguration", "ExamConfig")
                         .WithMany()
-                        .HasForeignKey("ExamConfigId");
+                        .HasForeignKey("ExamConfigId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ExamConfig");
                 });
@@ -1490,7 +1497,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Learning.Domain.Notification.ModelExamConfiguration", "ExamConfig")
                         .WithMany("Questions")
-                        .HasForeignKey("ExamConfigId");
+                        .HasForeignKey("ExamConfigId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Learning.Domain.Master.Attachment", "QuestionImage")
                         .WithOne()
@@ -1505,14 +1514,16 @@ namespace Learning.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Learning.Domain.Notification.ModelExamConfiguration", "ExamConfig")
                         .WithMany()
-                        .HasForeignKey("ExamConfigId");
+                        .HasForeignKey("ExamConfigId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ExamConfig");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamResultDetail", b =>
                 {
-                    b.HasOne("Learning.Domain.Notification.ModelExamResult", null)
+                    b.HasOne("Learning.Domain.Notification.ModelExamResult", "ModelExamResult")
                         .WithMany("ModelExamResultDetails")
                         .HasForeignKey("ModelExamResultId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1527,6 +1538,8 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.HasOne("Learning.Domain.Notification.ModelExamAnswerConfiguration", "SelectedAnswer")
                         .WithMany()
                         .HasForeignKey("SelectedAnswerId");
+
+                    b.Navigation("ModelExamResult");
 
                     b.Navigation("Question");
 
