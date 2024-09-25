@@ -45,7 +45,7 @@ public class DeleteExamNotificationCommandHandler : IRequestHandler<DeleteExamNo
         }
 
         await _fileStorage.DeleteFileAsync(examNotification.ImageRelativePath);
-        _dbContext.ExamNotifications.Remove(examNotification);
+        examNotification.IsActive = false;
         await _dbContext.SaveAsync(cancellationToken);
         _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsKey);
         _appCache.DeleteKey(ExamNotificationCacheKey.ActiveNotificationsDetailKey);

@@ -1,0 +1,104 @@
+﻿@using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Admin
+@using Learning.Shared.Common.Extensions
+@inject NavigationManager NavigationManager
+@inherits AppBaseComponent
+<AppMudDataGrid T="ModelExamDto"
+                Items="@_modelExams"
+                Virtualize="true"
+                Groupable="false"
+                Bordered
+                ShowMenuIcon="false"
+                FixedHeader="true"
+                Dense
+                Hover
+                Striped
+                RowClass="cursor-pointer"
+                Loading="_isLoading"
+                RowClick="@((context)=> NavigationManager.NavigateTo($"/admin/exam-notifications/{ExamNotificationId}/model-exams/{context.Item.Id}"))"
+                Elevation="0">
+    <ToolBarContent>
+        <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Model Exams" /> <MudSpacer />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Href="@($"/admin/exam-notifications/{ExamNotificationId}/model-exams/0")">Create Model Exam</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="@(x => $"#{x.Id}")"
+                        Title="Reference"
+                        Filterable="false"
+                        Sortable="false" />
+        <PropertyColumn Property="x => x.ExamName"
+                        Title="Exam Name" />
+        <PropertyColumn Property="@(x => x.IsActive ? "Yes" : "No")"
+                        Title="Is Enabled"
+                        Sortable="false" />
+        <PropertyColumn Property="@(x => x.IsFree ? "Yes" : "No")"
+                        Title="Is Free"
+                        Sortable="false" />
+        <PropertyColumn Property="@(x => x.DiscountedPrice.ToCurrency())"
+                        Title="Discounted Price"
+                        Sortable="true" />
+        <PropertyColumn Property="@(x => x.TotalQuestions)"
+                        Title="No. of Questions"
+                        Sortable="true" />
+        <PropertyColumn Property="@(x => x.TotalTimeLimitInSeconds.ToDurationString())"
+                        Title="Total Time Limit"
+                        Sortable="true" />
+        <PropertyColumn Property="@(x => x.CreatedOn.ToLocalDateTimeString())"
+                        Title="CreatedOn"
+                        Sortable="true" />
+        <TemplateColumn>
+            <CellTemplate>
+                <div>
+                    <MudLink Color="Color.Primary" Href="@context.Item.SolutionVideoSignedUrl">Solution Link</MudLink>
+                </div>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <NoRecordsContent>
+        <NoRecordsComponent />
+    </NoRecordsContent>
+</AppMudDataGrid>
+@code {
+    [Parameter, EditorRequired]
+    public int ExamNotificationId { get; set; }
+
+    private ModelExamDto[] _modelExams = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _modelExams = (await Mediator.Send(new GetModelExamsQuery()
+            {
+                ExamNotificationId = ExamNotificationId
+            })).Select(x => new ModelExamDto
+            {
+                CreatedOn = x.CreatedOn,
+                DiscountedPrice = x.DiscountedPrice,
+                ExamName = x.ExamName,
+                ExamNotificationId = x.ExamNotificationId,
+                Id = x.Id,
+                IsActive = x.IsActive,
+                IsFree = x.IsFree,
+                SolutionVideoSignedUrl = x.SolutionVideoSignedUrl,
+                TotalQuestions = x.TotalQuestions,
+                TotalTimeLimitInSeconds = x.TotalTimeLimitInSeconds,
+            }).ToArray();
+        SetInitialized();
+    }
+
+
+    public class ModelExamDto
+    {
+        public required int Id { get; set; }
+        public required int ExamNotificationId { get; set; }
+        public required string ExamName { get; set; }
+        public required bool IsFree { get; set; }
+        public required float DiscountedPrice { get; set; }
+        public required bool IsActive { get; set; }
+        public required string SolutionVideoSignedUrl { get; set; }
+        public required int TotalTimeLimitInSeconds { get; set; }
+        public required int TotalQuestions { get; set; }
+        public required DateTimeOffset CreatedOn { get; set; }
+    }
+}

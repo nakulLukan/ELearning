@@ -11,10 +11,17 @@ public class ModelExamConfigurationEFConfig : IEntityTypeConfiguration<ModelExam
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.ExamName).IsRequired(true).HasMaxLength(250);
         builder.Property(x => x.Description).IsRequired(true).HasMaxLength(500);
+        builder.Property(x => x.CreatedOn).IsRequired(true);
+        builder.Property(x => x.CreatedBy).HasMaxLength(36).IsRequired(true);
+        builder.Property(x => x.ExamSolutionVideoId).IsRequired(false);
 
         builder.HasOne(x => x.ExamSolutionVideo)
             .WithOne()
             .HasForeignKey<ModelExamConfiguration>(x => x.ExamSolutionVideoId);
+
+        builder.HasOne(x => x.ModelExamPackage)
+            .WithMany(x => x.ModelExamConfigs)
+            .HasForeignKey(x => x.ModelExamPackageId);
 
         builder.HasOne(x => x.ExamNotification)
             .WithMany()

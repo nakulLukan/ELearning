@@ -1,4 +1,4 @@
-﻿@page "/admin/notification/exam-notifications/{examNotificationId:int}"
+﻿@page "/admin/exam-notifications/{examNotificationId:int}"
 @using Learning.Business.Dto.Notifications.ExamNotification
 @using Learning.Business.Requests.Notifications.ExamNotification
 @using Learning.Shared.Common.Constants
@@ -6,17 +6,24 @@
 @using Learning.Shared.Common.Extensions;
 @layout AdminLayout
 @inherits AppBaseComponent
+@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
 <MudContainer Class="mt-5">
     <MudStack>
         <MudStack Row>
             <MudText Typo="Typo.h6">Exam Notification</MudText>
-            <MudButton StartIcon="@Icons.Material.Rounded.Edit" Href="@($"/admin/notification/exam-notifications/{ExamNotificationId}/edit")">Edit</MudButton>
+            <MudButton StartIcon="@Icons.Material.Rounded.Edit" Href="@($"/admin/exam-notifications/{ExamNotificationId}/edit")">Edit</MudButton>
         </MudStack>
         <MudDivider />
         <MudGrid>
             <MudItem xs="12" md="4">
                 <MudStack Spacing="0">
-                    <MudImage Fluid="true" Style="max-height: 300px;width: 100%;" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" Src="@_examNotificationDetail.ImageAbsPath" Alt="Exam notification display image" />
+                    <MudImage
+                        Fluid="true"
+                        Style="max-height: 300px;width: 100%;" 
+                        ObjectFit="ObjectFit.Cover"
+                        ObjectPosition="ObjectPosition.Center"
+                        Src="@_examNotificationDetail.ImageAbsPath" 
+                        Alt="Exam notification display image" />
                     <MudDivider></MudDivider>
                     <MudText Typo="Typo.caption" Class="mt-2">Updated on: @_examNotificationDetail.LastUpdatedOn</MudText>
                     <MudText Typo="Typo.caption" Class="mt-1">Created on: @_examNotificationDetail.CreatedOn</MudText>
@@ -39,7 +46,7 @@
 
                     <MudText Typo="Typo.body1" Class="mt-3"><b>Exam Link</b></MudText>
                     <MudLink Typo="Typo.body1" Href="@_examNotificationDetail.GovtLink"
-                    Target="_blank">@_examNotificationDetail.GovtLink</MudLink>
+                             Target="_blank">@_examNotificationDetail.GovtLink</MudLink>
 
                     <MudStack Row
                               Class="mt-3">
@@ -75,6 +82,8 @@
                 </MudStack>
             </MudItem>
         </MudGrid>
+        <MudDivider DividerType="DividerType.FullWidth"/>
+        <Learning.Web.Components.Pages.Admin.ConfigureNotification.ExamNotification.ModelExam.ExamNotificationListModelExamConfigComponent ExamNotificationId="@ExamNotificationId" />
     </MudStack>
 </MudContainer>
 @code {

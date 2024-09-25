@@ -103,4 +103,8 @@ public interface IFileStorage
     /// <param name="relativePath"></param>
     /// <returns></returns>
     public string GetObjectUrl(string relativePath);
+
+    public Task CreateDirectory(string directoryRelativePath);
+    public string GetS3ConsoleLink(string relativePath);
+    public Task<List<string>> GetFileNames(string relativePath);
 }

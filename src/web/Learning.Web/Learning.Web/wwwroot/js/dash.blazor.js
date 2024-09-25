@@ -49,8 +49,6 @@ export function initializeDashPlayer(elementId, videoUrl, hash, autoLoad, player
 
     var controlbar = new ControlBar(player); //Player is instance of Dash.js MediaPlayer;
     controlbar.initialize();
-
-    console.log({ player, controlbar })
     return { player, controlbar };
 }
 

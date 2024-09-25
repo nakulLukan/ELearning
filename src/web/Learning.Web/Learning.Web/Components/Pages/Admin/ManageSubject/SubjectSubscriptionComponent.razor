@@ -98,7 +98,7 @@
     SubjectSubscriptionDetailDto subscriptionDetails = new();
     UpdateSubjectSubscriptionDto model = new();
     UpdateSubjectSubscriptionDetailCommandValidator updateSubscriptionValidator = new();
-    MudForm _updateSubscriptionDetailForm;
+    MudForm? _updateSubscriptionDetailForm;
 
     bool _showUpdateSubscriptionDialog = false;
 
@@ -161,7 +161,7 @@
 
     private async Task OnValidSubmit()
     {
-        await _updateSubscriptionDetailForm.Validate();
+        await _updateSubscriptionDetailForm!.Validate();
         if (!_updateSubscriptionDetailForm.IsValid)
         {
             return;
@@ -176,7 +176,7 @@
                 OriginalPrice = model.OriginalPrice,
                 SubjectSubscriptionId = model.SubjectSubscriptionId,
                 SubscriptionType = model.SubscriptionType,
-                SubjectId = SubjectId.Value
+                SubjectId = SubjectId!.Value
             })
             .OnSuccess(async data =>
             {

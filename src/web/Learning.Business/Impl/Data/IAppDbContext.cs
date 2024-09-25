@@ -44,6 +44,7 @@ public interface IAppDbContext
     #region ExamNotifications
     public DbSet<ExamNotification> ExamNotifications { get; set; }
     public DbSet<ModelExamConfiguration> ModelExamConfigurations { get; set; }
+    public DbSet<ModelExamPackage> ModelExamPackages { get; set; }
     public DbSet<ModelExamQuestionConfiguration> ModelExamQuestionConfigurations { get; set; }
     public DbSet<ModelExamAnswerConfiguration> ModelExamAnswerConfigurations { get; set; }
     public DbSet<ModelExamResult> ModelExamResults { get; set; }

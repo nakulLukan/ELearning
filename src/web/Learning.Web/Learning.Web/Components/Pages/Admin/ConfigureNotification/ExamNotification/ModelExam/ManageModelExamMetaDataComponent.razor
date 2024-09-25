@@ -1,0 +1,168 @@
+﻿@using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Admin
+@using Learning.Shared.Common.Extensions
+@using System.ComponentModel.DataAnnotations
+@inherits AppBaseComponent
+@inject IDialogService DialogService
+
+<div style="background-color: var(--gray-50)">
+    @if (IsInitialized)
+    {
+        <EditForm Model="Model"
+                  FormName="update-quiz-global-setting"
+                  OnValidSubmit="SaveModelExam">
+            <DataAnnotationsValidator />
+            <MudStack Class="pa-4" Spacing="4">
+                <MudText><b>Configure quiz overall settings here.</b></MudText>
+
+                <MudTextField Label="Exam Name"
+                              @bind-Value=Model.ExamName
+                              InputType="InputType.Text"
+                              For="(()=> Model.ExamName)"
+                              ShrinkLabel></MudTextField>
+                <MudTextField Label="Description"
+                              @bind-Value=Model.ExamDescription
+                              InputType="InputType.Text"
+                              For="(()=> Model.ExamDescription)"
+                              ShrinkLabel></MudTextField>
+                <MudTextField Label="Total Time"
+                              @bind-Value=Model.TotalTimeLimit
+                              InputType="InputType.Time"
+                              For="(()=> Model.TotalTimeLimit)"
+                              ShrinkLabel></MudTextField>
+                <MudCheckBox Label="Is Free"
+                             @bind-Value="Model.IsFree"
+                             For="(()=> Model.IsFree)"></MudCheckBox>
+                <MudTextField Label="Price"
+                              @bind-Value=Model.Price
+                              InputType="InputType.Number"
+                              For="(()=> Model.Price)"
+                              ShrinkLabel></MudTextField>
+                <MudTextField Label="Discounted Price"
+                              @bind-Value=Model.DiscountedPrice
+                              InputType="InputType.Number"
+                              For="(()=> Model.DiscountedPrice)"
+                              ShrinkLabel></MudTextField>
+
+                <MudCheckBox Label="Is Enabled"
+                             @bind-Value="Model.IsActive"
+                             For="(()=> Model.IsActive)"></MudCheckBox>
+                <MudDivider />
+                @if (Model.Id != 0)
+                {
+                    <MudTextField Label="@($"Solution File Name {SolutionMpdFileName}")"
+                                  @bind-Value=Model.SolutionFileName
+                                  InputType="InputType.Text"
+                                  For="(()=> Model.SolutionFileName)"
+                                  ShrinkLabel></MudTextField>
+                    <MudButton EndIcon="@Icons.Material.Filled.PlayArrow" OnClick="PlayVideoSolution">Solution Video</MudButton>
+                    <MudText>Upload the solution file in <b>.mpd</b> format in this <a href="@SolutionVideoUploadLink" target="_blank" class="mud-info-text">directory</a></MudText>
+                }
+                <AppProgressButton Color="Color.Primary" ButtonType="ButtonType.Submit">Save</AppProgressButton>
+            </MudStack>
+        </EditForm>
+    }
+    else
+    {
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="50vh" Width="100%" />
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public int ExamNotificationId { get; set; }
+
+    [Parameter, EditorRequired]
+    public int ModelExamId { get; set; }
+
+    [Parameter]
+    public string? SolutionMpdFileName { get; set; }
+
+    [Parameter, EditorRequired]
+    public ModelExamMetaDataModel Model { get; set; } = new()
+        {
+            DiscountedPrice = null,
+            ExamDescription = string.Empty,
+            ExamName = string.Empty,
+            IsActive = true,
+            IsFree = false,
+            Price = null,
+            ExamNotificationId = 0,
+            Id = 0,
+            TotalTimeLimit = null,
+            SolutionFileName = null
+        };
+
+    [Parameter]
+    public EventCallback<int> OnModelExamSaved { get; set; }
+
+    [Parameter]
+    public string? SolutionVideoUploadLink { get; set; }
+
+    [Parameter]
+    public string? SolutionVideoSignedUrl { get; set; }
+
+    private async Task SaveModelExam(EditContext context)
+    {
+
+        await AppMediator.Send(new AddModelExamCommand
+            {
+                DiscountedPrice = Model!.DiscountedPrice!.Value,
+                ExamDescription = Model.ExamDescription,
+                ExamName = Model.ExamName,
+                ExamNotificationId = ExamNotificationId,
+                Id = ModelExamId,
+                IsActive = Model.IsActive,
+                IsFree = Model.IsFree,
+                Price = Model.Price!.Value,
+                TotalTimeLimit = (int)Model.TotalTimeLimit!.Value.TotalSeconds,
+                SolutionFileName = Model.SolutionFileName
+            })
+            .OnSuccess(data =>
+            {
+                ToastService.Success("Model exam saved successfully");
+                if (OnModelExamSaved.HasDelegate)
+                {
+                    InvokeAsync(() => OnModelExamSaved.InvokeAsync(data));
+                }
+            })
+            .OnError(err =>
+            {
+                ToastService.Error(err.Message);
+            });
+    }
+
+    private async Task PlayVideoSolution()
+    {
+        DialogParameters parameters = new DialogParameters<ModelExamSolutionPreviewerComponent>()
+        {
+            {"SolutionSignedUrl", SolutionVideoSignedUrl }
+        };
+        await DialogService.ShowAsync<ModelExamSolutionPreviewerComponent>(string.Empty, parameters, DialogOptionConstant.ExtraExtraLargeWidth);
+    }
+
+    #region Model
+    public class ModelExamMetaDataModel
+    {
+        public int Id { get; set; }
+        public int ExamNotificationId { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public required string ExamName { get; set; }
+        [Required]
+        [MaxLength(500)]
+        public required string ExamDescription { get; set; }
+        [Required]
+        [Range(0, double.MaxValue)]
+        public required float? Price { get; set; }
+        [Required]
+        [Range(0, double.MaxValue)]
+        public required float? DiscountedPrice { get; set; }
+        [Required]
+        public TimeSpan? TotalTimeLimit { get; set; }
+        public required bool IsActive { get; set; } = true;
+        public required bool IsFree { get; set; }
+
+        public required string? SolutionFileName { get; set; }
+    }
+    #endregion
+}

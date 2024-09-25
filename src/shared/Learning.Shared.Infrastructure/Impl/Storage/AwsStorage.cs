@@ -256,4 +256,64 @@ public class AwsStorage : IFileStorage
 
         return path + "/" + fileName;
     }
+
+    public async Task CreateDirectory(string directoryRelativePath)
+    {
+        if (!directoryRelativePath.EndsWith("/"))
+        {
+            directoryRelativePath += "/";
+        }
+
+        var putRequest = new PutObjectRequest
+        {
+            BucketName = _bucketName,
+            Key = directoryRelativePath, // The key represents the directory.
+            ContentBody = string.Empty // S3 requires some content for a PUT request, even if it's an empty directory.
+        };
+
+        var response = await _client.PutObjectAsync(putRequest);
+    }
+
+    public string GetS3ConsoleLink(string relativePath)
+    {
+        if (!relativePath.EndsWith("/"))
+        {
+            relativePath += "/";
+        }
+        return $"https://s3.console.aws.amazon.com/s3/buckets/{_bucketName}?region={_region}&bucketType=general&prefix={Uri.EscapeDataString(relativePath)}&showversions=false";
+    }
+
+    public async Task<List<string>> GetFileNames(string relativePath)
+    {
+        var files = new List<string>();
+
+        if (!relativePath.EndsWith("/"))
+        {
+            relativePath += "/";
+        }
+
+        var request = new ListObjectsV2Request
+        {
+            BucketName = _bucketName,
+            Prefix = relativePath // The prefix acts as the directory name in S3.
+        };
+
+        ListObjectsV2Response response;
+
+        do
+        {
+            response = await _client.ListObjectsV2Async(request);
+
+            foreach (S3Object entry in response.S3Objects)
+            {
+                files.Add(Path.GetFileName(entry.Key)); // Adding each file's key (path) to the list.
+            }
+
+            // If response is truncated, continue to fetch more keys.
+            request.ContinuationToken = response.NextContinuationToken;
+        }
+        while (response.IsTruncated);
+
+        return files;
+    }
 }

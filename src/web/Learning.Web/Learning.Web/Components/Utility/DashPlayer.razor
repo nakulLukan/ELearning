@@ -13,9 +13,9 @@
         background: #0000004d;
     }
 </style>
-<div class="dash-video-player h-100">
+<div class="dash-video-player h-100 @Class" style="@Style">
     <div id="videoContainer" class="videoContainer h-100 relative d-flex">
-        <video id="@_dashPlayerId" @onclick="TogglePlay"></video>
+        <video id="@_dashPlayerId" @onclick="TogglePlay" controls="false"></video>
         <div class="controller-bar">
 
             <div id="videoController" class="video-controller bg-transparent  unselectable" ng-cloak="">
@@ -36,7 +36,7 @@
                 <div id="trackSwitchBtn" class="btn-track-switch control-icon-layout" data-toggle="tooltip" data-placement="bottom" title="Track List">
                     <span class="icon-tracks"></span>
                 </div>
-                <div id="captionBtn" class="btn-caption control-icon-layout" data-toggle="tooltip" data-placement="bottom" title="Closed Caption / Subtitles">
+                <div id="captionBtn" class="btn-caption control-icon-layout @ShowCaptionControl()" data-toggle="tooltip" data-placement="bottom" title="Closed Caption / Subtitles">
                     <span class="icon-caption"></span>
                 </div>
                 <span id="videoDuration" class="duration-display">00:00:00</span>
@@ -59,24 +59,30 @@
 
     [Parameter]
     [EditorRequired]
-    public string VideoUrl { get; set; }
+    public string? VideoUrl { get; set; }
 
     [Parameter]
-    public string Hash { get; set; }
+    public string? Hash { get; set; }
 
     [Parameter]
     public bool AutoLoad { get; set; }
 
+    [Parameter, EditorRequired]
+    public DashPlayerOptions? Options { get; set; }
+
     [Parameter]
-    public DashPlayerOptions Options { get; set; }
+    public string Class { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Style { get; set; } = string.Empty;
 
     [Parameter] public EventCallback OnPlaybackEnded { get; set; }
 
     private const string _dashPlayerId = "dash-player";
     private bool _isDisposed = false;
-    private IJSObjectReference _jsModule;
-    private IJSObjectReference _jsDashPlayer;
-    private DotNetObjectReference<DashPlayer> _dotnetObjectRef;
+    private IJSObjectReference? _jsModule;
+    private IJSObjectReference? _jsDashPlayer;
+    private DotNetObjectReference<DashPlayer>? _dotnetObjectRef;
     private bool _togglePlay = true;
 
     protected override Task OnInitializedAsync()
@@ -114,7 +120,7 @@
     {
         await InitialisePlayer();
         VideoUrl = newUrl;
-        await _jsModule.InvokeVoidAsync("changeSource", _jsDashPlayer, newUrl);
+        await _jsModule!.InvokeVoidAsync("changeSource", _jsDashPlayer, newUrl);
     }
 
     private async Task TogglePlay()
@@ -123,7 +129,7 @@
         _togglePlay = !_togglePlay;
 
         string funcName = _togglePlay ? "play" : "pause";
-        await _jsModule.InvokeVoidAsync(funcName, _jsDashPlayer);
+        await _jsModule!.InvokeVoidAsync(funcName, _jsDashPlayer);
     }
 
     [JSInvokable]
@@ -139,13 +145,19 @@
         _dotnetObjectRef?.Dispose();
         _isDisposed = true;
     }
-}
 
+    private string ShowCaptionControl()
+    {
+        return Options == null || Options.ShowSubtitles ? "d-inline" : "d-none";
+    }
+}
 
 @code {
     public class DashPlayerOptions
     {
         public bool ScheduleWhilePaused { get; set; }
         public bool FastSwitchEnabled { get; set; } = true;
+
+        public bool ShowSubtitles { get; set; } = false;
     }
 }

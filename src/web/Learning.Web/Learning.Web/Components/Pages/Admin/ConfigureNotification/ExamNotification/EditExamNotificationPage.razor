@@ -1,4 +1,4 @@
-﻿@page "/admin/notification/exam-notifications/{examNotificationId:int}/edit"
+﻿@page "/admin/exam-notifications/{examNotificationId:int}/edit"
 @using Learning.Business.Dto.Notifications.ExamNotification
 @using Learning.Business.Requests.Notifications.ExamNotification
 @using Learning.Shared.Common.Constants
@@ -10,6 +10,7 @@
 @using System.ComponentModel.DataAnnotations
 @layout AdminLayout
 @inherits AppBaseComponent
+@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
 
 <MudContainer>
     <EditForm Model="@_model"

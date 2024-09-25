@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240915084559_IsActiveColAdded")]
+    partial class IsActiveColAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -804,6 +807,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<float>("DiscountedPrice")
+                        .HasColumnType("real");
+
                     b.Property<string>("ExamName")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -828,8 +834,8 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("LastUpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ModelExamPackageId")
-                        .HasColumnType("integer");
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
 
                     b.Property<int>("TotalTimeLimit")
                         .HasColumnType("integer");
@@ -841,34 +847,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.HasIndex("ExamSolutionVideoId")
                         .IsUnique();
 
-                    b.HasIndex("ModelExamPackageId");
-
                     b.ToTable("ModelExamConfigurations");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Notification.ModelExamPackage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("DiscountedPrice")
-                        .HasColumnType("real");
-
-                    b.Property<int>("ExamNotificationId")
-                        .HasColumnType("integer");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExamNotificationId")
-                        .IsUnique();
-
-                    b.ToTable("ModelExamPackages");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamPurchaseHistory", b =>
@@ -1506,26 +1485,9 @@ namespace Learning.Infrastructure.Persistence.Migrations
                         .WithOne()
                         .HasForeignKey("Learning.Domain.Notification.ModelExamConfiguration", "ExamSolutionVideoId");
 
-                    b.HasOne("Learning.Domain.Notification.ModelExamPackage", "ModelExamPackage")
-                        .WithMany("ModelExamConfigs")
-                        .HasForeignKey("ModelExamPackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("ExamNotification");
 
                     b.Navigation("ExamSolutionVideo");
-
-                    b.Navigation("ModelExamPackage");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Notification.ModelExamPackage", b =>
-                {
-                    b.HasOne("Learning.Domain.Notification.ExamNotification", "ExamNotification")
-                        .WithOne()
-                        .HasForeignKey("Learning.Domain.Notification.ModelExamPackage", "ExamNotificationId");
-
-                    b.Navigation("ExamNotification");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamPurchaseHistory", b =>
@@ -1730,11 +1692,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamConfiguration", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Learning.Domain.Notification.ModelExamPackage", b =>
-                {
-                    b.Navigation("ModelExamConfigs");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamQuestionConfiguration", b =>

@@ -43,7 +43,7 @@ public class AddEditQuizQuestionCommandHandler : IRequestHandler<AddEditQuizQues
         // Get default quiz or given quiz id.
         // If quiz id is null then take default quiz
         var quizConfig = await _dbContext.QuizConfigurations.AsTracking()
-            .Include(x => x.Questions)
+            .Include(x => x.Questions!)
                 .ThenInclude(x => x.Answers)
                     .ThenInclude(x => x.AnswerImage)
             .FirstAsync(x => 

@@ -1,4 +1,4 @@
-﻿@page "/admin/notification/exam-notifications"
+﻿@page "/admin/exam-notifications"
 @attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
 @using Learning.Web.Components.Layouts
 @layout AdminLayout
@@ -8,9 +8,9 @@
         <ListExamNotificationsComponent @ref=_listExamNotificationsComponentRef />
     </MudItem>
     <MudItem xs="12" md="4">
-        <AddExamNotificationComponent OnExamNotificationCreated="( x => _listExamNotificationsComponentRef.RefreshList())" />
+        <AddExamNotificationComponent OnExamNotificationCreated="( x => _listExamNotificationsComponentRef!.RefreshList())" />
     </MudItem>
 </MudGrid>
 @code {
-    ListExamNotificationsComponent _listExamNotificationsComponentRef;
+    ListExamNotificationsComponent? _listExamNotificationsComponentRef;
 }

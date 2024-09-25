@@ -11,6 +11,7 @@ public class ModelExamQuestionConfigurationEFConfig : IEntityTypeConfiguration<M
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.QuestionText).IsRequired(false).HasMaxLength(500);
         builder.Property(x => x.QuestionImageId).IsRequired(false);
+        builder.Property(x => x.IsActive).HasDefaultValue(true);
 
         builder.HasOne(x => x.QuestionImage)
             .WithOne()

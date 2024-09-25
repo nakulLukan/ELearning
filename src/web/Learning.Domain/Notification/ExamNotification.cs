@@ -22,7 +22,7 @@ public class ExamNotification : DomainBase
     /// If null then exam notification shall have infinite validity
     /// </summary>
     public DateOnly? ValidTill { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 
     public Attachment? PdfFile { get; set; }
     public Attachment? Video { get; set; }

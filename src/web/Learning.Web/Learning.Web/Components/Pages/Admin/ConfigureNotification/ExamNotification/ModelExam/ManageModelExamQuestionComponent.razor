@@ -1,0 +1,76 @@
+﻿@using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Admin
+@inherits AppBaseComponent
+@inject NavigationManager NavigationManager
+@if (IsInitialized && Questions != null)
+{
+    <AppMudDataGrid Items="@Questions"
+                    T="ModelExamQuestionMetaData"
+                    Virtualize="true"
+                    Groupable="false"
+                    Bordered
+                    ShowMenuIcon="false"
+                    FixedHeader="true"
+                    Dense
+                    Hover
+                    Striped
+                    RowClass="cursor-pointer"
+                    Loading="_isLoading"
+                    Elevation="0"
+                    RowClick="OnQuestionSelect">
+        <ToolBarContent>
+            <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Questions" /> <MudSpacer />
+
+            <MudStack Row Class="mr-3">
+                <MudText>@($"Total Questions: {Questions.Count()}")</MudText>
+                <MudText>@($"Active Questions: {Questions.Where(x => x.IsActive).Count()}")</MudText>
+            </MudStack>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Href="@($"/admin/exam-notifications/{ExamNotificationId}/model-exams/{ModelExamId}/questions/0")">Create Question</MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Order"
+                            Title="#"
+                            Sortable="true" />
+            <PropertyColumn Property="x => x.Score"
+                            Title="Score"
+                            Sortable="true" />
+
+            <PropertyColumn Property="x => x.QuestionText"
+                            Title="Question"
+                            Sortable="true" />
+            <PropertyColumn Property="@(x => $"Option {x.OptionNumber}")"
+                            Title="Answer"
+                            Sortable="false" />
+            <TemplateColumn Title="Is Enabled">
+                <CellTemplate>
+                    <div>
+                        <MudCheckBox Value="@context.Item.IsActive" ReadOnly/>
+                    </div>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <NoRecordsContent>
+            <NoRecordsComponent />
+        </NoRecordsContent>
+    </AppMudDataGrid>
+}
+else
+{
+    <MudSkeleton Height="100vh" />
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public int ExamNotificationId { get; set; }
+
+    [Parameter, EditorRequired]
+    public int ModelExamId { get; set; }
+    [Parameter, EditorRequired]
+    public ModelExamQuestionMetaData[]? Questions { get; set; }
+
+    private void OnQuestionSelect(DataGridRowClickEventArgs<ModelExamQuestionMetaData> selectedItem)
+    {
+        NavigationManager.NavigateTo($"/admin/exam-notifications/{ExamNotificationId}/model-exams/{ModelExamId}/questions/{selectedItem.Item.Id}");
+    }
+}

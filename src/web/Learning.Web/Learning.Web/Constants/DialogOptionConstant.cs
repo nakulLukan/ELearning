@@ -19,4 +19,12 @@ public static class DialogOptionConstant
         BackdropClick = false,
         MaxWidth = MaxWidth.Small
     };
+
+    public static readonly DialogOptions ExtraExtraLargeWidth = new DialogOptions()
+    {
+        NoHeader = true,
+        CloseButton = true,
+        BackdropClick = false,
+        MaxWidth = MaxWidth.ExtraExtraLarge,
+    };
 }

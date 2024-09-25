@@ -22,4 +22,7 @@ public class StoragePathConstant
 
     public static string PublicExamNotificationBasePath(int examNotificationId) => $"{PUBLIC}/notfications/exam-notification/{examNotificationId}";
     public static string QuizOptionImageBasePath(int quizConfigId) => $"{PUBLIC}/quiz/quick_test/configuration_{quizConfigId}";
+
+    public static string ExamNotificationModelExamBasePath(int examNotificationId, int modelExamId) => $"{PRIVATE}/notification/exam-notification/{examNotificationId}/model-exams/{modelExamId}";
+    public static string ModelExamSolutionVideoBasPath(int examNotificationId, int modelExamId) => $"{ExamNotificationModelExamBasePath(examNotificationId, modelExamId)}/solution";
 }

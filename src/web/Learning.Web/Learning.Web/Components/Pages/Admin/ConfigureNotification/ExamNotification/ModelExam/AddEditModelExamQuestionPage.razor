@@ -1,0 +1,284 @@
+﻿@page "/admin/exam-notifications/{examNotificationId:int}/model-exams/{modelExamId:int}/questions/{questionId:int}"
+@using System.ComponentModel.DataAnnotations
+@using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Admin
+@using Learning.Business.Requests.Notifications.ExamNotification
+@using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Admin
+@using Learning.Web.Components.Layouts
+@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
+@inherits AppBaseComponent
+@layout AdminLayout
+@inject NavigationManager NavigationManager
+<span>
+    <MudBreadcrumbs Items="_breadCrumbsItems"/>
+    @if (!IsInitialized)
+    {
+        <MudSkeleton Width="100%" Height="300px" />
+    }
+    else
+    {
+        <MudContainer Class="my-4">
+            <EditForm Model="Model!" FormName="save-question" OnValidSubmit="OnSave">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudStack Row AlignItems="AlignItems.Center">
+                            <span>
+                                <MudNumericField T="int?"
+                                                 Variant="Variant.Outlined"
+                                                 Label="Question Number"
+                                                 FullWidth="false"
+                                                 Min="1"
+                                                 @bind-Value="Model!.QuestionNumber"
+                                                 For="(()=> Model!.QuestionNumber)"></MudNumericField>
+                            </span>
+                            <MudCheckBox @bind-Value="Model.IsActive"
+                                         Label="Is Enabled" />
+                            <MudNumericField T="int?"
+                                             Variant="Variant.Outlined"
+                                             Label="Score"
+                                             Min="1"
+                                             @bind-Value="Model.Score"
+                                             For="(()=> Model.Score)"></MudNumericField>
+                        </MudStack>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudStack>
+                            <MudTextField T="string"
+                                          InputType="InputType.Text"
+                                          Variant="Variant.Outlined"
+                                          Label="Question"
+                                          Lines="3"
+                                          @bind-Value="Model!.Question"
+                                          For="(()=> Model!.Question)"></MudTextField>
+                            <MudStack AlignItems="AlignItems.Center" Spacing="2">
+
+                                @if (!string.IsNullOrEmpty(Model.QuestionImageUrl))
+                                {
+                                    <MudImage Src="@Model.QuestionImageUrl"
+                                              Alt="Image preview of the question"
+                                              ObjectFit="ObjectFit.Contain"
+                                              Class="rounded-lg"
+                                              Height="100" />
+                                }
+                                else
+                                {
+                                    <div style="height:100px; width:100px; border: 2px dashed var(--mud-palette-table-lines);">
+                                    </div>
+                                }
+                                <MudFileUpload T="IBrowserFile" FilesChanged="HandleSelected" Accept=".png,.jpeg,.jpg">
+                                    <ActivatorContent>
+                                        <MudButton Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.AddPhotoAlternate">Choose an image</MudButton>
+                                    </ActivatorContent>
+                                </MudFileUpload>
+                            </MudStack>
+                        </MudStack>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudDivider />
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudRadioGroup T="int" @bind-Value=Model!.CorrectOptionIndex
+                                       For="(()=> Model!.CorrectOptionIndex)">
+                            <MudGrid>
+                                @foreach (var option in Model.Options)
+                                {
+                                    <MudItem xs="6" Class="text-center">
+                                        <MudRadio Value="@option.OptionOrder"
+                                                  Class="rounded-lg border-2 ml-0 quiz-option"
+                                                  Dense
+                                                  Placement="Placement.Top"
+                                                  Size="Size.Small">
+                                            <ModelExamOptionsComponent OptionLabel="@GetOptionHeaderTitle(option)"
+                                                                       @bind-AnswerText=@option.AnswerText
+                                                                       @bind-AnswerImage=@option.AnswerImage
+                                                                       ImagePreviewUrl="@option.AnswerImageUrl" />
+                                        </MudRadio>
+                                    </MudItem>
+                                }
+                            </MudGrid>
+
+                        </MudRadioGroup>
+                        <MudDivider Class="my-4" />
+                        <div class="d-flex justify-content-center">
+                            <AppProgressButton Class="mt-2"
+                                               ButtonType="ButtonType.Submit"
+                                               Size="Size.Large"
+                                               Variant="Variant.Filled"
+                                               Color="Color.Primary" IsProgressing="_isSaving">Save</AppProgressButton>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        </MudContainer>
+    }
+</span>
+@code {
+    [Parameter]
+    public int ExamNotificationId { get; set; }
+
+    [Parameter]
+    public int ModelExamId { get; set; }
+
+    [Parameter]
+    public int QuestionId { get; set; }
+
+    public SaveModel? Model;
+    private bool _isSaving;
+    private List<BreadcrumbItem>? _breadCrumbsItems;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        if (QuestionId != 0)
+        {
+            var questionDetail = await Mediator.Send(new GetModelExamQuestionByIdQuery()
+                {
+                    ModelExamId = ModelExamId,
+                    QuestionId = QuestionId,
+                });
+            Model = new SaveModel()
+                {
+                    CorrectOptionIndex = questionDetail.Options.First(x => x.IsCorrectOption).Order,
+                    Id = questionDetail.Id,
+                    ModelExamId = ModelExamId,
+                    Question = questionDetail.QuestionText,
+                    QuestionImageUrl = questionDetail.QuestionImageSignedUrl,
+                    QuestionImage = null,
+                    QuestionNumber = questionDetail.Order,
+                    Score = questionDetail.Score,
+                    IsActive = questionDetail.IsActive,
+                    Options = questionDetail.Options.Select(x => new AnswerModel
+                    {
+                        AnswerImage = null,
+                        AnswerImageUrl = x.OptionImageSignedUrl,
+                        AnswerText = x.OptionText,
+                        OptionOrder = x.Order,
+                        IsCorrectionOption = x.IsCorrectOption,
+                        Id = x.Id
+                    }).ToList()
+                };
+        }
+        else
+        {
+            Model = new()
+                {
+                    CorrectOptionIndex = 0,
+                    Id = 0,
+                    IsActive = true,
+                    ModelExamId = ModelExamId,
+                    Question = null,
+                    QuestionImage = null,
+                    QuestionImageUrl = null,
+                    QuestionNumber = null,
+                    Score = null,
+                    Options = Enumerable.Range(1, 4).Select(x => new AnswerModel
+                    {
+                        AnswerImage = null,
+                        AnswerImageUrl = null,
+                        AnswerText = null,
+                        Id = 0,
+                        IsCorrectionOption = false,
+                        OptionOrder = x,
+                    }).ToList()
+                };
+        }
+        _breadCrumbsItems = new List<BreadcrumbItem>
+        {
+            new BreadcrumbItem("Exam Notification", href: $"/admin/exam-notifications/{ExamNotificationId}"),
+            new BreadcrumbItem("Questions", href: $"/admin/exam-notifications/{ExamNotificationId}/model-exams/{ModelExamId}"),
+        };
+        SetInitialized();
+    }
+
+    private string GetOptionHeaderTitle(AnswerModel option)
+    {
+        return $"Option {Model!.Options.IndexOf(option) + 1}";
+    }
+
+    private async Task OnSave(EditContext context)
+    {
+        ChangeToLoadingState(ref _isSaving);
+        await AppMediator.Send(new AddEditModelExamQuestionCommand()
+            {
+                ExamNotificationId = ExamNotificationId,
+                IsActive = Model!.IsActive,
+                ModelExamId = Model.ModelExamId,
+                QuestionText = Model.Question,
+                Score = Model.Score!.Value,
+                QuestionId = QuestionId,
+                QuestionImage = Model.QuestionImage,
+                QuestionNumber = Model.QuestionNumber!.Value,
+                Options = Model.Options.Select((x, index) => new AddEditModelExamOptionDto
+                {
+                    OptionOrder = x.OptionOrder,
+                    AnswerImage = x.AnswerImage,
+                    AnswerText = x.AnswerText,
+                    IsCorrectOption = (index + 1) == Model.CorrectOptionIndex,
+                    OptionId = x.Id,
+                }).ToList(),
+            })
+        .OnSuccess(data =>
+        {
+            ToastService.Success($"Question details saved successfully");
+            NavigationManager.NavigateTo($"/admin/exam-notifications/{ExamNotificationId}/model-exams/{ModelExamId}");
+        })
+        .OnError(err =>
+        {
+            ToastService.Error(err.Message);
+            ChangeToLoadedState(ref _isSaving);
+        });
+    }
+
+    private async Task HandleSelected(IBrowserFile file)
+    {
+        if (file == null)
+        {
+            return;
+        }
+        var resizedFile = await file.RequestImageFileAsync(file.ContentType, 128, 128);
+        var bytearray = new byte[resizedFile.Size];
+        using var stream = resizedFile.OpenReadStream();
+        await stream.ReadAsync(bytearray);
+        Model!.QuestionImage = bytearray;
+        Model.QuestionImageUrl = $"data:image/png;base64,{Convert.ToBase64String(bytearray)}";
+
+    }
+
+    #region Model
+    public class SaveModel
+    {
+        public required int Id { get; set; }
+
+        public required int ModelExamId { get; set; }
+        public required bool IsActive { get; set; }
+
+        [Required]
+        public required int? QuestionNumber { get; set; }
+
+        [Required]
+        public required string? Question { get; set; }
+
+        public required byte[]? QuestionImage { get; set; }
+        public required string? QuestionImageUrl { get; set; }
+
+        [Required]
+        public required int? Score { get; set; }
+
+        [Range(1, 4, ErrorMessage = "Please choose an option")]
+        public required int CorrectOptionIndex { get; set; }
+        public required List<AnswerModel> Options { get; set; }
+    }
+
+    public class AnswerModel
+    {
+        public required int Id { get; set; }
+        public required int OptionOrder { get; set; }
+        public required string? AnswerText { get; set; }
+        public required byte[]? AnswerImage { get; set; }
+        public required string? AnswerImageUrl { get; set; }
+        public required bool IsCorrectionOption { get; set; }
+    }
+    #endregion
+}
+

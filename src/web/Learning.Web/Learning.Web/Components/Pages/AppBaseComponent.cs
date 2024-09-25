@@ -4,8 +4,9 @@ namespace Learning.Web.Components;
 
 public class AppBaseComponent : ComponentBase
 {
+    [Parameter]
+    public bool IsInitialized { get; set; }
     protected bool _isLoading;
-    protected bool IsInitialized = false;
 
     protected void ChangeToLoadingState(ref bool isLoading)
     {
@@ -49,5 +50,6 @@ public class AppBaseComponent : ComponentBase
     protected void SetInitialized()
     {
         IsInitialized = true;
+        StateHasChanged();
     }
 }

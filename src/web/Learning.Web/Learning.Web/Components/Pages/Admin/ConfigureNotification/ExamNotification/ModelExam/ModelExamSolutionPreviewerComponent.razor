@@ -1,0 +1,34 @@
+﻿@using static Learning.Web.Components.Utility.DashPlayer
+<MudDialog>
+    <DialogContent>
+        @if (SolutionSignedUrl != null)
+        {
+            <div style="height: 70vh;">
+
+                <DashPlayer VideoUrl="@SolutionSignedUrl" Options="options" AutoLoad>
+
+                </DashPlayer>
+            </div>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [Parameter]
+    public string? SolutionSignedUrl { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    DashPlayerOptions options = new DashPlayerOptions
+        {
+            FastSwitchEnabled = true,
+            ScheduleWhilePaused = false
+        };
+
+    private void Close()
+    {
+        MudDialog!.Cancel();
+    }
+}

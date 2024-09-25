@@ -76,7 +76,7 @@
 
     private void OnExamNotificationClicked(DataGridRowClickEventArgs<ExamNotificationsListItemDto> selectedItem)
     {
-        NavigationManager.NavigateTo($"/admin/notification/exam-notifications/{selectedItem.Item.Id}");
+        NavigationManager.NavigateTo($"/admin/exam-notifications/{selectedItem.Item.Id}");
     }
 
     private async Task DeleteNotification(int examNotificationId)

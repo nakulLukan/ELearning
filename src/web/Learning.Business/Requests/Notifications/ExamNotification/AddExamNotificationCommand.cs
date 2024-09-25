@@ -52,6 +52,7 @@ public class AddExamNotificationCommandHandler : IRequestHandler<AddExamNotifica
             CreatedOn = AppDateTime.UtcNow,
             LastUpdatedOn = AppDateTime.UtcNow,
             GovtLink = request.GovtLink,
+            IsActive = true,
             ImportantPoints = request.ImportantPoints?.RemoveEmptyLines(),
         };
 
