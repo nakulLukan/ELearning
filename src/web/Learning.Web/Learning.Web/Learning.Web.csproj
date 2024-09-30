@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\functions\core\Functions.Identity.Core\Functions.Identity.Core.csproj" />
     <ProjectReference Include="..\..\..\shared\Learning.Shared.Application\Learning.Shared.Application.csproj" />
     <ProjectReference Include="..\..\Learning.Business\Learning.Business.csproj" />
     <ProjectReference Include="..\..\Learning.Domain\Learning.Domain.csproj" />
@@ -21,7 +22,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

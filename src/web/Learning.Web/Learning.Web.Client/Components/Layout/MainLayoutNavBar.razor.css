@@ -1,10 +1,26 @@
 ﻿
 .logo {
-    height: 48px; /* Adjust the height as needed */
+    height: 66px; /* Adjust the height as needed */
     width: auto;
-    margin-right: 5px;
+    margin-right: 22px;
+    margin-left:22px;
     padding:4px
+}
+
+.gap{
+    gap: 35px;
 }
 .mud-primary-text {
     color: white !important;
+}
+
+@media (max-width: 600px){
+    .logo {
+        height: 36px; /* Adjust the height as needed */
+        width: auto;
+        margin-right: 16px;
+        margin-left: 13px;
+        padding: 4px;
+        color: white !important;
+    }
 }

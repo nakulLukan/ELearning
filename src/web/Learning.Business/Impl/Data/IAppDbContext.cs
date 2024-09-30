@@ -13,14 +13,19 @@ namespace Learning.Business.Impl.Data;
 
 public interface IAppDbContext
 {
+    #region Identity
     public DbSet<ApplicationUser> AspNetUsers { get; set; }
     public DbSet<ApplicationUserOtherDetail> ApplicationUserOtherDetails { get; set; }
+    public DbSet<AppRole> AppRoles { get; set; }
     public DbSet<ContactUsRequest> ContactUsRequests { get; set; }
+    #endregion
 
+    #region Master
     public DbSet<LookupMaster> LookupMasters { get; set; }
     public DbSet<LookupValue> LookupValues { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
-
+    public DbSet<AppMasterSetting> AppSettings { get; set; }
+    #endregion
     public DbSet<Lesson> Lessons { get; set; }
     public DbSet<Chapter> Chapters { get; set; }
     public DbSet<ClassDivision> Classes { get; set; }

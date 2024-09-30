@@ -8,32 +8,35 @@ public class ApplicationUserOtherDetail
     /// Users contact number.
     /// </summary>
     /// <example>+91-9770272321</example>
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
     /// First name
     /// </summary>
-    public string FirstName { get; set; }
+    public string? FirstName { get; set; }
 
     /// <summary>
     /// Last name
     /// </summary>
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     /// <summary>
     /// Full name of the user
     /// </summary>
-    public string FullName { get; set; }
+    public string? FullName { get; set; }
 
     /// <summary>
     /// Associated user id
     /// </summary>
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
 
     /// <summary>
     /// Date of birth of the user
     /// </summary>
     public int? YearOfBirth { get; set; }
 
-    public ApplicationUser User  { get; set; }
+    public string? Email { get; set; }
+    public string? NormalizedEmail { get; set; }
+    public bool EmailConfirmed { get; set; }
+    public bool PhoneNumberConfirmed { get; set; }
 }

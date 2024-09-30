@@ -9,13 +9,12 @@ using Learning.Domain.Quiz;
 using Learning.Domain.Subscription;
 using Learning.Domain.Subscription.Offer;
 using Learning.Infrastructure.Data.Seeder.MigrationSeeder;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
 namespace Learning.Infrasture.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbContext
+public class ApplicationDbContext : DbContext, IAppDbContext
 {
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
@@ -57,13 +56,19 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
         }
     }
 
+    #region Identity
     public DbSet<ApplicationUser> AspNetUsers { get; set; }
     public DbSet<ApplicationUserOtherDetail> ApplicationUserOtherDetails { get; set; }
+    public DbSet<AppRole> AppRoles { get; set; }
     public DbSet<ContactUsRequest> ContactUsRequests { get; set; }
+    #endregion
 
+    #region Master
     public DbSet<LookupMaster> LookupMasters { get; set; }
     public DbSet<LookupValue> LookupValues { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
+    public DbSet<AppMasterSetting> AppSettings { get; set; }
+    #endregion
 
     public DbSet<Chapter> Chapters { get; set; }
     public DbSet<Lesson> Lessons { get; set; }

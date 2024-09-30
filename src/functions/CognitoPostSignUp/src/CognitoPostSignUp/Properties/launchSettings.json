@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Mock Lambda Test Tool": {
+      "commandName": "Executable",
+      "commandLineArgs": "--port 5050",
+      "executablePath": "C:\\Users\\nakul.a\\.dotnet\\tools\\dotnet-lambda-test-tool-6.0.exe",
+      "workingDirectory": ".\\bin\\Debug\\net8.0"
+    }
+  }
+}

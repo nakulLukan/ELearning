@@ -15,6 +15,7 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6"><b>Public Users</b></MudText>
         <MudSpacer />
+        <AppProgressButton Variant="Variant.Filled" IsProgressing="_isSync" OnClick="SyncUsers">Sync Users</AppProgressButton>
         <MudTextField @bind-Value="@SearchString" Lines="1" MaxLines=1 InputType=InputType.Email
                       Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
                       AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
@@ -58,7 +59,7 @@
     private int _usersCount;
 
     private string _lastSearchString = "";
-
+    private bool _isSync = false;
     private async Task<GridData<PublicUserListItemDto>> LoadUsers(GridState<PublicUserListItemDto> gridState)
     {
         _gridState = gridState;
@@ -88,5 +89,30 @@
     {
         SearchString = _lastSearchString = string.Empty;
         await OnSearch();
+    }
+
+    private async Task SyncUsers()
+    {
+        ChangeToLoadingState(ref _isSync);
+        await AppMediator.Send(new SyncUsersCommand())
+        .OnSuccess(data =>
+        {
+            ToastService.Success("Users synchronised.");
+            if (data.CreatedCount > 0)
+            {
+                ToastService.Success($"Total users created: {data.CreatedCount}");
+            }
+
+            if (data.UpdatedCount > 0)
+            {
+                ToastService.Success($"Total users updated: {data.UpdatedCount}");
+            }
+            ChangeToLoadedState(ref _isSync);
+        })
+        .OnError(err =>
+        {
+            ToastService.Error(err.Message);
+            ChangeToLoadedState(ref _isSync);
+        });
     }
 }

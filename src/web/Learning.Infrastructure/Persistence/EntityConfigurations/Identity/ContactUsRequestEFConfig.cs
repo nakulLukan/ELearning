@@ -14,6 +14,5 @@ public class ContactUsRequestEFConfig : IEntityTypeConfiguration<ContactUsReques
         builder.Property(x => x.EmailAddress).IsRequired(false).HasMaxLength(200);
 
         builder.HasIndex(x => x.Name);
-
     }
 }

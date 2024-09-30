@@ -9,13 +9,12 @@ public class ApplicationUserOtherDetailEFConfig : IEntityTypeConfiguration<Appli
     public void Configure(EntityTypeBuilder<ApplicationUserOtherDetail> builder)
     {
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.PhoneNumber).IsRequired(true).HasMaxLength(30);
-        builder.Property(x => x.FirstName).IsRequired(true).HasMaxLength(30);
-        builder.Property(x => x.LastName).IsRequired(true).HasMaxLength(30);
-        builder.Property(x => x.YearOfBirth).IsRequired(false);
+        builder.Property(x => x.PhoneNumber).IsRequired(false).HasMaxLength(30);
+        builder.Property(x => x.FirstName).IsRequired(false).HasMaxLength(30);
+        builder.Property(x => x.LastName).IsRequired(false).HasMaxLength(30);
+        builder.Property(x => x.Email).IsRequired(false);
+        builder.Property(x => x.NormalizedEmail).IsRequired(false);
 
-        builder.HasOne(x => x.User)
-            .WithOne(x=>x.OtherDetails)
-            .HasForeignKey<ApplicationUserOtherDetail>(x => x.UserId);
+        builder.Property(x => x.YearOfBirth).IsRequired(false);
     }
 }

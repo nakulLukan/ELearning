@@ -7,5 +7,6 @@ public static class SeederBase
     public static void SeedData(this ModelBuilder modelBuilder)
     {
         LookupSeeder.SeedData(modelBuilder);
+        AppSettingSeeder.SeedData(modelBuilder);
     }
 }

@@ -41,12 +41,12 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
             {
                 Id = x.Id,
                 AccountCreatedOn = x.AccountCreatedOn.ToHumanizedDateTimeString(),
-                ContactNumber = x.OtherDetails.PhoneNumber,
-                EmailAddress = x.Email,
-                IsEmailAddressVerified = x.EmailConfirmed,
-                IsContactNumberVerified = x.PhoneNumberConfirmed,
-                FirstName = x.OtherDetails.FirstName,
-                LastName = x.OtherDetails.LastName,
+                ContactNumber = x.OtherDetails.PhoneNumber ?? string.Empty,
+                EmailAddress = x.OtherDetails.Email ?? string.Empty,
+                IsEmailAddressVerified = x.OtherDetails.EmailConfirmed,
+                IsContactNumberVerified = x.OtherDetails.PhoneNumberConfirmed,
+                FirstName = x.OtherDetails!.FirstName ?? string.Empty,
+                LastName = x.OtherDetails!.LastName ?? string.Empty,
                 IsActive = x.IsActive,
                 Index = x.Index
             })
@@ -60,8 +60,8 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
         {
             usersQuery = (request.SortBy) switch
             {
-                nameof(PublicUserListItemDto.EmailAddress) => usersQuery.SortyBy(x => x.NormalizedEmail, request.IsDescending),
-                nameof(PublicUserListItemDto.IsEmailAddressVerified) => usersQuery.SortyBy(x => x.EmailConfirmed, request.IsDescending),
+                nameof(PublicUserListItemDto.EmailAddress) => usersQuery.SortyBy(x => x.OtherDetails.NormalizedEmail, request.IsDescending),
+                nameof(PublicUserListItemDto.IsEmailAddressVerified) => usersQuery.SortyBy(x => x.OtherDetails.EmailConfirmed, request.IsDescending),
                 nameof(PublicUserListItemDto.AccountCreatedOn) => usersQuery.SortyBy(x => x.AccountCreatedOn, request.IsDescending),
                 nameof(PublicUserListItemDto.Index) => usersQuery.SortyBy(x => x.Index, request.IsDescending),
                 nameof(PublicUserListItemDto.FirstName) => usersQuery.SortyBy(x => x.OtherDetails.FirstName, request.IsDescending),
@@ -92,7 +92,7 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
         if (!string.IsNullOrEmpty(request.EmailOrNameFilter))
         {
             usersQuery = usersQuery
-                .Where(x => x.NormalizedEmail.Contains(request.EmailOrNameFilter.ToUpper())
+                .Where(x => x.OtherDetails.NormalizedEmail!.Contains(request.EmailOrNameFilter.ToUpper())
                     || (x.OtherDetails.FullName != null
                         && x.OtherDetails.FullName.ToUpper().Contains(request.EmailOrNameFilter.ToUpper())))
                 .AsQueryable();
