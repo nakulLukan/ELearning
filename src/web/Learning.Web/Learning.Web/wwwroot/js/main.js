@@ -5,6 +5,11 @@
     });
 }
 
+function isMobile() {
+    console.log(window.outerWidth);
+    return window.outerWidth < 600;
+}
+
 window.scrollToTopOnNavigation = function () {
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 };

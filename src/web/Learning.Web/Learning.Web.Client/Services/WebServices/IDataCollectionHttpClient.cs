@@ -4,7 +4,7 @@ using Refit;
 
 namespace Learning.Web.Client.Services.WebServices;
 
-public interface IDataCollectionRestService
+public interface IDataCollectionHttpClient
 {
     [Post("/api/data-collection/add-contact-info")]
     public Task<ResponseDto<long>> AddContactInformation([Body] AddContactInformationCommandRequestDto request);

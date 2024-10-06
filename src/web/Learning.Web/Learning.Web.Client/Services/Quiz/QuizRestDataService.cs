@@ -7,9 +7,9 @@ namespace Learning.Web.Client.Services.Quiz;
 
 public class QuizRestDataService : IQuizDataService
 {
-    private readonly IPublicQuizRestService _httpClient;
+    private readonly IPublicQuizHttpClient _httpClient;
 
-    public QuizRestDataService(IPublicQuizRestService httpClient)
+    public QuizRestDataService(IPublicQuizHttpClient httpClient)
     {
         _httpClient = httpClient;
     }

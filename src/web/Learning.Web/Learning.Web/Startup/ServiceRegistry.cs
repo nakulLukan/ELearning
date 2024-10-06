@@ -10,6 +10,7 @@ using Learning.Web.Client.Contracts.Interop;
 using Learning.Web.Client.Contracts.Persistance;
 using Learning.Web.Client.Contracts.Presentation;
 using Learning.Web.Client.Contracts.Services.DataCollection;
+using Learning.Web.Client.Contracts.Services.ExamNotification;
 using Learning.Web.Client.Contracts.Services.Quiz;
 using Learning.Web.Client.Contracts.Services.Subscription;
 using Learning.Web.Client.Impl.HttpContext;
@@ -21,6 +22,7 @@ using Learning.Web.Impl.Events;
 using Learning.Web.Impl.Persistence;
 using Learning.Web.Impl.Presentation;
 using Learning.Web.Services.DataCollection;
+using Learning.Web.Services.ExamNotification;
 using Learning.Web.Services.Quiz;
 using Learning.Web.Services.Subscription;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -191,6 +193,7 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IQuizDataService, QuizDataService>();
         builder.Services.AddScoped<IContactUsDataService, ContactUsDataService>();
         builder.Services.AddScoped<ICouponCodeDataService, CouponCodeDataService>();
+        builder.Services.AddScoped<IExamNotificationDataService, ExamNotificationDataService>();
         builder.Services.AddScoped<IBrowserStorage, BrowserLocalStorage>();
         builder.Services.AddTransient<IAppJSInterop, AppJSInterop>();
     }

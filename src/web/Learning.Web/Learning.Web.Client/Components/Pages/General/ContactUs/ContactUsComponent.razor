@@ -1,37 +1,41 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using Learning.Shared.Constants
 @using Learning.Shared.Dto.DataCollection.ContactUsRequest
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Contracts.Interop
 @using Learning.Web.Client.Contracts.Presentation
 @using Learning.Web.Client.Contracts.Services.DataCollection
 @using Learning.Web.Client.Dto.ContactUs
 @inject IContactUsDataService ContactUsDataService
-<MudContainer MaxWidth="MaxWidth.Small">
-    <EditForm Model="@Model"
-              OnValidSubmit="OnValidSubmit"
-              FormName="ContactUs"
-              Enhance>
-        <DataAnnotationsValidator />
-        <MudPaper Elevation="0" Outlined Class="mt-10">
-            <MudGrid Class="p-4">
-                <MudItem xs="12">
-                    <MudText Typo="Typo.h6" Align="Align.Center">CONTACT US</MudText>
-                </MudItem>
-                <MudItem xs="12" md="6">
-                    <AppTextField Label="Name"
-                                  For="(()=> Model.Name)"
-                                  @bind-Value="@Model.Name"></AppTextField>
-                </MudItem>
-                <MudItem xs="12" md="6">
-                    <AppTextField Label="Contact Number"
-                                  @bind-Value="@Model.ContactNumber"
-                                  For="(()=> Model.ContactNumber)"></AppTextField>
-                </MudItem>
-                <MudItem xs="12">
-                    <AppTextField Label="Email Address (optional)"
-                                  @bind-Value="@Model.EmailAddress"
-                                  For="(()=> Model.EmailAddress)"></AppTextField>
-                </MudItem>
-                <MudItem xs="12">
+@inject IAppJSInterop JSInterop
+@rendermode InteractiveAuto
+<div class="app-contact-us-cover"
+     style="background: url('/assets/images/homepage/contact_us_cover.jpg');">
+    <div class="app-contact-us-container d-flex flex-column justify-center">
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            <EditForm Model="@Model"
+                      OnValidSubmit="OnValidSubmit"
+                      FormName="ContactUs">
+                <DataAnnotationsValidator />
+                <div class="app-contact-us-form d-flex flex-column m-3">
+                    <h1>Get in touch with us</h1>
+                    <MudGrid Justify="Justify.FlexStart" Spacing="6">
+                        <MudItem xs="12" md="6">
+                            <AppTextField Label="Name"
+                                          For="(()=> Model.Name)"
+                                          @bind-Value="@Model.Name"></AppTextField>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <AppTextField Label="Contact Number"
+                                          @bind-Value="@Model.ContactNumber"
+                                          For="(()=> Model.ContactNumber)"></AppTextField>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <AppTextField Label="Email Address (optional)"
+                                          @bind-Value="@Model.EmailAddress"
+                                          For="(()=> Model.EmailAddress)"></AppTextField>
+                        </MudItem>
+                    </MudGrid>
                     <MudStack>
 
                         @if (_showSuccessAlert)
@@ -42,23 +46,30 @@
                                       Variant="Variant.Filled">We have recieved your request. Thank You!!!</MudAlert>
 
                         }
-                        <MudButton ButtonType="ButtonType.Submit"
-                                   FullWidth
-                                   Variant="Variant.Filled"
-                                   StartIcon="@Icons.Material.Filled.Save">SUBMIT</MudButton>
+                        <div class="text-center">
+                            <AppButton FormType="AppButton.AppButtonFormType.Submit"
+                                       Text="Contact Us"
+                                       Padding="51px"
+                                       FullWidth="_isSubmitBtnFullWidth"></AppButton>
+                        </div>
                     </MudStack>
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-    </EditForm>
+                </div>
+            </EditForm>
 
-</MudContainer>
+        </MudContainer>
+    </div>
+</div>
 @code {
-    [SupplyParameterFromForm]
     public ContactUsModel Model { get; set; } = new();
 
     private bool _showSuccessAlert = false;
-
+    private bool _isSubmitBtnFullWidth = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _isSubmitBtnFullWidth = await JSInterop.IsMobile();
+        StateHasChanged();
+    }
     private async Task OnValidSubmit(EditContext context)
     {
         try

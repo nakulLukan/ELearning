@@ -6,6 +6,7 @@ using Learning.Web.Client.Contracts.Persistance;
 using Learning.Web.Client.Contracts.Presentation;
 using Learning.Web.Client.Contracts.Relay;
 using Learning.Web.Client.Contracts.Services.DataCollection;
+using Learning.Web.Client.Contracts.Services.ExamNotification;
 using Learning.Web.Client.Contracts.Services.Quiz;
 using Learning.Web.Client.Contracts.Services.Subscription;
 using Learning.Web.Client.Impl.HttpContext;
@@ -13,6 +14,7 @@ using Learning.Web.Client.Impl.Interop;
 using Learning.Web.Client.Impl.Persistance;
 using Learning.Web.Client.Impl.Relay;
 using Learning.Web.Client.Services.DataCollection;
+using Learning.Web.Client.Services.ExamNotification;
 using Learning.Web.Client.Services.Quiz;
 using Learning.Web.Client.Services.Subscription;
 using Learning.Web.Client.Services.WebServices;
@@ -37,9 +39,11 @@ internal static class ServiceRegistry
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
         #region Refit
-        builder.Services.AddRefitClient<IPublicQuizRestService>()
+        builder.Services.AddRefitClient<IPublicQuizHttpClient>()
                         .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-        builder.Services.AddRefitClient<IDataCollectionRestService>()
+        builder.Services.AddRefitClient<IDataCollectionHttpClient>()
+                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+        builder.Services.AddRefitClient<IExamNotificationHttpClient>()
                         .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
         #endregion
 
@@ -59,5 +63,6 @@ internal static class ServiceRegistry
         builder.Services.AddTransient<IQuizDataService, QuizRestDataService>();
         builder.Services.AddTransient<ICouponCodeDataService, CouponCodeRestDataService>();
         builder.Services.AddTransient<IContactUsDataService, ContactUsRestDataService>();
+        builder.Services.AddTransient<IExamNotificationDataService, ExamNotificationRestDataService>();
     }
 }

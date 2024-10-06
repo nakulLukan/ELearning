@@ -6,9 +6,9 @@ namespace Learning.Web.Client.Services.Subscription;
 
 public class CouponCodeRestDataService : ICouponCodeDataService
 {
-    private readonly IPublicQuizRestService _httpClient;
+    private readonly IPublicQuizHttpClient _httpClient;
 
-    public CouponCodeRestDataService(IPublicQuizRestService httpClient)
+    public CouponCodeRestDataService(IPublicQuizHttpClient httpClient)
     {
         _httpClient = httpClient;
     }

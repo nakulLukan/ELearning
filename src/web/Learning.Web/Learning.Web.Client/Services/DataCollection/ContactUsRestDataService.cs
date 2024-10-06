@@ -8,8 +8,8 @@ namespace Learning.Web.Client.Services.DataCollection;
 
 public class ContactUsRestDataService : IContactUsDataService
 {
-    private readonly IDataCollectionRestService _httpClient;
-    public ContactUsRestDataService(IDataCollectionRestService httpClient)
+    private readonly IDataCollectionHttpClient _httpClient;
+    public ContactUsRestDataService(IDataCollectionHttpClient httpClient)
     {
         _httpClient = httpClient;
     }

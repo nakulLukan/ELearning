@@ -1,12 +1,12 @@
-﻿@if(Href == null)
+﻿@if (Href == null)
 {
-    <button id="@Id" class="app-button @_buttonTypeClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
+    <button type="@_buttonFormType" id="@Id" class="app-button @_buttonTypeClass @_fullWidthClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
         @Text
     </button>
 }
 else
 {
-    <a id="@Id" href="@Href" class="app-button @_buttonTypeClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
+    <a type="@_buttonFormType" id="@Id" href="@Href" class="app-button @_buttonTypeClass @_fullWidthClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
         @Text
     </a>
 }
@@ -29,8 +29,20 @@ else
     [CascadingParameter(Name = "ParentDisabled")]
     private bool ParentDisabled { get; set; }
 
+    #region FullWidth
     [Parameter]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    public bool FullWidth { get; set; }
+    private bool lastFullWidth;
+    private string _fullWidthClass = string.Empty;
+    private const string _fullWidthClassName = "full-width";
+    #endregion
+
+    #region ButtonFormType
+    [Parameter]
+    public AppButtonFormType FormType { get; set; } = AppButtonFormType.Button;
+    private AppButtonFormType lastFormType = AppButtonFormType.Button;
+    private string _buttonFormType = StyleConstants.Button;
+    #endregion
 
     #region ButtonType
     [Parameter]
@@ -39,6 +51,8 @@ else
     private string _buttonTypeClass = "app-button-primary";
     #endregion
 
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -46,6 +60,24 @@ else
         {
             _buttonTypeClass = ButtonType == AppButtonType.Primary ? StyleConstants.AppPrimaryButton : StyleConstants.AppSecondaryButton;
             lastButtonType = ButtonType;
+        }
+
+        if (lastFullWidth != FullWidth)
+        {
+            _fullWidthClass = FullWidth ? _fullWidthClassName : string.Empty;
+            lastFullWidth = FullWidth;
+        }
+
+        if(lastFormType != FormType)
+        {
+            _buttonFormType = FormType switch
+            {
+                AppButtonFormType.Button => StyleConstants.Button,
+                AppButtonFormType.Submit => StyleConstants.Submit,
+                AppButtonFormType.Reset => StyleConstants.Reset,
+                _=> throw new ArgumentException()
+            };
+            lastFormType = FormType;
         }
     }
 
@@ -64,6 +96,12 @@ else
         Primary,
         Secondary
     }
+    public enum AppButtonFormType
+    {
+        Button,
+        Reset,
+        Submit
+    }
     #endregion
 
     #region StyleClassNameConstants
@@ -71,6 +109,11 @@ else
     {
         public const string AppPrimaryButton = "app-button-primary";
         public const string AppSecondaryButton = "app-button-secondary";
+
+        public const string Reset = "reset";
+        public const string Button = "button";
+        public const string Submit = "submit";
+
     }
     #endregion
 }

@@ -26,6 +26,10 @@
     border: 1px solid var(--Overlays-Default, #00000033)
 }
 
+.full-width{
+    width: 100% !important;
+}
+
 
 @media (max-width: 600px) {
     .app-button {

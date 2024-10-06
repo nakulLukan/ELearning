@@ -17,6 +17,11 @@ public class AppJSInterop : IAppJSInterop
         await _jsRuntime.InvokeVoidAsync("copyToClipboard", text);
     }
 
+    public async Task<bool> IsMobile()
+    {
+        return await _jsRuntime.InvokeAsync<bool>("isMobile");
+    }
+
     public Task OpenDocumentInNewTab(string url)
     {
         throw new NotImplementedException();

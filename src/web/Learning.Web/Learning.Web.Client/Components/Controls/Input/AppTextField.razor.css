@@ -1,0 +1,41 @@
+﻿::deep .app-text-field-input {
+    height: 60px !important;
+    width:100%;
+    border-radius: 12px;
+    border-width: 0px;
+    padding: 20px !important;
+    padding-left: 29px !important;
+    padding-right: 29px;
+    box-sizing: border-box;
+    padding-left: 0px;
+    font-family: var(--ff-600);
+    font-size: 1rem;
+    background-color: #FFFFFFCC;
+    border-bottom: 1px solid #123231;
+    outline: none;
+    border-color: transparent;
+}
+
+.app-text-field-input::placeholder {
+    color: #222222;
+}
+
+
+    ::deep .app-text-field-input:focus-visible {
+        outline: none;
+        border-color: transparent;
+    }
+
+.validation-message {
+    color: white;
+    padding-top: 5px;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    ::deep .app-text-field-input {
+        height: 48px !important;
+        font-size: 0.75rem;
+    }
+}
+

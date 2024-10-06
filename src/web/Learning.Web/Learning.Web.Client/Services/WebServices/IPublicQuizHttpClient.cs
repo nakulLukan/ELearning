@@ -5,9 +5,8 @@ using Refit;
 
 namespace Learning.Web.Client.Services.WebServices;
 
-public interface IPublicQuizRestService
+public interface IPublicQuizHttpClient
 {
-
     [Get("/api/public/quiz/meta-data")]
     public Task<QuizMetaDataDto> GetQuizMetaData();
 

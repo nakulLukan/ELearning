@@ -1,54 +1,24 @@
 ﻿@using System.Linq.Expressions
 @typeparam TValue
-@inherits Editor<string>
-<style>
-    .app-text-field-label {
-        margin:0px;
-        font-size: 0.75rem;
-    }
-
-    .app-text-field-input {
-        height: 34px;
-        padding: 10px;
-        padding-left:0px;
-        font-size: 0.875rem;
-        background-color: transparent;
-        border-bottom: 1px solid #123231;
-    }
-
-        .app-text-field-input:focus-visible {
-            outline: none;
-            border-color: var(--mud-palette-primary);
-        }
-
-    .validation-message{
-        color:red;
-        padding-top: 5px;
-        font-size: 0.75rem;
-    }
-</style>
-<MudStack Spacing="0">
-    <label for="@_fieldName" class="app-text-field-label"><b>@Label</b></label>
-    <InputText class="app-text-field-input"
-               @bind-Value="@Value" ></InputText>
+@inherits InputBase<string>
+<div>
+    <input class="app-text-field-input"
+           placeholder="@Label"
+           id="Id"
+           @bind="@CurrentValue" ></input>
     <ValidationMessage For="For"></ValidationMessage>
-</MudStack>
+</div>
 @code {
 
-    [Parameter]
-    public string? Label { get; set; }
+    [Parameter, EditorRequired] public Expression<Func<TValue>> For { get; set; } = default!;
+    [Parameter] public string? Id { get; set; }
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
 
-    [Parameter]
-    public Expression<Func<TValue>>? For
+    protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
     {
-        get => _for; set
-        {
-            _for = value;
-            _fieldName = FieldIdentifier.Create(_for).FieldName;
-        }
+        result = value;
+        validationErrorMessage = null;
+        return true;
     }
-    private Expression<Func<TValue>>? _for;
-
-    private string? _fieldName;
 
 }

@@ -9,7 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_ContentIncludedByDefault Remove="Startup\appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,19 @@
+﻿.app-contact-us-cover {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    height: 80vh;
+    min-height: 570px;
+}
+.app-contact-us-container {
+    background: #00000080;
+    height: 100%
+}
+
+h1 {
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.app-contact-us-form {
+    gap: 40px;
+}
