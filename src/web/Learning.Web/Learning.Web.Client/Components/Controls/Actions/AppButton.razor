@@ -1,0 +1,76 @@
+﻿@if(Href == null)
+{
+    <button id="@Id" class="app-button @_buttonTypeClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
+        @Text
+    </button>
+}
+else
+{
+    <a id="@Id" href="@Href" class="app-button @_buttonTypeClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
+        @Text
+    </a>
+}
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public string Text { get; set; } = "Button";
+
+    [Parameter]
+    public string Padding { get; set; } = "10px";
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public string? Href { get; set; }
+
+    [CascadingParameter(Name = "ParentDisabled")]
+    private bool ParentDisabled { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    #region ButtonType
+    [Parameter]
+    public AppButtonType ButtonType { get; set; } = AppButtonType.Primary;
+    private AppButtonType lastButtonType = AppButtonType.Primary;
+    private string _buttonTypeClass = "app-button-primary";
+    #endregion
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (lastButtonType != ButtonType)
+        {
+            _buttonTypeClass = ButtonType == AppButtonType.Primary ? StyleConstants.AppPrimaryButton : StyleConstants.AppSecondaryButton;
+            lastButtonType = ButtonType;
+        }
+    }
+
+
+    protected bool GetDisabledState() => Disabled || ParentDisabled;
+    protected virtual async Task OnClickHandler(MouseEventArgs ev)
+    {
+        if (GetDisabledState())
+            return;
+        await OnClick.InvokeAsync(ev);
+    }
+
+    #region Classes
+    public enum AppButtonType
+    {
+        Primary,
+        Secondary
+    }
+    #endregion
+
+    #region StyleClassNameConstants
+    private class StyleConstants
+    {
+        public const string AppPrimaryButton = "app-button-primary";
+        public const string AppSecondaryButton = "app-button-secondary";
+    }
+    #endregion
+}

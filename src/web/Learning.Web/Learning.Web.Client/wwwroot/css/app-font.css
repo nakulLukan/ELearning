@@ -1,0 +1,49 @@
+﻿:root {
+    --ff-100: Thin;
+    --ff-200: ExtraLight;
+    --ff-300: Light;
+    --ff-400: Regular;
+    --ff-500: Medium;
+    --ff-600: SemiBold;
+    --ff-700: Bold;
+    --ff-800: ExtraBold;
+    --ff-900: Black;
+}
+
+@font-face {
+    font-family: Thin;
+    src: url(/fonts/Inter_24pt-Thin100.ttf)
+}
+@font-face {
+    font-family: ExtraLight;
+    src: url(/fonts/Inter_24pt-ExtraLight200.ttf)
+}
+@font-face {
+    font-family: Light;
+    src: url(/fonts/Inter_24pt-Light300.ttf)
+}
+@font-face {
+    font-family: Regular;
+    src: url(/fonts/Inter_24pt-Regular400.ttf)
+}
+@font-face {
+    font-family: Medium;
+    src: url(/fonts/Inter_24pt-Medium500.ttf)
+}
+@font-face {
+    font-family: Semibold;
+    src: url(/fonts/Inter_24pt-SemiBold600.ttf)
+}
+@font-face {
+    font-family: Bold;
+    src: url(/fonts/Inter_24pt-Bold700.ttf)
+}
+
+@font-face {
+    font-family: ExtraBold;
+    src: url(/fonts/Inter_24pt-ExtraBold800.ttf)
+}
+@font-face {
+    font-family: Black;
+    src: url(/fonts/Inter_24pt-Black900.ttf);
+}

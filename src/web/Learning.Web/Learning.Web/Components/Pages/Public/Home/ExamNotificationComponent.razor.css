@@ -1,20 +1,74 @@
-﻿::deep .mud-image {
-    height: 40vh !important;
+﻿.app-exam-notification-base-component {
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
 }
 
-::deep .mud-paper {
-    background-color: #fdfdfde8 !important;
-    height: auto;
+.app-exam-notification-translucent {
+    padding: 113px;
+    height: 100%;
+    width: 100%;
+    background: #00000066;
 }
-@media (min-width: 768px){
 
-    ::deep .carousel-caption {
-        position: absolute;
-        right: 15%;
-        bottom: 0;
-        top:0;
-        left: auto;
-        max-width: 30%;
-        text-align: start;
+.app-exam-notification-flex {
+    gap: 90px;
+}
+
+    .app-exam-notification-flex > .landing-text {
+        width: auto;
+        height: 603px;
     }
+
+.landing-text > .landing-text-header {
+    font-size: 3rem;
+    line-height: 3.6rem;
+    color: #FFFFFF;
+    font-variation-settings: 'slnt' 0;
+}
+
+.landing-text > .landing-text-subtext {
+    color: white;
+}
+
+.gap-20 {
+    gap: 20px;
+}
+
+.app-exam-notification-container {
+    background-color: #FFFFFF;
+    width: auto;
+    max-width: 430px;
+    height: min-content;
+    border-radius: 1.5rem;
+    padding: 30px;
+    margin-top: 113px;
+}
+
+::deep .app-exam-notification-image {
+    border-radius: 20px !important;
+    width: 370px !important;
+    height: 190px !important;
+}
+
+::deep .carousel-indicators {
+    position: unset;
+}
+
+    ::deep .carousel-indicators > button {
+        border: 0.69px solid #8B8B8B;
+        border-radius: 9px;
+        width: 9px;
+        height: 9px;
+    }
+    ::deep .carousel-indicators > .active {
+        background: #8B8B8B;
+    }
+::deep .carousel-caption > p {
+    min-height: calc(1.5rem * 2); /* Ensure the div has the height of 3 lines of text */
+    max-height: calc(1.5rem * 2); /* Prevent the div from growing beyond 3 lines */
+    overflow: hidden; /* Hide any overflowing content if text goes beyond 3 lines */
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical;
 }

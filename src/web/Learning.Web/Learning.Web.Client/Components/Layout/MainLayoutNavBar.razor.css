@@ -4,10 +4,9 @@
     width: auto;
     margin-right: 22px;
     margin-left:22px;
-    padding:4px
+    padding:4px;
 }
-
-.gap{
+.gap {
     gap: 35px;
 }
 .mud-primary-text {

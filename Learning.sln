@@ -47,11 +47,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Web.Client", "src\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "functions", "functions", "{F1DC0AA0-45A4-4A95-A1E9-A38DF22BF4CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CognitoPostSignUp", "src\functions\CognitoPostSignUp\src\CognitoPostSignUp\CognitoPostSignUp.csproj", "{9924EFB2-296A-40BE-A02C-077A7DDF74FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CognitoPostSignUp", "src\functions\CognitoPostSignUp\src\CognitoPostSignUp\CognitoPostSignUp.csproj", "{9924EFB2-296A-40BE-A02C-077A7DDF74FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{55E4B8A0-9ED2-4888-A910-8FFFF46A5D59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions.Identity.Core", "src\functions\core\Functions.Identity.Core\Functions.Identity.Core.csproj", "{28198D08-2B15-4152-AC1E-0BCD4FD7630E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Identity.Core", "src\functions\core\Functions.Identity.Core\Functions.Identity.Core.csproj", "{28198D08-2B15-4152-AC1E-0BCD4FD7630E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

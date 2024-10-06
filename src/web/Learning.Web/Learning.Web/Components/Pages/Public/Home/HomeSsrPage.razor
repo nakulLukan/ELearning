@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using Learning.Web.Client.Components.Pages.Home
 <MudStack AlignItems="AlignItems.Stretch" Spacing="0">
-    <ExamNotificationComponent />
+    <ExamNotificationComponent @rendermode="InteractiveServer"/>
     <Learning.Web.Client.Components.Pages.Home.Cover.CoverPage/>
 <Learning.Web.Client.Components.Pages.Home.AboutBts.HomePageAboutBtsComponent/>
     <Learning.Web.Client.Components.Pages.General.ContactUs.ContactUsComponent></Learning.Web.Client.Components.Pages.General.ContactUs.ContactUsComponent>

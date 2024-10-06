@@ -7,6 +7,17 @@
     --mud-appbar-height: 99px !important;
 }
 
+body{
+    font-size: 62.5%;
+}
+
+.app-nav-banner-text {
+    font-family: var(--ff-600) !important;
+    font-size: 1.5rem !important;
+    color: #FFFFFF;
+}
+
+
 .active-link-class {
     background-color: red;
 }
@@ -19,6 +30,8 @@
 .app-nav-item {
     height: 100% !important;
     text-transform: none !important;
+    color: #FFFFFF;
+    font-family: var(--ff-500)
 }
 
 .mud-main-content {
@@ -39,7 +52,7 @@
 .validation-message {
     color: red !important;
     padding-top: 5px !important;
-    font-size: 12px !important;
+    font-size: 0.75rem !important;
 }
 
 
@@ -47,5 +60,10 @@
     :root {
         --mud-appbar-height: 60px !important;
     }
+
+    .app-nav-banner-text {
+        font-size: 0.875rem !important;
+    }
+
 }
 
