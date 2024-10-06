@@ -5,19 +5,37 @@
     text-align: left;
     color: #000000;
 }
-h3 {
+h2 {
     font-family: var(--ff-700);
-    font-size: 1.5rem;
-    line-height: 1.625rem;
+    font-size: 2rem;
+    line-height: 2.4rem;
     text-align: left;
     color: #000000;
 }
+h3 {
+    font-family: var(--ff-700);
+    font-size: 1.75rem;
+    line-height: 2.1rem;
+    text-align: left;
+    color: #000000;
+}
+
+h4 {
+    font-family: var(--ff-700);
+    font-size: 1.5rem;
+    line-height: 1.8rem;
+    text-align: left;
+    color: #000000;
+    margin: 0px;
+}
+
 h6 {
     font-family: var(--ff-700);
     font-size: 1.125rem;
     line-height: 1.625rem;
     text-align: left;
     color: #000000;
+    margin:0px;
 }
 
 p {

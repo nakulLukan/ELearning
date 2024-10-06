@@ -1,30 +1,26 @@
-﻿<MudContainer>
-
-    <MudPaper Elevation="3" Class="rounded-xl pa-10 mt-10">
-        <MudStack>
-            <MudText Typo="Typo.h6">
-                BTS: Where aspiration meets the result!!
-            </MudText>
-
-            <MudText>
-                Step into <b>BTS Defence Academy</b>, where dreams of wearing the nation's uniform take flight. We’re not just an academy—we’re a powerhouse of preparation, designed to mold the next generation of India’s finest defenders. If you’ve set your sights on the Indian Army, Navy, Air Force, or Paramilitary forces, BTS is your ultimate destination.
-            </MudText>
-
-            <MudText>
-                At BTS, we blend academic excellence with physical training to ensure you’re fully prepared for the challenges ahead. Our programs are tailored to meet the rigorous demands of defence careers, with a curriculum that covers everything from theoretical knowledge to the fitness and discipline required to succeed.
-            </MudText>
-
-            <MudText>
-                What sets us apart is our exceptional team of mentors. These are individuals who have not only served in various branches of the Indian Defence Forces but have excelled in their fields. Their experience and guidance are invaluable, offering you insider knowledge and practical skills that go beyond textbooks and training manuals.
-            </MudText>
-
-            <MudText>
-                With top-tier resources and a commitment to your success, BTS Defence Academy is here to guide you every step of the way. Join us, and let’s turn your aspirations into results.
-            </MudText>
-        </MudStack>
-    </MudPaper>
-</MudContainer>
-
+﻿@using Learning.Web.Client.Components.Controls.Containers
+<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundImage="/assets/images/homepage/about_bts/about_bts_bg.jpg">
+    <div class="app-container-flex-col d-flex flex-column">
+        <h1>What sets us apart</h1>
+        <MudGrid>
+            <MudItem xs="12" md="4" Class="h-100">
+                <AboutCardComponent Icon="./assets/images/homepage/about_bts/all_streams_of_military.svg" 
+                Heading="All streams of military " 
+                Subtext="If you’ve set your sights on the Indian Army, Navy, Air Force, or Paramilitary forces, BTS is your ultimate destination." />
+            </MudItem>
+            <MudItem xs="12" md="4" Class="h-100">
+                <AboutCardComponent Icon="./assets/images/homepage/about_bts/unique_training.svg"
+                                    Heading="Unique training"
+                                    Subtext="At BTS, we blend academic excellence with physical training to ensure you’re fully prepared for the challenges ahead." />
+            </MudItem>
+            <MudItem xs="12" md="4" Class="h-100">
+                <AboutCardComponent Icon="./assets/images/homepage/about_bts/team_of_mentors.svg"
+                                    Heading="Team of mentors"
+                                    Subtext="Our exceptional team of mentors who have not only served in various branches of the Indian Defence Forces but have excelled in their fields." />
+            </MudItem>
+        </MudGrid>
+    </div>
+</Learning.Web.Client.Components.Pages.General.AppContainer>
 @code {
 
 }

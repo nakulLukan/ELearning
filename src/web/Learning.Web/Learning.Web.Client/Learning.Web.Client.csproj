@@ -9,7 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\Controls\Containers\PlainCard.razor.css" />
+    <None Remove="Components\Pages\General\AppContainer.razor.css" />
     <None Remove="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
+    <None Remove="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />
+    <None Remove="Components\Pages\Home\AboutBts\HomePageAboutBtsComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,7 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Components\Controls\Containers\PlainCard.razor.css" />
+    <Content Include="Components\Pages\General\AppContainer.razor.css" />
     <Content Include="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
+    <Content Include="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />
+    <Content Include="Components\Pages\Home\AboutBts\HomePageAboutBtsComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
