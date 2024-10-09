@@ -1,25 +1,27 @@
 ﻿@using Learning.Web.Client.Components.Controls.Containers
 <Learning.Web.Client.Components.Pages.General.AppContainer BackgroundImage="/assets/images/homepage/about_bts/about_bts_bg.jpg">
-    <div class="app-container-flex-col d-flex flex-column">
-        <h1>What sets us apart</h1>
-        <MudGrid>
-            <MudItem xs="12" md="4" Class="h-100">
-                <AboutCardComponent Icon="./assets/images/homepage/about_bts/all_streams_of_military.svg" 
-                Heading="All streams of military " 
-                Subtext="If you’ve set your sights on the Indian Army, Navy, Air Force, or Paramilitary forces, BTS is your ultimate destination." />
-            </MudItem>
-            <MudItem xs="12" md="4" Class="h-100">
-                <AboutCardComponent Icon="./assets/images/homepage/about_bts/unique_training.svg"
-                                    Heading="Unique training"
-                                    Subtext="At BTS, we blend academic excellence with physical training to ensure you’re fully prepared for the challenges ahead." />
-            </MudItem>
-            <MudItem xs="12" md="4" Class="h-100">
-                <AboutCardComponent Icon="./assets/images/homepage/about_bts/team_of_mentors.svg"
-                                    Heading="Team of mentors"
-                                    Subtext="Our exceptional team of mentors who have not only served in various branches of the Indian Defence Forces but have excelled in their fields." />
-            </MudItem>
-        </MudGrid>
-    </div>
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <div class="app-container-flex-col d-flex flex-column align-center">
+            <h1>What sets us apart</h1>
+            <MudGrid>
+                <MudItem xs="12" md="4" Class="h-100">
+                    <AboutCardComponent Icon="./assets/images/homepage/about_bts/all_streams_of_military.svg"
+                                        Heading="All streams of military "
+                                        Subtext="If you’ve set your sights on the Indian Army, Navy, Air Force, or Paramilitary forces, BTS is your ultimate destination." />
+                </MudItem>
+                <MudItem xs="12" md="4" Class="h-100">
+                    <AboutCardComponent Icon="./assets/images/homepage/about_bts/unique_training.svg"
+                                        Heading="Unique training"
+                                        Subtext="At BTS, we blend academic excellence with physical training to ensure you’re fully prepared for the challenges ahead." />
+                </MudItem>
+                <MudItem xs="12" md="4" Class="h-100">
+                    <AboutCardComponent Icon="./assets/images/homepage/about_bts/team_of_mentors.svg"
+                                        Heading="Team of mentors"
+                                        Subtext="Our exceptional team of mentors who have not only served in various branches of the Indian Defence Forces but have excelled in their fields." />
+                </MudItem>
+            </MudGrid>
+        </div>
+    </MudContainer>
 </Learning.Web.Client.Components.Pages.General.AppContainer>
 @code {
 

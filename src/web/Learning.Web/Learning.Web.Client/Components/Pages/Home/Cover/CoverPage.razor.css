@@ -1,0 +1,13 @@
+﻿h2 {
+    color: #FFFFFF;
+}
+
+p {
+    color: #FFFFFFD1 !important;
+}
+
+video{
+    height:100%;
+    width:100%;
+    object-fit:cover;
+}

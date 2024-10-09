@@ -14,6 +14,7 @@
     <None Remove="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
     <None Remove="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />
     <None Remove="Components\Pages\Home\AboutBts\HomePageAboutBtsComponent.razor.css" />
+    <None Remove="Components\Pages\Home\Cover\CoverPage.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,9 @@
     <Content Include="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
     <Content Include="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />
     <Content Include="Components\Pages\Home\AboutBts\HomePageAboutBtsComponent.razor.css" />
+    <Content Include="Components\Pages\Home\Cover\CoverPage.razor.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

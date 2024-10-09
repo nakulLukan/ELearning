@@ -1,12 +1,11 @@
 ﻿.app-base-container {
     background-repeat: no-repeat !important;
     background-size: cover !important;
-    min-height: min(80vh, 570px);
 }
 
 .app-container-translucent {
-    padding: 113px;
-    height: 100%;
-    width: 100%;
+    --component-height:min(80vh, 570px) !important; 
+    padding: 0px;
+    min-height: var(--component-height);
     background: #00000066;
 }

@@ -1,6 +1,6 @@
 ﻿<div class="app-base-container"
-     style="background: url('@BackgroundImage');">
-    <div class="app-container-translucent">
+     style="background: @_background">
+    <div class="app-container-translucent d-flex flex-column justify-center" style="height: @_height">
         @ChildContent
     </div>
 </div>
@@ -8,6 +8,45 @@
     [Parameter, EditorRequired]
     public RenderFragment? ChildContent { get; set; }
 
+    #region BackgroundImage
     [Parameter]
-    public string BackgroundImage { get; set; } = string.Empty;
+    public string? BackgroundImage { get; set; }
+    private string? lastBackgroundImage;
+    #endregion
+
+    #region BackgroundColor
+    [Parameter]
+    public string? BackgroundColor { get; set; }
+    private string? lastBackgroundColor;
+    #endregion
+
+    #region IsHeightFixed
+    [Parameter]
+    public bool IsHeightFixed { get; set; }
+    private bool lastIsHeightFixed;
+    #endregion
+
+    private string _background = string.Empty;
+    private string _height = "unset";
+
+    protected override void OnParametersSet()
+    {
+        if (lastBackgroundColor != BackgroundColor)
+        {
+            _background = BackgroundColor ?? "#FFFFFF";
+            lastBackgroundColor = BackgroundColor;
+        }
+        if (lastBackgroundImage != BackgroundImage)
+        {
+            _background = $"url({BackgroundImage})";
+            lastBackgroundImage = BackgroundImage;
+        }
+
+        if (lastIsHeightFixed != IsHeightFixed)
+        {
+            _height = IsHeightFixed ? "var(--component-height)" : "unset";
+            lastIsHeightFixed = IsHeightFixed;
+        }
+
+    }
 }
