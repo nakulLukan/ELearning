@@ -5,7 +5,9 @@
 p {
     color: #FFFFFFD1 !important;
 }
-
+.cover-main-container{
+    height: 100vh !important;
+}
 video {
     height: 100%;
     width: 100%;
@@ -33,6 +35,9 @@ video {
         bottom: -1px !important;
         left: 0px !important;
         background: linear-gradient(0deg, #000000 30.81%, rgba(0, 0, 0, 0.505) 65.06%, rgba(0, 0, 0, 0) 100%) !important;
+    }
+    .cover-main-container {
+        height: unset !important;
     }
 
     video {
