@@ -1,0 +1,9 @@
+﻿::deep .mud-image {
+    color: #FFFFFF !important;
+}
+a {
+    color: #FFFFFF !important;
+    font-family: var(--ff-400) !important;
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+}

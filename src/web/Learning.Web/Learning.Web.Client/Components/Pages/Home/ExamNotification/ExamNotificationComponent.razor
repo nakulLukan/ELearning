@@ -2,11 +2,10 @@
 @using Learning.Web.Client.Contracts.Services.ExamNotification
 @inject IJSRuntime JSRuntime
 @inject IExamNotificationDataService ExamNotificationDataService
-<div class="app-exam-notification-base-component"
-     style="background: url('/assets/images/homepage/exam_notification_bg_placeholder.png');">
-    <div class="app-exam-notification-translucent">
-        <div class="d-flex flex-grow align-content-center align-center app-exam-notification-flex">
-            <div class="flex-grow-1 d-flex flex-column justify-center align-content-center landing-text">
+<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundImage="/assets/images/homepage/exam_notification_bg_placeholder.png">
+    <MudContainer>
+        <div class="d-flex flex-grow align-center app-exam-notification-flex justify-space-between">
+            <div class="d-none d-md-flex flex-column justify-center align-content-center landing-text pl-12 gap-4">
                 <h1 class="landing-text-header">
                     A Gateway to your
                     Military Dreams
@@ -21,60 +20,63 @@
                                                                                Padding="75.5px" />
                 </div>
             </div>
-            @if (_examNotifications != null)
-            {
-                <div class="app-exam-notification-container d-flex flex-column gap-20">
-                    <h3>Exam notifications</h3>
-                    <div id="examNotificationCarousel" class="carousel slide d-flex flex-column" data-bs-ride="carousel" data-interval="5000">
-
-                        <div class="carousel-inner">
-                            @foreach (var notification in _examNotifications)
-                            {
-                                var notificationIndex = _examNotifications.IndexOf(notification);
-                                string activeClass = notificationIndex == 0 ? "active" : string.Empty;
-                                <div class="carousel-item @activeClass" data-details-href="@($"/exam-notifications/{notification.ExamNotificationId}/apply")">
-                                    <MudImage ObjectFit="ObjectFit.Cover"
-                                              Src="@notification.ImagePath"
-                                              Class="app-exam-notification-image" />
-                                    <div class="carousel-caption d-none d-md-block" style="position:unset">
-                                        <h6>@notification.Title </h6>
-                                        <p data-full-text="@notification.Description">@notification.Description</p>
-                                    </div>
-                                </div>
-                            }
-
-                        </div>
-                        <div class="carousel-indicators">
-                            @foreach (var notification in _examNotifications)
-                            {
-                                var notificationIndex = _examNotifications.IndexOf(notification);
-                                string activeClass = notificationIndex == 0 ? "active" : string.Empty;
-                                <button type="button" data-bs-target="#examNotificationCarousel" data-bs-slide-to="@notificationIndex" class="@activeClass" aria-current="@(notificationIndex == 0)" aria-label="Slide @(notificationIndex + 1)"></button>
-                            }
-                        </div>
-                    </div>
-                    <AppButton Text="Attend free model exam"></AppButton>
-                    <AppButton Id="viewDetailsButton"
-                               Text="View details"
-                               ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-                               Href="@_currentHref"></AppButton>
-                </div>
-            }
-            else
-            {
-                <div class="app-exam-notification-container d-flex justify-start flex-column ">
-                    <MudSkeleton Height="50px">
+            <div class="d-flex justify-center w-100">
+                @if (_examNotifications != null)
+                {
+                    <div class="app-exam-notification-container d-flex flex-column app-en-gap">
                         <h3>Exam notifications</h3>
-                    </MudSkeleton>
-                    <MudSkeleton Height="300px" Class="app-exam-notification-image">
-                    </MudSkeleton>
-                    <MudSkeleton Height="500px" Class="app-exam-notification-image">
-                    </MudSkeleton>
-                </div>
-            }
+                        <div id="examNotificationCarousel" class="carousel slide d-flex flex-column" data-bs-ride="carousel" data-interval="5000">
+
+                            <div class="carousel-inner">
+                                @foreach (var notification in _examNotifications)
+                                {
+                                    var notificationIndex = _examNotifications.IndexOf(notification);
+                                    string activeClass = notificationIndex == 0 ? "active" : string.Empty;
+                                    <div class="carousel-item @activeClass" data-details-href="@($"/exam-notifications/{notification.ExamNotificationId}/apply")">
+                                        <MudImage ObjectFit="ObjectFit.Cover"
+                                                  Src="@notification.ImagePath"
+                                                  Class="app-exam-notification-image" />
+                                        <div class="carousel-caption" style="position:unset">
+                                            <h6>@notification.Title </h6>
+                                            <p data-full-text="@notification.Description" class="mt-2">@notification.Description</p>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="carousel-indicators">
+                                @foreach (var notification in _examNotifications)
+                                {
+                                    var notificationIndex = _examNotifications.IndexOf(notification);
+                                    string activeClass = notificationIndex == 0 ? "active" : string.Empty;
+                                    <button type="button" data-bs-target="#examNotificationCarousel" data-bs-slide-to="@notificationIndex" class="@activeClass" aria-current="@(notificationIndex == 0)" aria-label="Slide @(notificationIndex + 1)"></button>
+                                }
+                            </div>
+                        </div>
+                        <AppButton Text="Attend free model exam"></AppButton>
+                        <AppButton Id="viewDetailsButton"
+                                   Text="View details"
+                                   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+                                   Href="@_currentHref"></AppButton>
+                    </div>
+                }
+                else
+                {
+                    <div class="app-exam-notification-container d-flex justify-start flex-column">
+                        <MudSkeleton Height="50px" Width="300px">
+                            <h3>Exam notifications</h3>
+                        </MudSkeleton>
+                        <MudSkeleton Height="300px" Class="app-exam-notification-image">
+                        </MudSkeleton>
+                        <MudSkeleton Height="500px" Class="app-exam-notification-image">
+                        </MudSkeleton>
+                    </div>
+                }
+            </div>
         </div>
-    </div>
-</div>
+    </MudContainer>
+</Learning.Web.Client.Components.Pages.General.AppContainer>
+
 
 @code {
     private string _currentHref = "#";

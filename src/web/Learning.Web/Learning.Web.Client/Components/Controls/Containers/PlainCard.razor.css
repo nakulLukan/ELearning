@@ -5,3 +5,12 @@
     padding-top: 67px;
     border-radius: 24px;
 }
+
+@media(max-width:600px){
+    .app-plain-card {
+        padding: 26px;
+        padding-top: 30px;
+        border-radius: 24px;
+    }
+
+}

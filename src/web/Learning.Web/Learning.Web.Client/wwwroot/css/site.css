@@ -57,6 +57,7 @@ body {
     color: red !important;
     padding-top: 5px !important;
     font-size: 0.75rem !important;
+    width:
 }
 
 
@@ -69,5 +70,11 @@ body {
         font-size: 0.875rem !important;
     }
 
+
+    .app-nav-menu {
+        color: #1E1E1E !important;
+        font-family: var(--ff-500) !important;
+        font-size: 0.75rem !important;
+    }
 }
 

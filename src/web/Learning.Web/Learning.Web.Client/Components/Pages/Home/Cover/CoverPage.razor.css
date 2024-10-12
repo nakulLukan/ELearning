@@ -6,8 +6,40 @@ p {
     color: #FFFFFFD1 !important;
 }
 
-video{
-    height:100%;
-    width:100%;
-    object-fit:cover;
+video {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.app-video-shader {
+    height: 100% !important;
+    width: 284px !important;
+    top: -1px !important;
+    right: -1px !important;
+    background: linear-gradient(270deg, #000000 30.81%, rgba(0, 0, 0, 0.505) 65.06%, rgba(0, 0, 0, 0) 100%) !important;
+}
+
+.app-text-center {
+    text-align: start;
+}
+
+@media(max-width:600px) {
+    .app-video-shader {
+        height: 100px !important;
+        width: 100% !important;
+        top: unset !important;
+        right: unset !important;
+        bottom: -1px !important;
+        left: 0px !important;
+        background: linear-gradient(0deg, #000000 30.81%, rgba(0, 0, 0, 0.505) 65.06%, rgba(0, 0, 0, 0) 100%) !important;
+    }
+
+    video {
+        height: 254px !important;
+    }
+
+    .app-text-center {
+        text-align: center;
+    }
 }

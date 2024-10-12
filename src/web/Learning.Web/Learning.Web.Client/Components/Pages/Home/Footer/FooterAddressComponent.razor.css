@@ -1,0 +1,25 @@
+﻿.app-address-header {
+    font-family: var(--ff-700);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: start;
+    color: #FFFFFF;
+}
+
+.app-address-content {
+    font-family: var(--ff-300);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: start;
+    color: #FFFFFF;
+}
+
+@media(max-width:600px){
+    .app-address-header {
+        text-align: center !important;
+    }
+
+    .app-address-content {
+        text-align: center !important;
+    }
+}

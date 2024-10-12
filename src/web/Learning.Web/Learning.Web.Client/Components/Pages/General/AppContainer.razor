@@ -1,6 +1,6 @@
 ﻿<div class="app-base-container"
      style="background: @_background">
-    <div class="app-container-translucent d-flex flex-column justify-center" style="height: @_height">
+    <div class="app-container-translucent d-flex flex-column justify-center" style="height: @_height; padding-top: @_paddingY; padding-bottom: @_paddingY">
         @ChildContent
     </div>
 </div>
@@ -24,10 +24,17 @@
     [Parameter]
     public bool IsHeightFixed { get; set; }
     private bool lastIsHeightFixed;
+    private string _height = "100%";
+    #endregion
+
+    #region PaddingY
+    [Parameter]
+    public int PaddingY { get; set; }
+    private int lastPaddingY;
+    private string _paddingY = "0px";
     #endregion
 
     private string _background = string.Empty;
-    private string _height = "unset";
 
     protected override void OnParametersSet()
     {
@@ -46,6 +53,11 @@
         {
             _height = IsHeightFixed ? "var(--component-height)" : "unset";
             lastIsHeightFixed = IsHeightFixed;
+        }
+        if (lastPaddingY != PaddingY)
+        {
+            _paddingY = $"{PaddingY}px";
+            lastPaddingY = PaddingY;
         }
 
     }

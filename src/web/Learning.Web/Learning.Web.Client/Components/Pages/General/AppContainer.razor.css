@@ -4,7 +4,6 @@
 }
 
 .app-container-translucent {
-    --component-height:min(80vh, 570px) !important; 
     padding: 0px;
     min-height: var(--component-height);
     background: #00000066;

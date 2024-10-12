@@ -15,6 +15,10 @@
     <None Remove="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />
     <None Remove="Components\Pages\Home\AboutBts\HomePageAboutBtsComponent.razor.css" />
     <None Remove="Components\Pages\Home\Cover\CoverPage.razor.css" />
+    <None Remove="Components\Pages\Home\Footer\FooterAddressComponent.razor.css" />
+    <None Remove="Components\Pages\Home\Footer\FooterComponent.razor.css" />
+    <None Remove="Components\Pages\Home\Footer\FooterContactComponent - Copy.razor.css" />
+    <None Remove="Components\Pages\Home\Footer\FooterContactComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +34,9 @@
     <Content Include="Components\Pages\Home\Cover\CoverPage.razor.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Include="Components\Pages\Home\Footer\FooterAddressComponent.razor.css" />
+    <Content Include="Components\Pages\Home\Footer\FooterComponent.razor.css" />
+    <Content Include="Components\Pages\Home\Footer\FooterContactComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,11 @@
+﻿<MudStack Spacing="4" Style="max-width: 280.5px">
+    <label class="app-address-header">@Header</label>
+    <label class="app-address-content">@ChildContent</label>
+</MudStack>
+@code {
+
+    [Parameter, EditorRequired]
+    public string? Header { get; set; }
+    [Parameter, EditorRequired]
+    public RenderFragment? ChildContent { get; set; }
+            }

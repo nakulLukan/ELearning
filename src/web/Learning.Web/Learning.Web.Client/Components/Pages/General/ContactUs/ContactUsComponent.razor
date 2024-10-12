@@ -9,16 +9,15 @@
 @inject IContactUsDataService ContactUsDataService
 @inject IAppJSInterop JSInterop
 @rendermode InteractiveAuto
-<div class="app-contact-us-cover"
-     style="background: url('/assets/images/homepage/contact_us_cover.jpg');">
-    <div class="app-contact-us-container d-flex flex-column justify-center">
+<AppContainer BackgroundImage="/assets/images/homepage/contact_us_cover.jpg">
+    <div class="app-contact-us-container d-flex flex-column justify-start my-16">
         <MudContainer MaxWidth="MaxWidth.Medium">
             <EditForm Model="@Model"
                       OnValidSubmit="OnValidSubmit"
                       FormName="ContactUs">
                 <DataAnnotationsValidator />
-                <div class="app-contact-us-form d-flex flex-column m-3">
-                    <h1>Get in touch with us</h1>
+                <div class="app-contact-us-form d-flex flex-column gap-10">
+                    <h1 class="app-contact-us-header">Get in touch with us</h1>
                     <MudGrid Justify="Justify.FlexStart" Spacing="6">
                         <MudItem xs="12" md="6">
                             <AppTextField Label="Name"
@@ -46,11 +45,10 @@
                                       Variant="Variant.Filled">We have recieved your request. Thank You!!!</MudAlert>
 
                         }
-                        <div class="text-center">
-                            <AppButton FormType="AppButton.AppButtonFormType.Submit"
+                        <div class="d-flex flex-grow-1 justify-center">
+                            <AppButton FormType="AppButton.AppButtonFormType.Submit" Class="flex-grow-1 flex-md-grow-0"
                                        Text="Contact Us"
-                                       Padding="51px"
-                                       FullWidth="_isSubmitBtnFullWidth"></AppButton>
+                                       Padding="51px"></AppButton>
                         </div>
                     </MudStack>
                 </div>
@@ -58,7 +56,8 @@
 
         </MudContainer>
     </div>
-</div>
+</AppContainer>
+
 @code {
     public ContactUsModel Model { get; set; } = new();
 

@@ -1,13 +1,16 @@
 ﻿@using Learning.Web.Client.Components.Controls.Containers
-<PlainCard>
-    <MudStack Style="gap: 15px !important">
-        <MudImage Width="48" Src="@Icon"></MudImage>
-        <h4>@Heading</h4>
-        <p>
-            @Subtext
-        </p>
-    </MudStack>
-</PlainCard>
+<span>
+    <PlainCard Class="app-ab-us-card">
+        <MudStack Style="gap: 15px !important">
+            <MudImage Width="48" Src="@Icon" Class="p-1"></MudImage>
+            <h4>@Heading</h4>
+            <p>
+                @Subtext
+            </p>
+        </MudStack>
+    </PlainCard>
+
+</span>
 
 @code {
     [Parameter, EditorRequired]

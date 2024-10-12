@@ -1,24 +1,21 @@
 ﻿<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundColor="#000000" 
-    IsHeightFixed="true">
-    <div class="d-flex justify-center align-stretch h-100">
+    >
+    <div class="d-flex justify-center align-stretch align-stretch">
         <MudGrid Justify="Justify.Center" Class="align-center h-100 ma-0">
-            <MudItem md="7" Class="overflow-hidden h-100 pa-0 relative d-inline-block">
+            <MudItem md="7" Class="overflow-hidden h-100 w-100 pa-0 relative d-flex align-stretch">
                 <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
                     
                 </video>
-                <div class="absolute " style="height:100%; width: 284px;top: 0;
-  right: 0; background: linear-gradient(270deg, #000000 30.81%, rgba(0, 0, 0, 0.505) 65.06%, rgba(0, 0, 0, 0) 100%);">
-                   
-                </div>
+                <div class="absolute app-video-shader"/>
             </MudItem>
 
-            <MudItem xs="12" md="5">
-                <MudStack>
-                    <h2>
+            <MudItem xs="12" md="5" Class="pa-4 pl-sm-0 pt-sm-15 pb-sm-15 pr-sm-15">
+                <MudStack Justify="Justify.Center" Spacing="4">
+                    <h2 class="app-text-center">
                         BTS: Where aspiration
                         meets the result!!
                     </h2>
-                    <p>
+                    <p class="app-text-center">
                         Step into BTS Defence Academy, where dreams of wearing the nation's uniform take flight. We’re not just an academy—we’re a powerhouse of preparation, designed to mold the next generation of India’s finest defenders
                     </p>
                 </MudStack>

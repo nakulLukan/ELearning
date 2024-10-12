@@ -6,6 +6,10 @@
     margin-left:22px;
     padding:4px;
 }
+
+.logo-text {
+    color: white !important;
+}
 .gap {
     gap: 35px;
 }
@@ -20,6 +24,5 @@
         margin-right: 16px;
         margin-left: 13px;
         padding: 4px;
-        color: white !important;
     }
 }
