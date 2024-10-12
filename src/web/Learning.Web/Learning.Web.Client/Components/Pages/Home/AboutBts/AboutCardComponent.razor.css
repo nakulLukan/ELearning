@@ -5,7 +5,7 @@ p {
     font-family: var(--ff-500)
 }
 
-@media (max-width:600px){
+@media (max-width: 960px){
 
     h4 {
         font-size: 1.125rem;

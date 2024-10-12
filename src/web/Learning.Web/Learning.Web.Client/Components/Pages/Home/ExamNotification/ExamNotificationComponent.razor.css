@@ -64,7 +64,7 @@
     -webkit-box-orient: vertical;
 }
 
-@media(max-width:600px) {
+@media(max-width: 960px) {
     .app-exam-notification-container {
         padding: 20px;
         border-radius:12px;

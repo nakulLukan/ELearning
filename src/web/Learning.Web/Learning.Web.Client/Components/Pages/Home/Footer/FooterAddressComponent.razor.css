@@ -14,7 +14,7 @@
     color: #FFFFFF;
 }
 
-@media(max-width:600px){
+@media(max-width: 960px){
     .app-address-header {
         text-align: center !important;
     }

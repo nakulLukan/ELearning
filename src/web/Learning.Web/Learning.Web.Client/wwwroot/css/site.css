@@ -61,7 +61,7 @@ body {
 }
 
 
-@media (max-width: 600px) {
+@media (max-width: 960px) {
     :root {
         --mud-appbar-height: 60px !important;
     }

@@ -31,7 +31,7 @@
 }
 
 
-@media (max-width: 600px) {
+@media (max-width: 960px) {
     .app-button {
         font-size: 0.875rem;
         line-height: 16.94px;

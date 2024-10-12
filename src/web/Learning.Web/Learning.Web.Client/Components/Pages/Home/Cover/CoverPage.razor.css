@@ -24,7 +24,7 @@ video {
     text-align: start;
 }
 
-@media(max-width:600px) {
+@media(max-width: 960px) {
     .app-video-shader {
         height: 100px !important;
         width: 100% !important;

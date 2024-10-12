@@ -32,7 +32,7 @@
     font-size: 0.75rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 960px) {
     ::deep .app-text-field-input {
         height: 48px !important;
         font-size: 0.75rem;

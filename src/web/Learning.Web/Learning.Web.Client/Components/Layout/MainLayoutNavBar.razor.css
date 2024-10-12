@@ -17,7 +17,7 @@
     color: white !important;
 }
 
-@media (max-width: 600px){
+@media (max-width: 960px){
     .logo {
         height: 36px; /* Adjust the height as needed */
         width: auto;
