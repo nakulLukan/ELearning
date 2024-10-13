@@ -1,4 +1,5 @@
 ﻿using Learning.Business.Dto.Notifications.ExamNotification;
+using Learning.Shared.Dto.Notifications.ExamNotification;
 
 namespace Learning.Business.Contracts.Services.ExamNotification;
 

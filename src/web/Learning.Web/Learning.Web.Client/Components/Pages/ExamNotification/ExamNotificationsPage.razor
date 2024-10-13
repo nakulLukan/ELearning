@@ -1,0 +1,74 @@
+﻿@page "/exam-notifications"
+@using Learning.Shared.Common.Constants
+@using Learning.Shared.Dto.Notifications.ExamNotification
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Pages
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
+@inject IExamNotificationDataService ExamNotificationDataService;
+<AppPage BackgroundColor="#F4F4F4">
+    <div class="pt-9">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="en-page-container">
+            @if (_examNotifications != null)
+            {
+                <div class="d-flex flex-column gap-6">
+                    <h4>Exam Notifications</h4>
+                    <div class="d-flex flex-wrap flex-grow-1 flex-md-grow-0 justify-md-start gap-6">
+                        @foreach (var notification in _examNotifications)
+                        {
+                            <Learning.Web.Client.Components.Controls.Containers.PlainCard Class="exam-notification-card flex-grow-1 flex-md-grow-0">
+                                <div class="d-flex flex-column notification-container">
+                                    <div class="relative">
+                                        <MudImage Class="exam-notification-card-image" Src="@notification.ImageAbsPath"></MudImage>
+                                        @if (notification.ValidTill.HasValue)
+                                        {
+                                            <span class="absolute notification-date">@notification.ValidTill</span>
+                                        }
+                                    </div>
+                                    <h6>@notification.Title</h6>
+                                    <p class="notification-description">@notification.Description</p>
+                                    <div class="d-flex flex-grow-1 gap-2">
+                                        <AppButton Class="flex-grow-1" Text="Free Model Exam"></AppButton>
+                                        <AppButton ButtonType="AppButton.AppButtonType.Secondary"
+                                                   Class="pa-4"
+                                                   Icon="@GlyphIcons.ArrowRight"
+                                                   Href="@($"/exam-notifications/{notification.Id}/apply")"></AppButton>
+                                    </div>
+                                </div>
+                            </Learning.Web.Client.Components.Controls.Containers.PlainCard>
+
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-0">
+                    <MudSkeleton Width="100%" Height="50px"></MudSkeleton>
+                    <div class="d-flex  flex-wrap gap-3">
+                        <MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+                        <MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+                        <MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+
+                    </div>
+                </div>
+            }
+        </MudContainer>
+    </div>
+</AppPage>
+@code {
+    private ExamNotificationCardItemDto[]? _examNotifications = null;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var result = await ExamNotificationDataService.GetAllActiveExamNotifications();
+        if (result.IsSuccess)
+        {
+            _examNotifications = result.Value;
+            StateHasChanged();
+        }
+    }
+}

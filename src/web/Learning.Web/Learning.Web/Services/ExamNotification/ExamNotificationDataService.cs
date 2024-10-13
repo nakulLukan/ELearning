@@ -14,7 +14,6 @@ public class ExamNotificationDataService : IExamNotificationDataService
     {
         _mediator = mediator;
     }
-
     public async Task<Result<ActiveHomepageExamNotificationsQueryResponseDto[]>> GetActiveHomePageExamNotifications()
     {
         try
@@ -27,4 +26,31 @@ public class ExamNotificationDataService : IExamNotificationDataService
             return Result.Fail(ex.Message);
         }
     }
+
+    public async Task<Result<ExamNotificationCardItemDto[]>> GetAllActiveExamNotifications()
+    {
+        try
+        {
+            var examNotifications = await _mediator.Send(new ActiveExamNotificationsQuery());
+            return examNotifications;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ActiveExamNotificationDetailDto>> ActiveExamNotificationDetailById(int examNotificationId)
+    {
+        try
+        {
+            var examNotifications = await _mediator.Send(new ActiveExamNotificationDetailByIdQuery() { ExamNotificationId = examNotificationId });
+            return examNotifications;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
 }

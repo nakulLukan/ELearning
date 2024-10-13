@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <None Remove="Components\Controls\Containers\PlainCard.razor.css" />
+    <None Remove="Components\Pages\ExamNotification\ExamNotificationDetailPage.razor.css" />
+    <None Remove="Components\Pages\ExamNotification\ExamNotificationsPage.razor.css" />
     <None Remove="Components\Pages\General\AppContainer.razor.css" />
     <None Remove="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
     <None Remove="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />
@@ -27,6 +29,8 @@
 
   <ItemGroup>
     <Content Include="Components\Controls\Containers\PlainCard.razor.css" />
+    <Content Include="Components\Pages\ExamNotification\ExamNotificationDetailPage.razor.css" />
+    <Content Include="Components\Pages\ExamNotification\ExamNotificationsPage.razor.css" />
     <Content Include="Components\Pages\General\AppContainer.razor.css" />
     <Content Include="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
     <Content Include="Components\Pages\Home\AboutBts\AboutCardComponent.razor.css" />

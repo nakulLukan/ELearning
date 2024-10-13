@@ -1,4 +1,4 @@
-﻿namespace Learning.Business.Dto.Notifications.ExamNotification;
+﻿namespace Learning.Shared.Dto.Notifications.ExamNotification;
 
 public class ActiveExamNotificationCacheDto
 {

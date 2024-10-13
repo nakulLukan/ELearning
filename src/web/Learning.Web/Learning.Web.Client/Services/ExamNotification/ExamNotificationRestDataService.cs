@@ -26,4 +26,30 @@ public class ExamNotificationRestDataService : IExamNotificationDataService
             return Result.Fail(ex.Message);
         }
     }
+
+    public async Task<Result<ExamNotificationCardItemDto[]>> GetAllActiveExamNotifications()
+    {
+        try
+        {
+            var result = await _httpClient.GetAllActiveExamNotifications();
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ActiveExamNotificationDetailDto>> ActiveExamNotificationDetailById(int examNotificationId)
+    {
+        try
+        {
+            var result = await _httpClient.ActiveExamNotificationDetailById(examNotificationId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
 }

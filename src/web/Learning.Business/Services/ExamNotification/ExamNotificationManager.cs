@@ -5,6 +5,7 @@ using Learning.Business.Dto.Notifications.ExamNotification;
 using Learning.Business.Impl.Data;
 using Learning.Shared.Application.Contracts.Storage;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Dto.Notifications.ExamNotification;
 using Microsoft.EntityFrameworkCore;
 
 namespace Learning.Business.Services.ExamNotification;

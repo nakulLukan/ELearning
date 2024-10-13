@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Pages\Public\" />
     <Folder Include="Models\" />
   </ItemGroup>
 

@@ -6,8 +6,12 @@
 }
 else
 {
-    <a type="@_buttonFormType" id="@Id" href="@Href" class="app-button @_buttonTypeClass @_fullWidthClass" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
-        @Text
+    <a type="@_buttonFormType" id="@Id" href="@Href" class="app-button @_buttonTypeClass @_fullWidthClass @Class" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
+        @Text 
+        @if (Icon != null)
+        {
+            <img width="24" src="@GlyphIcons.ArrowRight" />
+        }
     </a>
 }
 @code {
@@ -18,7 +22,7 @@ else
     public string Class { get; set; } = string.Empty;
 
     [Parameter]
-    public string Text { get; set; } = "Button";
+    public string? Text { get; set; }
 
     [Parameter]
     public string Padding { get; set; } = "10px";
@@ -28,6 +32,9 @@ else
 
     [Parameter]
     public string? Href { get; set; }
+
+    [Parameter]
+    public string? Icon { get; set; }
 
     [CascadingParameter(Name = "ParentDisabled")]
     private bool ParentDisabled { get; set; }
@@ -83,7 +90,6 @@ else
             lastFormType = FormType;
         }
     }
-
 
     protected bool GetDisabledState() => Disabled || ParentDisabled;
     protected virtual async Task OnClickHandler(MouseEventArgs ev)
