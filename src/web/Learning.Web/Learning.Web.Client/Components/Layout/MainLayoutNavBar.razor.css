@@ -17,7 +17,22 @@
     color: white !important;
 }
 
-@media (max-width: 960px){
+
+::deep .app-nav-item {
+    text-transform: none !important;
+    color: #FFFFFF !important;
+    font-family: var(--ff-700) !important;
+    font-size: 1.125rem !important;
+    line-height: 1.6rem !important;
+    width: auto !important;
+    height:100% !important;
+    align-items: center !important;
+}
+::deep .mud-nav-link.active {
+    color: #4F76DC !important;
+}
+
+@media (max-width: 960px) {
     .logo {
         height: 36px; /* Adjust the height as needed */
         width: auto;

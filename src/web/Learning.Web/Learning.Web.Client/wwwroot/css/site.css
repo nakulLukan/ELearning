@@ -31,13 +31,6 @@ body {
 }
 
 
-.app-nav-item {
-    height: 100% !important;
-    text-transform: none !important;
-    color: #FFFFFF;
-    font-family: var(--ff-500)
-}
-
 .mud-main-content {
     height: 100vh !important;
     padding-top: 0px !important;
