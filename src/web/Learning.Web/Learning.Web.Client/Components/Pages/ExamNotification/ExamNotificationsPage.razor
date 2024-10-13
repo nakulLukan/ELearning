@@ -18,7 +18,7 @@
                         @foreach (var notification in _examNotifications)
                         {
                             <Learning.Web.Client.Components.Controls.Containers.PlainCard Class="exam-notification-card flex-grow-1 flex-md-grow-0">
-                                <div class="d-flex flex-column notification-container">
+                                <div class="d-flex flex-column notification-container h-100">
                                     <div class="relative">
                                         <MudImage Class="exam-notification-card-image" Src="@notification.ImageAbsPath"></MudImage>
                                         @if (notification.ValidTill.HasValue)
@@ -28,7 +28,7 @@
                                     </div>
                                     <h6>@notification.Title</h6>
                                     <p class="notification-description">@notification.Description</p>
-                                    <div class="d-flex flex-grow-1 gap-2">
+                                    <div class="d-flex flex-grow-1 gap-2 align-end">
                                         <AppButton Class="flex-grow-1" Text="Free Model Exam"></AppButton>
                                         <AppButton ButtonType="AppButton.AppButtonType.Secondary"
                                                    Class="pa-4"
