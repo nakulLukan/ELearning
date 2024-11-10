@@ -25,8 +25,7 @@
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.Index" Title="Code" Sortable="true" />
-        <PropertyColumn Property="x => x.FirstName" Title="First Name" Sortable="true" />
-        <PropertyColumn Property="x => x.LastName" Title="Last Name" />
+        <PropertyColumn Property="x => x.FullName" Title="Full Name" Sortable="true" />
         <PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
         <PropertyColumn Property="@(context=> context.IsContactNumberVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
         <PropertyColumn Property="x => x.EmailAddress" Title="Email Address" Sortable=true />

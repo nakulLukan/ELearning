@@ -20,14 +20,15 @@ public class IdentityUserManager : IIdentityUserManager
             string email = userAttributes["email"];
             bool isEmailVerified = bool.Parse(userAttributes["email_verified"]);
             string sub = userAttributes["sub"];
+            string fullName = userAttributes["name"];
             connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             string insertQuery = @"INSERT INTO ""AspNetUsers"" (""Id"", ""IsAdmin"", ""AccountCreatedOn"",""IsActive"") 
                                     VALUES 
                                     (@UserId, @IsAdmin, @AccountCreatedOn, @IsActive);
-                                    INSERT INTO ""ApplicationUserOtherDetails"" (""PhoneNumber"", ""UserId"", ""Email"", ""NormalizedEmail"", ""EmailConfirmed"", ""PhoneNumberConfirmed"")
+                                    INSERT INTO ""ApplicationUserOtherDetails"" (""PhoneNumber"", ""UserId"", ""Email"", ""NormalizedEmail"", ""EmailConfirmed"", ""PhoneNumberConfirmed"", ""FullName"")
                                     VALUES
-                                    (@PhoneNumber, @UserId, @Email, @NormalizedEmail, @EmailConfirmed, @PhoneNumberConfirmed)";
+                                    (@PhoneNumber, @UserId, @Email, @NormalizedEmail, @EmailConfirmed, @PhoneNumberConfirmed, @FullName)";
 
 
             // SQL query to insert user record
@@ -39,6 +40,7 @@ public class IdentityUserManager : IIdentityUserManager
             command.Parameters.AddWithValue("@IsActive", isEmailVerified);
             command.Parameters.AddWithValue("@Email", email);
             command.Parameters.AddWithValue("@NormalizedEmail", email.ToUpperInvariant());
+            command.Parameters.AddWithValue("@FullName", fullName);
             command.Parameters.AddWithValue("@EmailConfirmed", isEmailVerified);
             command.Parameters.AddWithValue("@PhoneNumberConfirmed", false);
             command.Parameters.AddWithValue("@PhoneNumber", DBNull.Value);

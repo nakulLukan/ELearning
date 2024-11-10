@@ -13,16 +13,6 @@ public class ApplicationUserOtherDetail
     /// <summary>
     /// First name
     /// </summary>
-    public string? FirstName { get; set; }
-
-    /// <summary>
-    /// Last name
-    /// </summary>
-    public string? LastName { get; set; }
-
-    /// <summary>
-    /// Full name of the user
-    /// </summary>
     public string? FullName { get; set; }
 
     /// <summary>

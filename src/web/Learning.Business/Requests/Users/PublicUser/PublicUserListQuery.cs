@@ -45,8 +45,7 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
                 EmailAddress = x.OtherDetails.Email ?? string.Empty,
                 IsEmailAddressVerified = x.OtherDetails.EmailConfirmed,
                 IsContactNumberVerified = x.OtherDetails.PhoneNumberConfirmed,
-                FirstName = x.OtherDetails!.FirstName ?? string.Empty,
-                LastName = x.OtherDetails!.LastName ?? string.Empty,
+                FullName = x.OtherDetails.FullName ?? string.Empty,
                 IsActive = x.IsActive,
                 Index = x.Index
             })
@@ -64,7 +63,7 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
                 nameof(PublicUserListItemDto.IsEmailAddressVerified) => usersQuery.SortyBy(x => x.OtherDetails.EmailConfirmed, request.IsDescending),
                 nameof(PublicUserListItemDto.AccountCreatedOn) => usersQuery.SortyBy(x => x.AccountCreatedOn, request.IsDescending),
                 nameof(PublicUserListItemDto.Index) => usersQuery.SortyBy(x => x.Index, request.IsDescending),
-                nameof(PublicUserListItemDto.FirstName) => usersQuery.SortyBy(x => x.OtherDetails.FirstName, request.IsDescending),
+                nameof(PublicUserListItemDto.FullName) => usersQuery.SortyBy(x => x.OtherDetails.FullName, request.IsDescending),
                 _ => throw new NotImplementedException()
             };
         }
