@@ -24,7 +24,7 @@
 
 .app-exam-notification-container {
     background-color: #FFFFFF;
-    width: auto;
+    width: 430px;
     max-width: min(430px, 100%);
     height: min-content;
     border-radius: 1.5rem;

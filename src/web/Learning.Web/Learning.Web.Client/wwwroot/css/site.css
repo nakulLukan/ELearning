@@ -15,12 +15,6 @@ body {
     font-size: 62.5%;
 }
 
-.app-nav-banner-text {
-    font-family: var(--ff-600) !important;
-    font-size: 1.5rem !important;
-    color: #FFFFFF;
-}
-
 
 .active-link-class {
     background-color: red;
@@ -53,16 +47,16 @@ body {
     width:
 }
 
+.en-page-container {
+    margin-top: var(--mud-appbar-height) !important;
+}
+
+
 
 @media (max-width: 960px) {
     :root {
         --mud-appbar-height: 60px !important;
     }
-
-    .app-nav-banner-text {
-        font-size: 0.875rem !important;
-    }
-
 
     .app-nav-menu {
         color: #1E1E1E !important;

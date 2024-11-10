@@ -17,6 +17,11 @@ public class BrowserLocalStorage : IBrowserStorage
         _cryptoService = cryptoService;
     }
 
+    public async ValueTask<bool> HasKey(string key)
+    {
+        return await _localStorage.ContainKeyAsync(key);
+    }
+
     public async ValueTask<T?> Get<T>(string key, string encryptionKey)
     {
         var encryptedData = await _localStorage.GetItemAsync<string>(key);

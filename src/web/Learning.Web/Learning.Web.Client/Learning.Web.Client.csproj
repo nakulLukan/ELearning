@@ -9,8 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\Controls\Alerts\NewQuizDialog.razor.css" />
     <None Remove="Components\Controls\Containers\PlainCard.razor.css" />
     <None Remove="Components\Pages\ExamNotification\ExamNotificationDetailPage.razor.css" />
+    <None Remove="Components\Pages\ExamNotification\ExamNotificationModelExamComponent.razor.css" />
     <None Remove="Components\Pages\ExamNotification\ExamNotificationsPage.razor.css" />
     <None Remove="Components\Pages\General\AppContainer.razor.css" />
     <None Remove="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
@@ -21,6 +23,7 @@
     <None Remove="Components\Pages\Home\Footer\FooterComponent.razor.css" />
     <None Remove="Components\Pages\Home\Footer\FooterContactComponent - Copy.razor.css" />
     <None Remove="Components\Pages\Home\Footer\FooterContactComponent.razor.css" />
+    <None Remove="Components\Views\Auth\LoginNavButtonComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,8 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Components\Controls\Alerts\NewQuizDialog.razor.css" />
     <Content Include="Components\Controls\Containers\PlainCard.razor.css" />
     <Content Include="Components\Pages\ExamNotification\ExamNotificationDetailPage.razor.css" />
+    <Content Include="Components\Pages\ExamNotification\ExamNotificationModelExamComponent.razor.css" />
     <Content Include="Components\Pages\ExamNotification\ExamNotificationsPage.razor.css" />
     <Content Include="Components\Pages\General\AppContainer.razor.css" />
     <Content Include="Components\Pages\General\ContactUs\ContactUsComponent.razor.css" />
@@ -41,6 +46,7 @@
     <Content Include="Components\Pages\Home\Footer\FooterAddressComponent.razor.css" />
     <Content Include="Components\Pages\Home\Footer\FooterComponent.razor.css" />
     <Content Include="Components\Pages\Home\Footer\FooterContactComponent.razor.css" />
+    <Content Include="Components\Views\Auth\LoginNavButtonComponent.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +70,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Components\Controls\Alerts\NewQuizDialog.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Components\Controls\Input\AppTextFieldV2.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

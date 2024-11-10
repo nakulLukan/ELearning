@@ -26,8 +26,7 @@ namespace CognitoPostSignUp
         public async Task<CognitoPostConfirmationEvent> FunctionHandler(CognitoPostConfirmationEvent input, ILambdaContext context)
         {
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(input.Request.UserAttributes));
-            string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")!;
-            var userId = await _identityUserManager.AddUser(input.Request.UserAttributes, connectionString);
+            var userId = await _identityUserManager.AddUser(input.Request.UserAttributes);
             Console.WriteLine($"User '{userId}' added to database");
             return input;
         }

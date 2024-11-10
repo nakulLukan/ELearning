@@ -1,0 +1,59 @@
+﻿@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Views.Auth
+@rendermode InteractiveAuto
+<div>
+    <MudAppBar WrapContent Gutters="false" Class="mr-2">
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+            <MudButton Href="/" Class="no-link h-100 pa-0 pr-4 ">
+                <img src="assets/images/bts_icon.svg" alt="Logo" class="logo" /> <MudText Class="app-nav-banner-text"><b>@UIConstant.AppName</b></MudText>
+            </MudButton>
+
+            <MudSpacer />
+            <div class="d-flex h-100">
+                <MudNavLink Class="app-nav-item" Href="/exam-notifications">Exam Notifications</MudNavLink>
+                <MudNavLink Class="app-nav-item" Href="/quiz">Quiz</MudNavLink>
+                <MudNavLink Class="app-nav-item" Href="/contacts-us">Contact Us</MudNavLink>
+                <MudNavLink Class="app-nav-item" Href="/about-us">About Us</MudNavLink>
+
+                <div class="ml-4 mr-2 d-flex align-center">
+                    <LoginNavButtonComponent />
+                </div>
+            </div>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+            <div class="d-flex flex-no-wrap justify-space-between w-100">
+                <MudButton Href="/" Class="no-link">
+                    <img src="assets/images/bts_icon.svg" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1" Class="app-nav-banner-text"><b>@UIConstant.AppName</b></MudText>
+                </MudButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
+            </div>
+        </MudHidden>
+    </MudAppBar>
+
+    <MudDrawer Class="fixed"
+               Fixed
+               Variant="DrawerVariant.Temporary"
+               Width="304px"
+               @bind-Open=_openDrawer>
+        <MudDrawerHeader Style="padding:24px;">
+            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                <h6>@UIConstant.AppName</h6>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Rounded.Close"
+                               OnClick="@(()=> _openDrawer = false)"
+                               Class="pa-0"></MudIconButton>
+            </MudStack>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Class="app-nav-menu" Href="/exam-notifications">Exam Notifications</MudNavLink>
+            <MudNavLink Class="app-nav-menu" Href="/quiz">Quiz</MudNavLink>
+            <MudNavLink Class="app-nav-menu" Href="/contact-us">Contact Us</MudNavLink>
+            <MudNavLink Class="app-nav-menu" Href="/about-us">About Us</MudNavLink>
+        </MudNavMenu>
+        <MudNavLink Class="app-nav-menu" Href="/login">Login</MudNavLink>
+    </MudDrawer>
+</div>
+@code {
+    private bool _openDrawer = false;
+
+}

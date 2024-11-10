@@ -901,7 +901,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<float>("Amount")
                         .HasColumnType("real");
 
-                    b.Property<int>("ExamConfigId")
+                    b.Property<int>("ModelExamPackageId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("PurchasedOn")
@@ -914,7 +914,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExamConfigId");
+                    b.HasIndex("ModelExamPackageId");
 
                     b.ToTable("ModelExamPurchaseHistory");
                 });
@@ -1422,11 +1422,11 @@ namespace Learning.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamPurchaseHistory", b =>
                 {
-                    b.HasOne("Learning.Domain.Notification.ModelExamConfiguration", "ExamConfig")
-                        .WithMany()
-                        .HasForeignKey("ExamConfigId");
+                    b.HasOne("Learning.Domain.Notification.ModelExamPackage", "ModelExamPackage")
+                        .WithMany("PurchaseHitories")
+                        .HasForeignKey("ModelExamPackageId");
 
-                    b.Navigation("ExamConfig");
+                    b.Navigation("ModelExamPackage");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamQuestionConfiguration", b =>
@@ -1576,6 +1576,8 @@ namespace Learning.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamPackage", b =>
                 {
                     b.Navigation("ModelExamConfigs");
+
+                    b.Navigation("PurchaseHitories");
                 });
 
             modelBuilder.Entity("Learning.Domain.Notification.ModelExamQuestionConfiguration", b =>

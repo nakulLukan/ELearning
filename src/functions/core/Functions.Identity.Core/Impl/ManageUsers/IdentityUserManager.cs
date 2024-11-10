@@ -5,14 +5,22 @@ namespace Functions.Identity.Core.Impl.ManageUsers;
 
 public class IdentityUserManager : IIdentityUserManager
 {
-    public async Task<string> AddUser(IDictionary<string, string> userAttributes, string connectionString)
+    private readonly string _connectionString;
+    private NpgsqlConnection connection;
+
+    public IdentityUserManager()
+    {
+        _connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")!;
+    }
+
+    public async Task<string> AddUser(IDictionary<string, string> userAttributes)
     {
         try
         {
             string email = userAttributes["email"];
             bool isEmailVerified = bool.Parse(userAttributes["email_verified"]);
             string sub = userAttributes["sub"];
-            using var connection = new NpgsqlConnection(connectionString);
+            connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
             string insertQuery = @"INSERT INTO ""AspNetUsers"" (""Id"", ""IsAdmin"", ""AccountCreatedOn"",""IsActive"") 
                                     VALUES 

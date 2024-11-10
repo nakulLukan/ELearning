@@ -12,4 +12,7 @@ public interface IQuizManager
     public QuizLocalStorageModel FinishQuiz(QuizLocalStorageModel model, int quizMaxDiscount);
     public (int? Score, int? Discount, string? DiscountCode) GetQuizResult(string encryptedData);
     public QuizLocalStorageModel SubmitQuestionScore(QuizLocalStorageModel model, int currentQuestionNumber, int score);
+
+    public Task<DateOnly?> WhenQuizLatestInfoWasChecked();
+    public Task SetWhenQuizLatestInfoWasChecked(DateOnly value);
 }

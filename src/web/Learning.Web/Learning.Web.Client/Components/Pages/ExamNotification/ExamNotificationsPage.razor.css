@@ -1,7 +1,4 @@
-﻿::deep .en-page-container {
-    margin-top: var(--mud-appbar-height) !important;
-}
-
+﻿
 ::deep .notification-container {
     gap: 20px;
 }

@@ -11,7 +11,7 @@ internal class Startup
         var services = new ServiceCollection();
 
         // Register your services here
-        services.AddTransient<IIdentityUserManager, IdentityUserManager>();
+        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
 
         return services.BuildServiceProvider();
     }

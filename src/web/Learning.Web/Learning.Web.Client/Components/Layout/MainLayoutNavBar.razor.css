@@ -20,16 +20,26 @@
 
 ::deep .app-nav-item {
     text-transform: none !important;
-    color: #FFFFFF !important;
+    color: #757575 !important;
     font-family: var(--ff-700) !important;
     font-size: 1.125rem !important;
     line-height: 1.6rem !important;
     width: auto !important;
-    height:100% !important;
+    height: 100% !important;
     align-items: center !important;
 }
 ::deep .mud-nav-link.active {
     color: #4F76DC !important;
+}
+
+::deep .app-nav-banner-text {
+    font-family: var(--ff-700) !important;
+    font-size: 1.5rem !important;
+    color: #222222;
+}
+
+::deep .mud-appbar {
+    background-color: #E9E9E9 !important;
 }
 
 @media (max-width: 960px) {
@@ -39,5 +49,14 @@
         margin-right: 16px;
         margin-left: 13px;
         padding: 4px;
+    }
+
+
+    ::deep .app-nav-banner-text {
+        font-size: 0.875rem !important;
+    }
+
+    ::deep .mud-icon-button {
+        color: #222222 !important;
     }
 }

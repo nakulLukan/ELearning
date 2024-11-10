@@ -1,0 +1,41 @@
+﻿@using Learning.Web.Client.Components.Controls.Actions
+<style>
+    :root {
+        --mud-default-borderradius: 24px !important;
+    }
+
+</style>
+<span>
+
+    <MudDialog Class="ma-9" ContentClass="ma-0 pa-0">
+        <DialogContent>
+            <div class="relative">
+
+                <MudGrid Spacing="0" Justify="Justify.Center" Class="align-center ">
+                    <MudItem xs="12" md="6" Class="ma-0 pa-0 h-100">
+                        <img src="/assets/images/homepage/quiz/new_quiz_image_bg.jpg" class="alert-img" />
+                    </MudItem>
+                    <MudItem xs="12" md="6" Class="d-flex align-content-center pa-9">
+                        <div class="d-flex flex-column align-content-center justify-center  gap-5">
+                            <h2>Weekly Quiz</h2>
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. </p>
+                            <AppButton Text="Start Quiz Now" OnClick="Submit"></AppButton>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                               Class="absolute end-0 top-0 ma-5"
+                               OnClick="Cancel"></MudIconButton>
+            </div>
+        </DialogContent>
+    </MudDialog>
+</span>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    private void Submit() => MudDialog!.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog!.Cancel();
+}

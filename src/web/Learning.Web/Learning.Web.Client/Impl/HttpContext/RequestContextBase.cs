@@ -1,23 +1,22 @@
 ﻿using Learning.Shared.Common.Constants;
-using Learning.Shared.Contracts.HttpContext;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Learning.Web.Client.Impl.HttpContext;
 
-public class RequestContext : IRequestContext
+public abstract class RequestContextBase
 {
-    private readonly AuthenticationStateProvider _authStateProvider;
+    protected readonly AuthenticationStateProvider AuthStateProvider;
 
-    public RequestContext(AuthenticationStateProvider authStateProvider)
+    public RequestContextBase(AuthenticationStateProvider authStateProvider)
     {
-        _authStateProvider = authStateProvider;
+        AuthStateProvider = authStateProvider;
     }
 
     private AuthenticationState _authState;
 
     private async Task Init()
     {
-        _authState ??= await _authStateProvider.GetAuthenticationStateAsync();
+        _authState ??= await AuthStateProvider.GetAuthenticationStateAsync();
     }
 
     public async Task<bool> IsAuthenticated()
@@ -61,5 +60,12 @@ public class RequestContext : IRequestContext
         if (!await IsAuthenticated()) return string.Empty;
         var userRole = _authState.User.Claims.First(x => x.Type == ClaimConstant.AwsRoleClaim);
         return userRole.Value;
+    }
+
+    public async Task<string> GetName()
+    {
+        if (!await IsAuthenticated()) return string.Empty;
+        var name = _authState.User.Claims.First(x => x.Type == ClaimConstant.Name);
+        return name.Value;
     }
 }

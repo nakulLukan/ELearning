@@ -1,6 +1,14 @@
 ﻿@page "/"
+@using Learning.Web.Client.Components.Layout.HomePage
 @using Learning.Web.Client.Components.Pages.Home
+@using Learning.Web.Client.Contracts.Presentation
+@using Learning.Web.Client.Contracts.Services.Quiz
+@layout HomePageLayout
 @rendermode InteractiveAuto
+@inject IQuizManager QuizManager
+@inject IQuizDataService QuizDataService
+@inject IAlertService AlertService
+
 <MudStack AlignItems="AlignItems.Stretch" Spacing="0">
     <Learning.Web.Client.Components.Pages.Home.ExamNotification.ExamNotificationComponent @rendermode=InteractiveAuto />
     <Learning.Web.Client.Components.Pages.Home.Cover.CoverPage />
@@ -9,4 +17,35 @@
     <Learning.Web.Client.Components.Pages.Home.Footer.FooterComponent></Learning.Web.Client.Components.Pages.Home.Footer.FooterComponent>
 </MudStack>
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
+        var quizModel = await QuizManager.GetQuizModel();
+        var lastTimeCheckedDate = await QuizManager.WhenQuizLatestInfoWasChecked();
+        if (!lastTimeCheckedDate.HasValue)
+        {
+            await QuizManager.SetWhenQuizLatestInfoWasChecked(currentDate.AddDays(-1));
+            return;
+        }
+
+        if (lastTimeCheckedDate < currentDate)
+        {
+            var latestQuizInfoResult = await QuizDataService.GetQuizMetaData();
+            await QuizManager.SetWhenQuizLatestInfoWasChecked(currentDate);
+            if (latestQuizInfoResult.IsSuccess && latestQuizInfoResult.Value.QuizVersionNumber > quizModel.QuizVersionNumber)
+            {
+                var hasOpened = await AlertService.DisplayNewQuizAlert();
+                if (hasOpened)
+                {
+                    NavigationManager.NavigateTo("/quiz");
+                }
+            }
+        }
+    }
+
+    private async Task TestButton()
+    {
+        await AlertService.DisplayNewQuizAlert();
+    }
 }

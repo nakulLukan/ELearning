@@ -26,7 +26,21 @@ public class AlertService : IAlertService
         };
         var dialog = await _dialogService.ShowAsync<AdminAlertDialog>("Simple Dialog", parameters);
         var res = (await dialog.Result);
-        return res.Data is bool action && action;
+        return res!.Data is bool action && action;
+    }
+
+    public async Task<bool> DisplayNewQuizAlert()
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            NoHeader = true,
+            Position = DialogPosition.Center,
+            CloseButton = true
+        };
+        var dialog = await _dialogService.ShowAsync<NewQuizDialog>("test", options);
+        var res = (await dialog.Result);
+        return res!.Data is bool action && action;
     }
 
     private Color GetOkButtonColor(AlertTypeEnum alertType)

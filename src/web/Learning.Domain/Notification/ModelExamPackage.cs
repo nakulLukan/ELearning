@@ -9,4 +9,5 @@ public class ModelExamPackage
 
     public ExamNotification? ExamNotification { get; set; }
     public List<ModelExamConfiguration>? ModelExamConfigs { get; set; }
+    public List<ModelExamPurchaseHistory>? PurchaseHitories { get; set; }
 }

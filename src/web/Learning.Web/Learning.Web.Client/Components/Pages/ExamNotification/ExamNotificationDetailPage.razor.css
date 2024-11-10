@@ -1,1 +1,35 @@
-﻿
+﻿video {
+    max-height: 409px !important;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    max-width: 409px !important;
+    height: 100%;
+    background-color: black;
+    border-radius: 1rem;
+}
+
+h6{
+    text-align: right !important;
+}
+
+li, p {
+    font-family: var(--ff-400);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    text-align: left;
+    color: #444444;
+}
+
+::deep .app-button {
+    min-width: 250px !important;
+}
+
+@media(max-width:960px) {
+    h6 {
+        text-align: left !important;
+    }
+
+    video{
+        max-width: 100% !important;
+    }
+}

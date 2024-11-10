@@ -13,7 +13,7 @@ public sealed class UserInfo
     public bool IsEmailVerified { get; init; }
 
     public const string UserIdClaimType = ClaimConstant.AwsUserNameClaim;
-    public const string NameClaimType = ClaimConstant.AwsUserNameClaim;
+    public const string NameClaimType = ClaimConstant.Name;
     public const string RoleClaimType = ClaimConstant.AwsRoleClaim;
     public const string EmailClaimType = ClaimConstant.EmailClaim;
     public const string IsEmailVerifiedClaimType = ClaimConstant.IsEmailVerifiedClaim;

@@ -1,0 +1,89 @@
+﻿@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@using Learning.Web.Client.Dto.ExamNotifications.ModelExam
+@inject IModelExamDataService ModelExamDataService
+
+<div class="d-flex flex-column gap-6 mt-20">
+
+    @if (_modelExams != null)
+    {
+        if (_modelExams.Any())
+        {
+            <h4>Model Exams</h4>
+            <div class="d-flex flex-column flex-md-row gap-8 gap-md-11">
+                @foreach (var modelExam in _modelExams)
+                {
+                    @if (modelExam.IsLocked)
+                    {
+                        <div class="me-card">
+                            <div class="me-card-gradient pa-4">
+                                <div class="d-flex flex-column justify-center h-100">
+                                    <div class="d-flex flex-column align-center gap-3">
+                                        <MudIcon Icon="@Icons.Material.Rounded.Lock" Class="lock-icon"></MudIcon>
+                                        <h4 class="me-card-title">@modelExam.ExamName</h4>
+                                        <AppButton Text="@($"PURCHASE NOW for ₹{modelExam.DiscountedPrice}")" ButtonType="AppButton.AppButtonType.Secondary">
+                                        </AppButton>
+                                        <p class="text-caption"> Purchase once and unlock all model exams </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="me-card">
+                            <div class="me-card-gradient pa-4">
+                                <div class="d-flex flex-column justify-space-between h-100">
+                                    <div>
+                                        @if (modelExam.IsFree)
+                                        {
+                                            <span class="me-badge">
+                                                FREE EXAM
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="d-flex flex-column gap-4">
+                                        <h4 class="me-card-title">@modelExam.ExamName</h4>
+                                        <AppButton Text="Start Exam Now">
+
+                                        </AppButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+
+</div>
+@code {
+    [Parameter, EditorRequired]
+    public int ExamNotificationId { get; set; }
+
+    ModelExamMetaDataDto[]? _modelExams;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        if (ExamNotificationId != 0)
+        {
+            var modelExams = await ModelExamDataService.GetAllModelExamMetaData(ExamNotificationId);
+            if (modelExams.IsSuccess)
+            {
+                _modelExams = modelExams.Value.Select(x => new ModelExamMetaDataDto
+                    {
+                        DiscountedPrice = x.DiscountedPrice,
+                        Price = x.Price,
+                        ExamConfigId = x.ExamConfigId,
+                        ExamName = x.ExamName,
+                        ExamNotificationId = x.ExamNotificationId,
+                        IsFree = x.IsFree,
+                        IsLocked = x.IsLocked,
+                    }).ToArray();
+                StateHasChanged();
+            }
+        }
+    }
+}

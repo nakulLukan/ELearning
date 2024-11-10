@@ -9,11 +9,10 @@
     border-radius: 12px;
     gap: 10px;
     text-align: center;
-    text-transform: uppercase;
 }
 
 .app-button-primary {
-    font-family: Bold;
+    font-family: var(--ff-700);
     background: linear-gradient(90deg, #2380E6 0%, #6C42E6 100%);
     color: #FFFFFF;
     box-shadow: 0px 4px 14px 0px #00000040;

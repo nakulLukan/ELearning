@@ -1,0 +1,20 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider />
+<MudPopoverProvider @rendermode="InteractiveAuto"/>
+<MudDialogProvider @rendermode="InteractiveAuto" />
+
+<MudLayout>
+    <HomePageLayoutNavBar />
+
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

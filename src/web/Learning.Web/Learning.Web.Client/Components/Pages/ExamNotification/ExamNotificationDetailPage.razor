@@ -1,94 +1,106 @@
 ﻿@page "/exam-notifications/{ExamNotificationId:int}/apply"
 @using Learning.Shared.Dto.Notifications.ExamNotification
+@using Learning.Shared.Extensions
+@using Learning.Web.Client.Components.Controls.Actions
 @using Learning.Web.Client.Components.Pages
 @using Learning.Web.Client.Contracts.Services.ExamNotification
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using static Learning.Web.Client.Components.Controls.Actions.AppButton
 @rendermode InteractiveAuto
 @inject NavigationManager NavigationManager
 @inject IExamNotificationDataService ExamNotificationDataService
 <AppPage>
-    <MudContainer MaxWidth="MaxWidth.Large">
-        @if (_detail != null)
-        {
-            <MudGrid>
-                <MudItem xs="12">
-                    <MudStack Spacing="0">
-                        <MudImage Class="d-md-none rounded-lg mud-elevation-5 mb-4"
-                                  ObjectFit="ObjectFit.Cover"
-                                  Src="@_detail.ImageAbsPath"></MudImage>
-
-                        <MudText Typo="Typo.h4" Align="Align.Center"><b>@_detail.Title</b></MudText>
-                        <MudDivider />
-                    </MudStack>
-                </MudItem>
-                <MudItem xs="12" md="6">
-                    <MudStack>
+    <div class="pt-9">
+        <MudContainer MaxWidth="MaxWidth.Large" class="en-page-container">
+            @if (_detail != null)
+            {
+                <div class="d-flex flex-column gap-3 gap-md-6">
+                    <div class="d-flex flex-column flex-md-row justify-space-between">
+                        <h4>@_detail.Title</h4>
                         @if (_detail.ValidTill.HasValue)
                         {
-                            <MudText Style="border-left: 2px solid black; background-color: beige" Class="pa-3">Last Date: <b>@_detail.ValidTill.Value.ToShortDateString()</b></MudText>
+                            <h6 class="mt-3 mt-md-0">@_detail.ValidTill.Value.ToDateString()</h6>
                         }
-                        <MudText>@_detail.Description</MudText>
-                        @if (_detail.ImportantPoints != null)
-                        {
-                            <MudText Class="mt-5"><u><b>Important points to be noted</b></u></MudText>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-space-between align-stretch gap-7 gap-md-9">
+                        <MudStack>
+                            <p class="mb-9">@_detail.Description</p>
+                            <h4 class="mb-3 mb-md-6">Important points to be noted</h4>
                             <ol>
-                                @foreach (var point in _detail.ImportantPoints)
+                                @foreach (var li in _detail.ImportantPoints!)
                                 {
-                                    <li>
-                                        <MudText>@point</MudText>
-                                    </li>
+                                    <li>@li</li>
                                 }
                             </ol>
-                        }
-                    </MudStack>
-                </MudItem>
-                <MudItem xs="12" md="6">
-                    <MudStack Spacing="3" Class="mb-5">
-                        <MudText Typo="Typo.h6"><b>Here is a short video about the exam.</b></MudText>
-                        <MudPaper Style="border-radius: 15px; overflow:hidden; background-color: black" Elevation="5">
-                            <video src="@_detail.VideoAbsUrl"
-                                   style="width: -webkit-fill-available; width: -moz-available; max-height: 400px; background-color: black"
-                                   loop
-                                   preload="metadata"
-                                   controls
-                                   controlsList="nodownload noremoteplayback noplaybackrate"
-                                   disablePictureInPicture />
-                        </MudPaper>
-
-                        <MudPaper Elevation="5" Class="pa-5 mt-5" Style="border-radius: 15px; background-color: #F5F5F5">
-                            <MudGrid Spacing="5">
+                            <div class="d-none d-md-flex flex-row flex-grow-1 gap-5 align-end">
+                                <AppButton Text="Apply now"
+                                           Href="@_detail.GovtLink"
+                                           Target="_blank"></AppButton>
                                 @if (!string.IsNullOrEmpty(_detail.PdfFileAbsUrl))
                                 {
-                                    <MudItem xs="12" sm="6">
-                                        <MudButton FullWidth
-                                                   StartIcon="@Icons.Material.Filled.Download"
-                                                   Href="@_detail.PdfFileAbsUrl"
-                                                   Color="Color.Surface"
-                                                   Target="_blank"><b>Download Now</b></MudButton>
-                                    </MudItem>
+                                    <AppButton Text="Download PDF"
+                                               ButtonType="AppButtonType.Secondary"
+                                               Href="@_detail.PdfFileAbsUrl"
+                                               Target="_blank"></AppButton>
                                 }
-                                <MudItem xs="12" sm="6">
-                                    <MudButton StartIcon="@Icons.Material.Filled.Send"
-                                               FullWidth
-                                               Href="@_detail.GovtLink"
-                                               Variant="Variant.Filled"
-                                               Target="_blank"
-                                               Style="background-color: #000000e3; color: white"><b>Apply</b></MudButton>
-                                </MudItem>
+                            </div>
+                        </MudStack>
+                        <video src="@_detail.VideoAbsUrl" loop preload="metadata" controls controlsList="nodownload noremoteplayback noplaybackrate" disablePictureInPicture></video>
+                        <div class="d-flex d-md-none flex-column gap-4">
+                            <AppButton Text="Apply now"
+                                       FullWidth
+                                       Href="@_detail.GovtLink"
+                                       Target="_blank"></AppButton>
+                            @if (!string.IsNullOrEmpty(_detail.PdfFileAbsUrl))
+                            {
+                                <AppButton Text="Download PDF"
+                                           FullWidth
+                                           ButtonType="AppButtonType.Secondary"
+                                           Href="@_detail.PdfFileAbsUrl"
+                                           Target="_blank"></AppButton>
+                            }
+                        </div>
+                    </div>
+                    <ExamNotificationModelExamComponent ExamNotificationId="@ExamNotificationId" />
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3 gap-md-6">
+                    <div class="d-flex flex-column flex-md-row justify-space-between">
+                        <MudSkeleton Width="150px" Height="39px"></MudSkeleton>
+                        <MudSkeleton Width="100px" Height="39px"></MudSkeleton>
+                    </div>
 
-                            </MudGrid>
-                        </MudPaper>
-                    </MudStack>
-                </MudItem>
-                <MudItem xs="12">
+                    <div class="d-flex flex-column flex-md-row justify-space-between align-stretch gap-7 gap-md-9">
+                        <MudStack>
+                            <MudSkeleton Class="mb-9" Width="533px" Height="66px">
 
-                </MudItem>
-            </MudGrid>
-        }
-        else
-        {
+                            </MudSkeleton>
+                            <MudSkeleton Class="mb-3 mb-md-6" Width="533px" Height="133px">
 
-        }
-    </MudContainer>
+                            </MudSkeleton>
+                            <div class="d-none d-md-flex flex-row flex-grow-1 gap-5">
+                                <MudSkeleton Width="250px" Height="60px"></MudSkeleton>
+                                <MudSkeleton Width="250px" Height="60px"></MudSkeleton>
+                            </div>
+                        </MudStack>
+                        <MudSkeleton Width="400px" Height="400px"/>
+                        <div class="d-flex d-md-none flex-column gap-4">
+                            <MudSkeleton Width="250px" Height="60px"></MudSkeleton>
+                            <MudSkeleton Width="250px" Height="60px"></MudSkeleton>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column flex-md-row gap-md-11">
+                        <MudSkeleton Width="335px" Height="256px" />
+                        <MudSkeleton Width="335px" Height="256px" />
+                        <MudSkeleton Width="335px" Height="256px" />
+                    </div>
+                </div>
+            }
+        </MudContainer>
+    </div>
 </AppPage>
 
 @code {

@@ -1,4 +1,5 @@
-﻿@rendermode InteractiveAuto
+﻿@using Learning.Web.Client.Components.Views.Auth
+@rendermode InteractiveAuto
 <div>
     <MudAppBar WrapContent Gutters="false" Class="mr-2">
         <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
@@ -12,7 +13,10 @@
                 <MudNavLink Class="app-nav-item" Href="/quiz">Quiz</MudNavLink>
                 <MudNavLink Class="app-nav-item" Href="/contacts-us">Contact Us</MudNavLink>
                 <MudNavLink Class="app-nav-item" Href="/about-us">About Us</MudNavLink>
-                <MudNavLink Class="app-nav-item ml-4 mr-2" Href="/login">Login</MudNavLink>
+                
+                <div class="ml-4 mr-2 d-flex align-center">
+                    <LoginNavButtonComponent/>
+                </div>
             </div>
         </MudHidden>
         <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
@@ -20,7 +24,7 @@
                 <MudButton Href="/" Class="no-link">
                     <img src="assets/images/bts_icon.svg" alt="Logo" class="logo" /> <MudText Typo="Typo.subtitle1" Class="app-nav-banner-text"><b>@UIConstant.AppName</b></MudText>
                 </MudButton>
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="(()=> _openDrawer = !_openDrawer)"></MudIconButton>
             </div>
         </MudHidden>
     </MudAppBar>
@@ -30,8 +34,8 @@
                Variant="DrawerVariant.Temporary"
                Width="304px"
                @bind-Open=_openDrawer>
-        <MudDrawerHeader Style="padding:24px;">
-            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+        <MudDrawerHeader Class="pa-6">
+            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="w-100">
                 <h6>@UIConstant.AppName</h6>
                 <MudSpacer/>
                 <MudIconButton Icon="@Icons.Material.Rounded.Close"

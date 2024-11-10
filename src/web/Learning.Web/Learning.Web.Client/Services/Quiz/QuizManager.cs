@@ -1,4 +1,5 @@
-﻿using Learning.Shared.Common.Utilities;
+﻿using Blazored.LocalStorage;
+using Learning.Shared.Common.Utilities;
 using Learning.Shared.Enums;
 using Learning.Web.Client.Constants;
 using Learning.Web.Client.Contracts.Persistance;
@@ -12,11 +13,14 @@ public class QuizManager : IQuizManager
 {
     private readonly ILogger<QuizManager> _logger;
     private readonly IBrowserStorage _browserStorage;
+    private readonly ILocalStorageService _localStorage;
 
-    public QuizManager(ILogger<QuizManager> logger, IBrowserStorage browserStorage)
+
+    public QuizManager(ILogger<QuizManager> logger, IBrowserStorage browserStorage, ILocalStorageService localStorage)
     {
         _logger = logger;
         _browserStorage = browserStorage;
+        _localStorage = localStorage;
     }
 
     private const string encryptionKey = "quiz@1232";
@@ -118,5 +122,19 @@ public class QuizManager : IQuizManager
         model.MarkScored += score;
 
         return model;
+    }
+
+    public async Task<DateOnly?> WhenQuizLatestInfoWasChecked()
+    {
+        if (!await _localStorage.ContainKeyAsync(BrowserStorageKeys.QuizLatestInfoLastCheckedStorageKey))
+        {
+            return null;
+        }
+        return await _localStorage.GetItemAsync<DateOnly>(BrowserStorageKeys.QuizLatestInfoLastCheckedStorageKey);
+    }
+
+    public async Task SetWhenQuizLatestInfoWasChecked(DateOnly value)
+    {
+        await _localStorage.SetItemAsync(BrowserStorageKeys.QuizLatestInfoLastCheckedStorageKey, value);
     }
 }

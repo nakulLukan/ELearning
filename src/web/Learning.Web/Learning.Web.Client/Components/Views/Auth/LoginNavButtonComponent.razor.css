@@ -1,0 +1,17 @@
+﻿
+::deep .app-button {
+    border-radius: 24px !important;
+    font-family: var(--ff-700) !important;
+    font-size: 1.125rem !important;
+    color: #222222 !important;
+    padding: 8px 25px 8px 25px !important;
+}
+
+::deep .mud-menu > .mud-button {
+    border-radius: 24px !important;
+    font-family: var(--ff-700) !important;
+    font-size: 1.125rem !important;
+    color: #222222 !important;
+    background-color: white !important;
+    padding: 8px 25px 8px 25px !important;
+}

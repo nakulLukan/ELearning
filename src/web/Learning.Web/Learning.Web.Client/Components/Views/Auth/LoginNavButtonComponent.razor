@@ -1,0 +1,58 @@
+﻿@using Learning.Shared.Contracts.HttpContext
+@using Learning.Web.Client.Components.Controls.Actions
+@inject IRequestContext RequestContext
+@inject HttpClient logoutHttpClient
+<span>
+    @if (_isLoggedIn)
+    {
+        <MudMenu EndIcon="@Icons.Material.Filled.KeyboardArrowDown"
+                 Label="@($"Hi, {_loggedInName}")"
+                 FullWidth
+                 AnchorOrigin="Origin.BottomLeft"
+                 Ripple="false">
+            <MudMenuItem>
+                <MudButton ButtonType="ButtonType.Submit"
+                           Class="mud-nav-link"
+                           StartIcon="@Icons.Material.Filled.Logout"
+                           Style="text-transform:none;" 
+                           Size="Size.Small"
+                           OnClick="OnLogout">
+                    Logout
+                </MudButton>
+            </MudMenuItem>
+        </MudMenu>
+
+    }
+    else
+    {
+        <AppButton ButtonType="AppButton.AppButtonType.Secondary"
+                   Href="/login" Text="Login" TextTransform="AppButton.ButtonTextTransform.None"></AppButton>
+    }
+</span>
+@code {
+
+    private string? _loggedInName;
+    private bool _isLoggedIn = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoggedIn = await RequestContext.IsAuthenticated();
+        if (_isLoggedIn)
+        {
+            _loggedInName = await RequestContext.GetName();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnLogout()
+    {
+        try
+        {
+            NavigationManager.NavigateTo("Account/SignOut", true);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"{ex.Message} {ex.StackTrace}");
+        }
+    }
+}

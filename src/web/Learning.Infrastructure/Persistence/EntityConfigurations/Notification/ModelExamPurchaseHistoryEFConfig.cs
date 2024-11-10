@@ -11,9 +11,9 @@ public class ModelExamPurchaseHistoryEFCOnfig : IEntityTypeConfiguration<ModelEx
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.UserId).IsRequired(true).HasMaxLength(36);
 
-        builder.HasOne(x => x.ExamConfig)
-            .WithMany()
-            .HasForeignKey(x => x.ExamConfigId)
+        builder.HasOne(x => x.ModelExamPackage)
+            .WithMany(x => x.PurchaseHitories)
+            .HasForeignKey(x => x.ModelExamPackageId)
             .IsRequired(false);
     }
 }

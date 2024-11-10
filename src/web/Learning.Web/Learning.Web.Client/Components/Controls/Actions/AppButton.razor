@@ -1,13 +1,23 @@
 ﻿@if (Href == null)
 {
-    <button type="@_buttonFormType" id="@Id" class="app-button @_buttonTypeClass @_fullWidthClass @Class" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
+    <button type="@_buttonFormType"
+            id="@Id"
+            class="app-button @_buttonTypeClass @_fullWidthClass @Class"
+            @onclick="OnClickHandler"
+            style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform">
         @Text
     </button>
 }
 else
 {
-    <a type="@_buttonFormType" id="@Id" href="@Href" class="app-button @_buttonTypeClass @_fullWidthClass @Class" @onclick="OnClickHandler" style="padding-left: @Padding; padding-right: @Padding">
-        @Text 
+    <a type="@_buttonFormType"
+       id="@Id"
+       href="@Href"
+       class="app-button @_buttonTypeClass @_fullWidthClass @Class"
+       @onclick="OnClickHandler"
+       style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+       target="@Target">
+        @Text
         @if (Icon != null)
         {
             <img width="24" src="@GlyphIcons.ArrowRight" />
@@ -34,7 +44,17 @@ else
     public string? Href { get; set; }
 
     [Parameter]
+    public string? Target { get; set; }
+
+    [Parameter]
     public string? Icon { get; set; }
+
+    #region TextTransform
+    [Parameter]
+    public ButtonTextTransform TextTransform { get; set; } = AppButton.ButtonTextTransform.Upper;
+    private string _textTransform = "uppercase";
+    private ButtonTextTransform? lastTextTransform = null;
+    #endregion
 
     [CascadingParameter(Name = "ParentDisabled")]
     private bool ParentDisabled { get; set; }
@@ -78,16 +98,26 @@ else
             lastFullWidth = FullWidth;
         }
 
-        if(lastFormType != FormType)
+        if (lastFormType != FormType)
         {
             _buttonFormType = FormType switch
             {
                 AppButtonFormType.Button => StyleConstants.Button,
                 AppButtonFormType.Submit => StyleConstants.Submit,
                 AppButtonFormType.Reset => StyleConstants.Reset,
-                _=> throw new ArgumentException()
+                _ => throw new ArgumentException()
             };
             lastFormType = FormType;
+        }
+        if (lastTextTransform != TextTransform)
+        {
+            _textTransform = TextTransform switch
+            {
+                ButtonTextTransform.Upper => "uppercase",
+                ButtonTextTransform.None => "unset",
+                _ => throw new ArgumentException()
+            };
+            lastTextTransform = TextTransform;
         }
     }
 
@@ -110,6 +140,11 @@ else
         Button,
         Reset,
         Submit
+    }
+    public enum ButtonTextTransform
+    {
+        Upper,
+        None
     }
     #endregion
 

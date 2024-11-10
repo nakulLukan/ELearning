@@ -53,16 +53,17 @@ internal static class ServiceRegistry
 
     public static void RegisterAppServices(this WebAssemblyHostBuilder builder)
     {
-        builder.Services.AddScoped<IRequestContext, RequestContext>();
+        builder.Services.AddScoped<IRequestContext, RequestContextWasm>();
         builder.Services.AddScoped<IBrowserStorage, BrowserLocalStorage>();
         builder.Services.AddTransient<IAppJSInterop, AppJSInterop>();
         builder.Services.AddTransient<IHttpClientService, HttpClientService>();
         builder.Services.AddScoped<IQuizManager, QuizManager>();
-        builder.Services.AddSingleton<IAlertService, AlertService>();
+        builder.Services.AddScoped<IAlertService, AlertService>();
 
         builder.Services.AddTransient<IQuizDataService, QuizRestDataService>();
         builder.Services.AddTransient<ICouponCodeDataService, CouponCodeRestDataService>();
         builder.Services.AddTransient<IContactUsDataService, ContactUsRestDataService>();
         builder.Services.AddTransient<IExamNotificationDataService, ExamNotificationRestDataService>();
+        builder.Services.AddTransient<IModelExamDataService, ModelExamRestDataService>();
     }
 }

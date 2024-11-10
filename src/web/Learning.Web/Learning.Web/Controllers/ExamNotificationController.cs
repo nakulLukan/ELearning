@@ -1,5 +1,7 @@
 ﻿using Learning.Business.Requests.Notifications.ExamNotification;
+using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Learning.Web.Controllers;
@@ -32,6 +34,13 @@ public class ExamNotificationController : ControllerBase
     public async Task<IActionResult> GetAllActiveExamNotifications(int examNotificationId)
     {
         var data = await _mediator.Send(new ActiveExamNotificationDetailByIdQuery() { ExamNotificationId = examNotificationId });
+        return Ok(data);
+    }
+
+    [HttpGet("{examNotificationId:int}/model-exams/listing")]
+    public async Task<IActionResult> GetAllModelExamMetaData(int examNotificationId)
+    {
+        var data = await _mediator.Send(new GetAllModelExamMetaDataQuery() { ExamNotificationId = examNotificationId });
         return Ok(data);
     }
 }

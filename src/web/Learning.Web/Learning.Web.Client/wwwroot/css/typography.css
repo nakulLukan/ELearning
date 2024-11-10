@@ -51,7 +51,16 @@ p {
     margin: 0px;
 }
 
-@media(max-width: 960px){
+.text-caption {
+    font-family: var(--ff-400);
+    font-size: 0.875rem;
+    line-height: 1.4rem;
+    text-align: left;
+    color: #FFFFFF;
+    margin: 0px;
+}
+
+@media(max-width: 960px) {
     h2{
         font-size: 1.5rem;
         line-height: 2rem;

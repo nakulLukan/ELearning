@@ -2,5 +2,5 @@
 
 public interface IIdentityUserManager
 {
-    public Task<string> AddUser(IDictionary<string, string> userAttributes, string connectionString);
+    public Task<string> AddUser(IDictionary<string, string> userAttributes);
 }

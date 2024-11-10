@@ -1,6 +1,7 @@
 ﻿using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using Learning.Business;
+using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.Persistence;
 using Learning.Infrastructure;
 using Learning.Shared.Common.Constants;
@@ -19,6 +20,7 @@ using Learning.Web.Client.Impl.Persistance;
 using Learning.Web.Client.Services.Quiz;
 using Learning.Web.Contracts.Events;
 using Learning.Web.Impl.Events;
+using Learning.Web.Impl.HttpContext;
 using Learning.Web.Impl.Persistence;
 using Learning.Web.Impl.Presentation;
 using Learning.Web.Services.DataCollection;
@@ -173,11 +175,20 @@ public static class ServiceRegistry
         });
         #endregion
 
+        builder.Services.AddCors((options) =>
+        {
+            options.AddPolicy("Default", policy =>
+            {
+                policy.WithOrigins("https://localhost:5000");
+            });
+        });
+
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllersWithViews();
         builder.Services.AddAntiforgery();
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddSubtleCrypto();
+        builder.Services.AddHttpClient();
         RegisterAppServices(builder);
     }
 
@@ -185,7 +196,8 @@ public static class ServiceRegistry
     {
         builder.Services.AddScoped<IToastService, ToastService>();
         builder.Services.AddScoped<IAppMediator, AppMediator>();
-        builder.Services.AddScoped<IRequestContext, RequestContext>();
+        builder.Services.AddScoped<IRequestContext, RequestContextServer>();
+        builder.Services.AddScoped<IApiRequestContext, ApiRequestContext>();
         builder.Services.AddSingleton<IAppCache, IAppMemoryCache>();
         builder.Services.AddScoped<IQuizManager, QuizManager>();
         builder.Services.AddScoped<IAlertService, AlertService>();
@@ -194,6 +206,7 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IContactUsDataService, ContactUsDataService>();
         builder.Services.AddScoped<ICouponCodeDataService, CouponCodeDataService>();
         builder.Services.AddScoped<IExamNotificationDataService, ExamNotificationDataService>();
+        builder.Services.AddScoped<IModelExamDataService, ModelExamDataService>();
         builder.Services.AddScoped<IBrowserStorage, BrowserLocalStorage>();
         builder.Services.AddTransient<IAppJSInterop, AppJSInterop>();
     }
