@@ -43,4 +43,12 @@ public class ExamNotificationController : ControllerBase
         var data = await _mediator.Send(new GetAllModelExamMetaDataQuery() { ExamNotificationId = examNotificationId });
         return Ok(data);
     }
+
+    [Authorize]
+    [HttpGet("model-exams/{modelExamId:int}/validate-subscription")]
+    public async Task<IActionResult> CheckUserModelExamSubscription(int modelExamId)
+    {
+        var data = await _mediator.Send(new CheckUserModelExamSubscriptionQuery() { ModelExamId = modelExamId });
+        return Ok(data);
+    }
 }

@@ -26,4 +26,8 @@
     <Folder Include="Services\Quiz\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Requests\Notifications\ExamNotification\ModelExam\CheckUserModelExamSubscriptionQuery.cs" />
+  </ItemGroup>
+
 </Project>

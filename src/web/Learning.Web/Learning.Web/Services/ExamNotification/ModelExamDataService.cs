@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
+using Learning.Shared.Common.Dto;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
 using MediatR;
@@ -24,6 +25,22 @@ public class ModelExamDataService : IModelExamDataService
                 ExamNotificationId = examNotificationId
             });
             return examNotifications;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ResponseDto<bool>>> CheckUserModelExamSubscriptionQuery(int modelExamId)
+    {
+        try
+        {
+            var hasValidSubscription = await _mediator.Send(new CheckUserModelExamSubscriptionQuery()
+            {
+                ModelExamId = modelExamId
+            });
+            return hasValidSubscription;
         }
         catch (Exception ex)
         {

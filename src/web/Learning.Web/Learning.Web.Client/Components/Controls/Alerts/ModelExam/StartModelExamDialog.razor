@@ -1,0 +1,40 @@
+﻿@using Learning.Web.Client.Components.Controls.Actions
+<style>
+    :root {
+        --mud-default-borderradius: 24px !important;
+    }
+
+</style>
+<span>
+    <MudDialog Class="ma-9" ContentClass="ma-0 pa-0">
+        <DialogContent>
+
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                           Class="absolute end-0 top-0 ma-5"
+                           OnClick="Cancel"></MudIconButton>
+            <div class="d-flex flex-column ma-20">
+                <div class="d-flex flex-column align-center gap-5">
+                    <h2>@ModelExamName</h2>
+                    <p class="px-8">@ModelExamDescription</p>
+                    <AppButton Text="Start Exam" OnClick="Submit" FullWidth />
+                </div>
+            </div>
+
+        </DialogContent>
+    </MudDialog>
+</span>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public string ModelExamName { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ModelExamDescription { get; set; } = string.Empty;
+
+    private void Submit() => MudDialog!.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog!.Cancel();
+}

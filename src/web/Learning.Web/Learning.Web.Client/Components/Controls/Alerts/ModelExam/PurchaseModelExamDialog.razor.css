@@ -1,0 +1,12 @@
+﻿
+.section > h6 {
+    font-family: var(--ff-700);
+    font-size: 0.875rem;
+    color: #757575;
+}
+
+.section > p {
+    font-family: var(--ff-700);
+    font-size: 1.125rem;
+    color: #222222;
+}

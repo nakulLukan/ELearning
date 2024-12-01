@@ -33,11 +33,13 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
                 ExamNotificationId = request.ExamNotificationId,
                 ExamConfigId = x.Id,
                 ExamName = x.ExamName,
+                ExamDescription = x.Description,
                 IsFree = x.IsFree,
                 IsLocked = true,
                 Price = x.ModelExamPackage!.Price,
                 ExamPackageId = x.ModelExamPackageId,
                 DiscountedPrice = x.ModelExamPackage.DiscountedPrice,
+                ValidUpto = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(2))
             })
             .ToListAsync(cancellationToken);
 
@@ -58,6 +60,8 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
             IsFree = x.IsFree,
             IsLocked = !x.IsFree && !hasPurchased,
             Price = x.Price,
+            ExamDescription = x.ExamDescription,
+            ValidUpto = x.ValidUpto
         }).ToArray();
     }
 }

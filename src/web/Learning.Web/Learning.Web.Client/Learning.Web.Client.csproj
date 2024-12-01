@@ -78,5 +78,9 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Pages\ExamNotification\ModelExam\" />
+  </ItemGroup>
+
 
 </Project>

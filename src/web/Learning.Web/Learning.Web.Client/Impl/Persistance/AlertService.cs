@@ -1,5 +1,7 @@
 ﻿using Learning.Web.Client.Components.Controls.Alerts;
+using Learning.Web.Client.Components.Controls.Alerts.ModelExam;
 using Learning.Web.Client.Contracts.Presentation;
+using Learning.Web.Client.Dto.ExamNotifications.ModelExam;
 using Learning.Web.Client.Enums;
 using MudBlazor;
 
@@ -38,7 +40,49 @@ public class AlertService : IAlertService
             Position = DialogPosition.Center,
             CloseButton = true
         };
-        var dialog = await _dialogService.ShowAsync<NewQuizDialog>("test", options);
+        var dialog = await _dialogService.ShowAsync<NewQuizDialog>(string.Empty, options);
+        var res = (await dialog.Result);
+        return res!.Data is bool action && action;
+    }
+
+    public async Task<bool> DisplayStartModelExamAlert(string modelExamName, string modelExamDescription)
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            NoHeader = true,
+            Position = DialogPosition.Center,
+            CloseButton = true
+        };
+
+        DialogParameters parameters = new DialogParameters()
+        {
+            { nameof(StartModelExamDialog.ModelExamName), modelExamName },
+            { nameof(StartModelExamDialog.ModelExamDescription), modelExamDescription },
+        };
+        var dialog = await _dialogService.ShowAsync<StartModelExamDialog>(string.Empty, parameters, options);
+        var res = (await dialog.Result);
+        return res!.Data is bool action && action;
+    }
+
+    public async Task<bool> DisplayPurchaseExamAlert(ModelExamPurchaseDialogParam parameter)
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            NoHeader = true,
+            Position = DialogPosition.Center,
+            CloseButton = true
+        };
+
+        DialogParameters parameters = new DialogParameters()
+        {
+            { nameof(PurchaseModelExamDialog.ModelExamName), parameter.ExamName },
+            { nameof(PurchaseModelExamDialog.ModelExamDescription), parameter.ExamDescription },
+            { nameof(PurchaseModelExamDialog.DiscountedPrice), parameter.DiscountedPrice },
+            { nameof(PurchaseModelExamDialog.ValidUpto), parameter.ValidUpto },
+        };
+        var dialog = await _dialogService.ShowAsync<PurchaseModelExamDialog>(string.Empty, parameters, options);
         var res = (await dialog.Result);
         return res!.Data is bool action && action;
     }

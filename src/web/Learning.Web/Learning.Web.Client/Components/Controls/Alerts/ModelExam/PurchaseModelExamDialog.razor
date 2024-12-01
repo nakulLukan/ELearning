@@ -1,0 +1,64 @@
+﻿@using Learning.Shared.Common.Extensions
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Shared.Extensions;
+<style>
+    :root {
+        --mud-default-borderradius: 24px !important;
+    }
+
+</style>
+<span>
+    <MudDialog Class="ma-9" ContentClass="ma-0 pa-0">
+        <DialogContent>
+            <div class="d-flex flex-column ma-9">
+                <div class="d-flex flex-column align-start gap-4">
+                    <div class="d-flex flex-column gap-3">
+                        <h4>Purchase Model Exams</h4>
+                        <Learning.Web.Client.Components.Controls.DataDisplay.AppChip Title="ONE TIME FEE TO PURCHASE ALL EXAMS!"/>
+                    </div>
+                    <div class="d-flex flex-column gap-2 mt-4">
+                        <h6>@ModelExamName</h6>
+                        <p>@ModelExamDescription</p>
+                    </div>
+                    <div class="d-flex flex-column gap-2 section">
+                        <h6>Price</h6>
+                        <p>@DiscountedPrice.ToCurrency()</p>
+                    </div>
+                    <div class="d-flex flex-column gap-2 section">
+                        <h6>Valid Upto</h6>
+                        <p>@ValidUpto.ToDateString()</p>
+                    </div>
+                    <div class="d-flex flex-column gap-2 section">
+                        <h6>Contact No.</h6>
+                        <p>90525 20398</p>
+                    </div>
+                    <div class="d-flex gap-4 mt-11">
+                        <AppButton Text="Cancel" OnClick="Cancel" ButtonType="AppButton.AppButtonType.Secondary" Class="px-12"/>
+                        <AppButton Text="Confirm Purchase" OnClick="Submit" Class="px-12" />
+                    </div>
+                </div>
+            </div>
+        </DialogContent>
+    </MudDialog>
+</span>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public string ModelExamName { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ModelExamDescription { get; set; } = string.Empty;
+
+    [Parameter]
+    public float DiscountedPrice { get; set; }
+
+    [Parameter]
+    public DateOnly ValidUpto { get; set; }
+
+    private void Submit() => MudDialog!.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog!.Cancel();
+}
