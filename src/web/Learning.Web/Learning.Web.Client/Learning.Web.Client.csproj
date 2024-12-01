@@ -79,6 +79,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Controls\Navigation\" />
     <Folder Include="Components\Pages\ExamNotification\ModelExam\" />
   </ItemGroup>
 

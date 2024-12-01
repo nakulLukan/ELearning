@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Learning.Web.Client.Contracts.Presentation
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
@@ -15,4 +16,4 @@
 @using Learning.Web.Client.Components.Controls;
 @using Learning.Web.Client.Components.Controls.Input;
 @using System.Collections.Generic;
-@inject NavigationManager NavigationManager;
+@inject INavigationService NavigationManager;

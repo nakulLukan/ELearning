@@ -2,10 +2,13 @@
 @attribute [Authorize]
 @rendermode InteractiveAuto
 @code {
+    [Parameter, SupplyParameterFromQuery]
+    public required string? RedirectUrl { get; set; }
+
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         if (!firstRender) return;
-        NavigationManager.NavigateTo("/", forceLoad: true);
+        NavigationManager.NavigateTo(!string.IsNullOrEmpty(RedirectUrl) ? RedirectUrl : "/", forceLoad: true);
     }
 }

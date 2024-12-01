@@ -17,6 +17,7 @@ using Learning.Web.Client.Contracts.Services.Subscription;
 using Learning.Web.Client.Impl.HttpContext;
 using Learning.Web.Client.Impl.Interop;
 using Learning.Web.Client.Impl.Persistance;
+using Learning.Web.Client.Impl.Presentation;
 using Learning.Web.Client.Services.Quiz;
 using Learning.Web.Contracts.Events;
 using Learning.Web.Impl.Events;
@@ -201,6 +202,7 @@ public static class ServiceRegistry
         builder.Services.AddSingleton<IAppCache, IAppMemoryCache>();
         builder.Services.AddScoped<IQuizManager, QuizManager>();
         builder.Services.AddScoped<IAlertService, AlertService>();
+        builder.Services.AddScoped<INavigationService, NavigationService>();
 
         builder.Services.AddScoped<IQuizDataService, QuizDataService>();
         builder.Services.AddScoped<IContactUsDataService, ContactUsDataService>();

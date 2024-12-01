@@ -12,6 +12,7 @@ using Learning.Web.Client.Contracts.Services.Subscription;
 using Learning.Web.Client.Impl.HttpContext;
 using Learning.Web.Client.Impl.Interop;
 using Learning.Web.Client.Impl.Persistance;
+using Learning.Web.Client.Impl.Presentation;
 using Learning.Web.Client.Impl.Relay;
 using Learning.Web.Client.Services.DataCollection;
 using Learning.Web.Client.Services.ExamNotification;
@@ -59,6 +60,7 @@ internal static class ServiceRegistry
         builder.Services.AddTransient<IHttpClientService, HttpClientService>();
         builder.Services.AddScoped<IQuizManager, QuizManager>();
         builder.Services.AddScoped<IAlertService, AlertService>();
+        builder.Services.AddScoped<INavigationService, NavigationService>();
 
         builder.Services.AddTransient<IQuizDataService, QuizRestDataService>();
         builder.Services.AddTransient<ICouponCodeDataService, CouponCodeRestDataService>();
