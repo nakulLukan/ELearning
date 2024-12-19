@@ -4,8 +4,13 @@
             id="@Id"
             class="app-button @_buttonTypeClass @_fullWidthClass @Class"
             @onclick="OnClickHandler"
-            style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform">
-        @Text
+            style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+            disabled="@isInternallyDisabled">
+        <div class="d-flex align-center gap-1">
+            <span class="@(!isInternallyDisabled ? "" : "loader")">
+            </span>
+            @Text
+        </div>
     </button>
 }
 else
@@ -16,12 +21,17 @@ else
        class="app-button @_buttonTypeClass @_fullWidthClass @Class"
        @onclick="OnClickHandler"
        style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+       disabled="@isInternallyDisabled"
        target="@Target">
-        @Text
-        @if (Icon != null)
-        {
-            <img width="24" src="@GlyphIcons.ArrowRight" />
-        }
+        <div class="d-flex justify-center gap-1">
+            <span class="@(!isInternallyDisabled ? "" : "loader")">
+            </span>
+            @Text
+            @if (Icon != null)
+            {
+                <img width="24" src="@GlyphIcons.ArrowRight" />
+            }
+        </div>
     </a>
 }
 @code {
@@ -58,7 +68,7 @@ else
 
     [CascadingParameter(Name = "ParentDisabled")]
     private bool ParentDisabled { get; set; }
-
+    private bool isInternallyDisabled = false;
     #region FullWidth
     [Parameter]
     public bool FullWidth { get; set; }
@@ -126,7 +136,11 @@ else
     {
         if (GetDisabledState())
             return;
+        isInternallyDisabled = true;
+        StateHasChanged();
         await OnClick.InvokeAsync(ev);
+        isInternallyDisabled = false;
+        StateHasChanged();
     }
 
     #region Classes
