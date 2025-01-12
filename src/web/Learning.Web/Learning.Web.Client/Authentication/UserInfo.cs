@@ -8,24 +8,30 @@ public sealed class UserInfo
 {
     public required string UserId { get; init; }
     public required string Email { get; init; }
+    public required bool IsEmailVerified { get; init; }
+    public required string PhoneNumber { get; init; }
+    public required bool IsPhoneNumberVerified { get; init; }
     public required string Role { get; init; }
     public required string Name { get; init; }
-    public bool IsEmailVerified { get; init; }
 
     public const string UserIdClaimType = ClaimConstant.AwsUserNameClaim;
     public const string NameClaimType = ClaimConstant.Name;
     public const string RoleClaimType = ClaimConstant.AwsRoleClaim;
     public const string EmailClaimType = ClaimConstant.EmailClaim;
     public const string IsEmailVerifiedClaimType = ClaimConstant.IsEmailVerifiedClaim;
+    public const string PhoneNumberClaimType = ClaimConstant.PhoneNumber;
+    public const string IsPhoneNumberVerifiedClaimType = ClaimConstant.IsPhoneNumberVerifiedClaim;
 
     public static UserInfo FromClaimsPrincipal(ClaimsPrincipal principal) =>
         new()
         {
             UserId = GetRequiredClaim(principal, UserIdClaimType),
             Email = GetRequiredClaim(principal, EmailClaimType),
+            IsEmailVerified = bool.TryParse(GetRequiredClaim(principal, IsEmailVerifiedClaimType), out bool isEmailVerifiedClaim) ? isEmailVerifiedClaim : false,
             Role = GetRequiredClaim(principal, RoleClaimType),
             Name = GetRequiredClaim(principal, NameClaimType),
-            IsEmailVerified = bool.Parse(GetRequiredClaim(principal, IsEmailVerifiedClaimType)),
+            PhoneNumber = GetRequiredClaim(principal, PhoneNumberClaimType),
+            IsPhoneNumberVerified = bool.TryParse(GetRequiredClaim(principal, IsPhoneNumberVerifiedClaimType), out bool isPhoneNumberVerifiedClaim) ? isPhoneNumberVerifiedClaim : false,
         };
 
     public ClaimsPrincipal ToClaimsPrincipal() =>

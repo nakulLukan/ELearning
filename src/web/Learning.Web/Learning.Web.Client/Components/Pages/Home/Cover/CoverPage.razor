@@ -3,9 +3,20 @@
     <div class="d-flex justify-center align-stretch align-stretch cover-main-container">
         <MudGrid Justify="Justify.Center" Class="align-center h-100 ma-0">
             <MudItem xs="12" md="7" Class="overflow-hidden h-100 w-100 pa-0 relative d-flex align-stretch">
-                <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
-                    
-                </video>
+                <div id="carouselVideoPreview" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
+                        </div>
+                        <div class="carousel-item">
+                            <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
+                        </div>
+                        <div class="carousel-item">
+                            <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
+                        </div>
+                    </div>
+                </div>
+
                 <div class="absolute app-video-shader"/>
             </MudItem>
 
@@ -16,7 +27,7 @@
                         meets the result!!
                     </h2>
                     <p class="app-text-center">
-                        Step into BTS Defence Academy, where dreams of wearing the nation's uniform take flight. We’re not just an academy—we’re a powerhouse of preparation, designed to mold the next generation of India’s finest defenders
+                        Our mentors with their broad spectrum of experience are committed to guiding the energy and passion of young blood of the country in the direction of nation building and national security
                     </p>
                 </MudStack>
             </MudItem>

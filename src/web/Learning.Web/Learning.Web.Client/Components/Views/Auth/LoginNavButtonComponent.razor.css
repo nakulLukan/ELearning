@@ -15,3 +15,18 @@
     background-color: white !important;
     padding: 8px 25px 8px 25px !important;
 }
+
+::deep .app-nav-item {
+    text-transform: none !important;
+    color: #757575 !important;
+    font-family: var(--ff-700) !important;
+    font-size: 1.125rem !important;
+    line-height: 1.6rem !important;
+    width: auto !important;
+    height: 100% !important;
+    align-items: center !important;
+}
+
+::deep .mud-nav-link.active {
+    color: #4F76DC !important;
+}

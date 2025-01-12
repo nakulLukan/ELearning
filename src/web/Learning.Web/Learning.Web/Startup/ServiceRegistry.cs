@@ -1,4 +1,7 @@
-﻿using Blazor.SubtleCrypto;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using Learning.Business;
 using Learning.Business.Contracts.HttpContext;
@@ -14,7 +17,6 @@ using Learning.Web.Client.Contracts.Services.DataCollection;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
 using Learning.Web.Client.Contracts.Services.Quiz;
 using Learning.Web.Client.Contracts.Services.Subscription;
-using Learning.Web.Client.Impl.HttpContext;
 using Learning.Web.Client.Impl.Interop;
 using Learning.Web.Client.Impl.Persistance;
 using Learning.Web.Client.Impl.Presentation;
@@ -35,9 +37,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 namespace Learning.Web;
 
 public static class ServiceRegistry
@@ -86,12 +85,12 @@ public static class ServiceRegistry
                 options.ClientId = configuration["Oidc:ClientId"];
                 options.ClientSecret = configuration["Oidc:ClientSecret"];
                 options.ResponseType = OpenIdConnectResponseType.Code;
+                options.RequireHttpsMetadata = true;
                 options.SaveTokens = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                 };
-
                 options.Scope.Clear();
                 foreach (var scope in configuration["Oidc:Scope"].Split(' '))
                 {
@@ -107,9 +106,14 @@ public static class ServiceRegistry
                         if (idToken != null)
                         {
                             MapClaim(context, idToken, ClaimConstant.AwsRoleClaim);
-                            MapClaim(context, idToken, ClaimConstant.EmailClaim);
-                            MapClaim(context, idToken, ClaimConstant.IsEmailVerifiedClaim);
+                            MapClaim(context, idToken, ClaimConstant.PhoneNumber);
+                            MapClaim(context, idToken, ClaimConstant.IsPhoneNumberVerifiedClaim);
                         }
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http://", "https://");
                         return Task.CompletedTask;
                     }
                 };
@@ -176,6 +180,7 @@ public static class ServiceRegistry
         });
         #endregion
 
+        #region CORS
         builder.Services.AddCors((options) =>
         {
             options.AddPolicy("Default", policy =>
@@ -183,6 +188,7 @@ public static class ServiceRegistry
                 policy.WithOrigins("https://localhost:5000");
             });
         });
+        #endregion CORS
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllersWithViews();
@@ -216,11 +222,16 @@ public static class ServiceRegistry
 
     private static void MapClaim(TokenValidatedContext context, JwtSecurityToken idToken, string claim)
     {
-        var roleClaim = idToken.Claims.First(c => c.Type == claim);
+        var roleClaim = idToken.Claims.FirstOrDefault(c => c.Type == claim);
         if (roleClaim != null)
         {
             var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
             claimsIdentity.AddClaim(new Claim(claim, roleClaim.Value));
+        }
+        else
+        {
+            var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+            claimsIdentity.AddClaim(new Claim(claim, RoleConstant.User));
         }
     }
 }

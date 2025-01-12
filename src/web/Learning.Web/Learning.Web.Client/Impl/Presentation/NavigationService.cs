@@ -22,6 +22,6 @@ public class NavigationService : INavigationService
 
     public void NavigateToLogin()
     {
-        _navigationManager.NavigateTo($"/login?redirectUrl={_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}");
+        _navigationManager.NavigateTo($"/login?redirectUrl={_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}", true);
     }
 }

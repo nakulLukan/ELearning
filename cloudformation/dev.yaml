@@ -1,0 +1,243 @@
+Parameters:
+  DeployedRegion:
+    Description: Choose a region
+    Type: String
+    AllowedValues:
+      - ap-south-1
+    Default: ap-south-1
+    
+  EC2InstanceTypeParam:
+    Description: Choose an instance type
+    Type: String
+    AllowedValues:
+      - t2.micro
+    Default: t2.micro
+
+  SecurityGroupDescription:
+    Description: Security Group Description
+    Type: String
+    Default: SSH Security Group for EC2 Intance
+  
+  FileStorageBuckNameParam:
+    Description: Name of the bucket where files are stored in S3
+    Type: String
+    Default: btss3storage
+  
+  S3PolicyCustomResource:
+    Description: ARN of the user created manually for development purpose
+    Type: String
+  
+  DbInstanceIdentifier:
+    Description: RDS Postgres DB identifier
+    Type: String
+    Default: elearning-db
+  
+  DbName:
+    Description: RDS Postgres DB name
+    Type: String
+    Default: elearning
+
+  DbUsername:
+    NoEcho: True
+    Type: String
+    Description: RDS Postgres DB username
+    Default: postgres
+  
+  DbPassword:
+    NoEcho: True
+    Type: String
+    Description: RDS Postgres DB password
+
+  DbAllocatedStorage:
+    Description: RDS Postgres DB allocated storage in gigabytes
+    Type: Number
+    Default: 20
+ 
+  DbInstanceClass:
+    Description: RDS Postgres DB instance type for the RDS instance
+    Type: String
+    Default: db.t4g.micro
+  
+
+Mappings:
+  # Region mapping for choosing the EC2 instance image.
+  RegionMapping:
+    ap-south-1:
+      ImageId: ami-0614680123427b75e
+  
+Resources:
+  KeyPairForEC2:
+    Type: AWS::EC2::KeyPair
+    Properties: 
+      KeyName: SSH Putty Connection to EC2WebServer
+      PublicKeyMaterial: ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEApMZMF22D9qBIObfTIkrZwaH4PuFPFmTVuQ9fWe2IKF5bVBLHJnpQsrth3SWXKF/C+qrqjbZdO75nLV0dLEtw5XPC8ZA6yAxNiKwKZjXqAKXBgOsIrjrWukhGcd97i3wNTBJ/9myBXedxmECKgaoqd84sMbClyP+w8yPLuKtUn6evdqP63ooK3aYM/WjtukeERkOThckJXq1fXA4pJwa+3EdOQfci/ZWlbvtWbVbF3zf1qWF1zkNjmngiLeFy2Jobxc7Rra29ACuGoeqDFAleGkr7XQv3OCTZc9G5/eEmKnoFxsIczAhdRO1OtQHz2X9w6DzrJTh/NXie2i3wkMHIbQ== rsa-key-20241207
+
+  EC2WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMapping, !Ref DeployedRegion, ImageId]
+      InstanceType: !Ref EC2InstanceTypeParam
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+      KeyName:
+        Ref: KeyPairForEC2
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          sudo su
+          yum update -y
+          # install dotnet
+          wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+          chmod +x ./dotnet-install.sh
+          ./dotnet-install.sh --channel 9.0 --runtime aspnetcore
+          # Set System Globalization
+          export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=0
+          sudo yum install -y libicu
+
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref SecurityGroupDescription
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+  
+  FileStorage:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref FileStorageBuckNameParam
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "https://localhost:5000"
+              - !Join 
+                - ''
+                - - "https://"
+                  - !GetAtt 
+                    - EC2WebServer
+                    - PublicIp
+              
+            AllowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            AllowedHeaders:
+              - "*"
+            ExposedHeaders: []
+            MaxAge: 3000
+
+    
+  WebServerIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: "WebServerIAMRole"
+      Description: "IAM Role used by the webserver, S3 Role with full access for ec2 instance, RDS full access"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref WebServerIAMRole
+        
+  FileStoragePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FileStorage
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: 
+            - 's3:*'
+            Effect: Allow
+            Principal:
+              AWS: 
+                - !GetAtt WebServerIAMRole.Arn
+                - !Ref S3PolicyCustomResource
+            Resource: 
+              - !Sub "arn:aws:s3:::${FileStorageBuckNameParam}/*"
+# Allow free access to anyone in public directory
+          - Action:
+            - 's3:GetObject'
+            Effect: Allow
+            Principal: '*'
+            Resource: 
+              - !Sub "arn:aws:s3:::${FileStorageBuckNameParam}/public/*"
+            
+  RdsDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DbInstanceIdentifier
+      DBName: !Ref DbName
+      Engine: postgres
+      MasterUsername: !Ref DbUsername
+      MasterUserPassword: !Ref DbPassword
+      AllocatedStorage: !Ref DbAllocatedStorage
+      DBInstanceClass: !Ref DbInstanceClass
+      EngineVersion: '16.3'
+      StorageType: gp2
+      MultiAZ: false
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 0
+      StorageEncrypted: false
+      VPCSecurityGroups:
+        - !GetAtt RDSSecurityGroup.GroupId
+    DeletionPolicy: Delete
+  
+    
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow access to RDS from EC2 instances
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !GetAtt SSHSecurityGroup.GroupId
+  
+Outputs:
+  RDSInstanceEndpoint:
+    Description: RDS PostgreSQL Instance Endpoint
+    Value: !GetAtt RdsDB.Endpoint.Address
+    Export:
+      Name: RDSInstanceEndpoint
+  JCPublicIPEC2WebServer:
+    Description: Public IP address of Webserver
+    Value: !Join 
+      - ''
+      - - !GetAtt 
+          - EC2WebServer
+          - PublicIp
+    Export: 
+      Name: EC2WebServerPublicIp
+  

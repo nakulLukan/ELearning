@@ -1,0 +1,47 @@
+[Unit]
+Description=E-Learning Web APP
+
+[Service]
+WorkingDirectory=/var/www/release
+ExecStart=/home/ec2-user/.dotnet/dotnet /var/www/release/Learning.Web.dll
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=elearning-webapp
+User=ec2-user
+
+StandardOutput=journal
+StandardError=journal
+
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_NOLOGO=true
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5001
+
+# Connection string
+Environment=ConnectionStrings__Default="CONNECTION_STRING"
+
+
+# Oidc
+Environment=Oidc__Domain=""
+Environment=Oidc__Authority=""
+Environment=Oidc__ClientId=""
+Environment=Oidc__ClientSecret=""
+Environment=Oidc__Scope="phone openid email profile"
+
+# S3
+Environment=Aws__S3__AccessKey=accesskey
+Environment=Aws__S3__SecretKey=secretkey
+Environment=Aws__S3__Region=ap-south-1
+Environment=Aws__S3__UseBasicCredentialAuthentication=false
+Environment=Aws__S3__BucketName=btss3storage
+
+# ExternalIdentity
+Environment=ExternalIdentity__Aws__AccessKey=accesskey
+Environment=ExternalIdentity__Aws__SecretKey=secretkey
+Environment=ExternalIdentity__Aws__Region=ap-south-1
+Environment=ExternalIdentity__Aws__UseBasicCredentialAuthentication=false
+Environment=ExternalIdentity__Aws__UserPoolId="ap-south-1_yxynOeOft"
+
+[Install]
+WantedBy=multi-user.target

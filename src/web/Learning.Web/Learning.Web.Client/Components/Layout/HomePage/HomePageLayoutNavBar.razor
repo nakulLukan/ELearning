@@ -35,8 +35,8 @@
                Variant="DrawerVariant.Temporary"
                Width="304px"
                @bind-Open=_openDrawer>
-        <MudDrawerHeader Style="padding:24px;">
-            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+        <MudDrawerHeader Class="pa-6">
+            <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="w-100">
                 <h6>@UIConstant.AppName</h6>
                 <MudSpacer />
                 <MudIconButton Icon="@Icons.Material.Rounded.Close"
@@ -50,7 +50,7 @@
             <MudNavLink Class="app-nav-menu" Href="/contact-us">Contact Us</MudNavLink>
             <MudNavLink Class="app-nav-menu" Href="/about-us">About Us</MudNavLink>
         </MudNavMenu>
-        <MudNavLink Class="app-nav-menu" Href="/login">Login</MudNavLink>
+        <LoginNavButtonComponent/>
     </MudDrawer>
 </div>
 @code {
