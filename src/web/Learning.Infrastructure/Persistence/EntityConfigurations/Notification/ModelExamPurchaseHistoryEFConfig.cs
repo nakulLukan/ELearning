@@ -9,11 +9,10 @@ public class ModelExamPurchaseHistoryEFCOnfig : IEntityTypeConfiguration<ModelEx
     public void Configure(EntityTypeBuilder<ModelExamPurchaseHistory> builder)
     {
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        builder.Property(x => x.UserId).IsRequired(true).HasMaxLength(36);
 
-        builder.HasOne(x => x.ModelExamPackage)
-            .WithMany(x => x.PurchaseHitories)
-            .HasForeignKey(x => x.ModelExamPackageId)
-            .IsRequired(false);
+        builder.HasOne(x => x.ModelExamOrder)
+            .WithOne()
+            .HasForeignKey<ModelExamPurchaseHistory>(x => x.OrderId)
+            .IsRequired(true);
     }
 }

@@ -98,6 +98,7 @@ public class ApplicationDbContext : DbContext, IAppDbContext
     public DbSet<ModelExamAnswerConfiguration> ModelExamAnswerConfigurations { get; set; }
     public DbSet<ModelExamResult> ModelExamResults { get; set; }
     public DbSet<ModelExamResultDetail> ModelExamResultDetails { get; set; }
+    public DbSet<ModelExamOrder> ModelExamOrders { get; set; }
     public DbSet<ModelExamPurchaseHistory> ModelExamPurchaseHistory { get; set; }
     #endregion
 }

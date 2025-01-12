@@ -47,8 +47,9 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
         if (await _requestContext.IsAuthenticated())
         {
             var userId = await _requestContext.GetUserId();
-            hasPurchased = await _appDbContext.ModelExamPurchaseHistory.AnyAsync(x => x.UserId == userId
-            && x.ModelExamPackageId == modelExams.First().ExamPackageId, cancellationToken);
+            hasPurchased = await _appDbContext.ModelExamPurchaseHistory
+                .AnyAsync(x => x.ModelExamOrder!.UserId == userId
+                    && x.ModelExamOrder.ModelExamPackageId == modelExams.First().ExamPackageId, cancellationToken);
         }
 
         return modelExams.Select(x => new GetAllModelExamMetaDataResponseDto

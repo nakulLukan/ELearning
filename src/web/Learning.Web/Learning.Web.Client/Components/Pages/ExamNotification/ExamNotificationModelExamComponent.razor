@@ -6,134 +6,140 @@
 @inject IModelExamDataService ModelExamDataService
 @inject IAlertService AlertService
 @inject IRequestContext RequestContext
+
 <div class="d-flex flex-column gap-6 mt-20">
 
-    @if (_modelExams != null)
-    {
-        if (_modelExams.Any())
-        {
-            <h4>Model Exams</h4>
-            <div class="d-flex flex-column flex-md-row gap-8 gap-md-11">
-                @foreach (var modelExam in _modelExams)
-                {
-                    @if (modelExam.IsLocked)
-                    {
-                        <div class="me-card">
-                            <div class="me-card-gradient pa-4">
-                                <div class="d-flex flex-column justify-center h-100">
-                                    <div class="d-flex flex-column align-center gap-3">
-                                        <MudIcon Icon="@Icons.Material.Rounded.Lock" Class="lock-icon"></MudIcon>
-                                        <h4 class="me-card-title">@modelExam.ExamName</h4>
-                                        <AppButton Text="@($"PURCHASE NOW for ₹{modelExam.DiscountedPrice}")"
-                                        ButtonType="AppButton.AppButtonType.Secondary"
-                                        OnClick="@(()=> PurchaseModelExamClicked(modelExam))">
-                                        </AppButton>
-                                        <p class="text-caption"> Purchase once and unlock all model exams </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="me-card">
-                            <div class="me-card-gradient pa-4">
-                                <div class="d-flex flex-column justify-space-between h-100">
-                                    <div>
-                                        @if (modelExam.IsFree)
-                                        {
-                                            <span class="me-badge">
-                                                FREE EXAM
-                                            </span>
-                                        }
-                                    </div>
-                                    <div class="d-flex flex-column gap-4">
-                                        <h4 class="me-card-title">@modelExam.ExamName</h4>
-                                        <AppButton Text="Start Exam Now" OnClick="@(()=> StartExamClicked(modelExam))" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
-        }
-    }
+	@if (_modelExams != null)
+	{
+		if (_modelExams.Any())
+		{
+			<h4>Model Exams</h4>
+			<div class="d-flex flex-column flex-md-row gap-8 gap-md-11">
+				@foreach (var modelExam in _modelExams)
+				{
+					@if (modelExam.IsLocked)
+					{
+						<div class="me-card">
+							<div class="me-card-gradient pa-4">
+								<div class="d-flex flex-column justify-center h-100">
+									<div class="d-flex flex-column align-center gap-3">
+										<MudIcon Icon="@Icons.Material.Rounded.Lock" Class="lock-icon"></MudIcon>
+										<h4 class="me-card-title">@modelExam.ExamName</h4>
+										<AppButton Text="@($"PURCHASE NOW for ₹{modelExam.DiscountedPrice}")"
+												   ButtonType="AppButton.AppButtonType.Secondary"
+												   OnClick="@(()=> PurchaseModelExamClicked(modelExam))">
+										</AppButton>
+										<p class="text-caption"> Purchase once and unlock all model exams </p>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+					else
+					{
+						<div class="me-card">
+							<div class="me-card-gradient pa-4">
+								<div class="d-flex flex-column justify-space-between h-100">
+									<div>
+										@if (modelExam.IsFree)
+										{
+											<span class="me-badge">
+												FREE EXAM
+											</span>
+										}
+									</div>
+									<div class="d-flex flex-column gap-4">
+										<h4 class="me-card-title">@modelExam.ExamName</h4>
+										<AppButton Text="Start Exam Now" OnClick="@(()=> StartExamClicked(modelExam))" />
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+				}
+			</div>
+		}
+	}
 
 </div>
 @code {
-    [Parameter, EditorRequired]
-    public int ExamNotificationId { get; set; }
+	[Parameter, EditorRequired]
+	public int ExamNotificationId { get; set; }
 
-    ModelExamMetaDataDto[]? _modelExams;
+	ModelExamMetaDataDto[]? _modelExams;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        if (ExamNotificationId != 0)
-        {
-            var modelExams = await ModelExamDataService.GetAllModelExamMetaData(ExamNotificationId);
-            if (modelExams.IsSuccess)
-            {
-                _modelExams = modelExams.Value.Select(x => new ModelExamMetaDataDto
-                    {
-                        ModelExamId = x.ExamConfigId,
-                        DiscountedPrice = x.DiscountedPrice,
-                        Price = x.Price,
-                        ExamConfigId = x.ExamConfigId,
-                        ExamName = x.ExamName,
-                        ExamNotificationId = x.ExamNotificationId,
-                        IsFree = x.IsFree,
-                        IsLocked = x.IsLocked,
-                        ExamDescription = x.ExamDescription,
-                        ValidUpto = x.ValidUpto
-                    }).ToArray();
-                StateHasChanged();
-            }
-        }
-    }
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		if (ExamNotificationId != 0)
+		{
+			var modelExams = await ModelExamDataService.GetAllModelExamMetaData(ExamNotificationId);
+			if (modelExams.IsSuccess)
+			{
+				_modelExams = modelExams.Value.Select(x => new ModelExamMetaDataDto
+					{
+						ModelExamId = x.ExamConfigId,
+						DiscountedPrice = x.DiscountedPrice,
+						Price = x.Price,
+						ExamName = x.ExamName,
+						ExamNotificationId = x.ExamNotificationId,
+						IsFree = x.IsFree,
+						IsLocked = x.IsLocked,
+						ExamDescription = x.ExamDescription,
+						ValidUpto = x.ValidUpto
+					}).ToArray();
+				StateHasChanged();
+			}
+		}
+	}
 
-    private async Task StartExamClicked(ModelExamMetaDataDto modelExam)
-    {
-        if (!await RequestContext.IsAuthenticated())
-        {
-            NavigationManager.NavigateToLogin();
-            return;
-        }
+	private async Task StartExamClicked(ModelExamMetaDataDto modelExam)
+	{
+		if (!await RequestContext.IsAuthenticated())
+		{
+			NavigationManager.NavigateToLogin();
+			return;
+		}
 
-        var hasValidSubscription = await ModelExamDataService.CheckUserModelExamSubscriptionQuery(modelExam.ModelExamId);
-        if (hasValidSubscription.IsSuccess)
-        {
-            if (hasValidSubscription.Value.Data)
-            {
-                var started = await AlertService.DisplayStartModelExamAlert(modelExam.ExamName, modelExam.ExamDescription);
-                if (started)
-                {
-                    NavigationManager.NavigateTo("");
-                }
-            }
-            return;
-        }
-    }
+		var hasValidSubscription = await ModelExamDataService.CheckUserModelExamSubscriptionQuery(modelExam.ModelExamId);
+		if (hasValidSubscription.IsSuccess)
+		{
+			if (hasValidSubscription.Value.Data)
+			{
+				var started = await AlertService.DisplayStartModelExamAlert(modelExam.ExamName, modelExam.ExamDescription);
+				if (started)
+				{
+					NavigationManager.NavigateTo("");
+				}
+			}
+			return;
+		}
+	}
 
-    private async Task PurchaseModelExamClicked(ModelExamMetaDataDto modelExam)
-    {
-        if (!await RequestContext.IsAuthenticated())
-        {
-            NavigationManager.NavigateToLogin();
-            return;
-        }
+	private async Task PurchaseModelExamClicked(ModelExamMetaDataDto modelExam)
+	{
+		if (!await RequestContext.IsAuthenticated())
+		{
+			NavigationManager.NavigateToLogin();
+			return;
+		}
 
-        var confirmed = await AlertService.DisplayPurchaseExamAlert(new ModelExamPurchaseDialogParam
-            {
-                DiscountedPrice = modelExam.DiscountedPrice,
-                ExamDescription = modelExam.ExamDescription,
-                ExamName = modelExam.ExamName,
-                ValidUpto = modelExam.ValidUpto,
-            });
-        if (confirmed)
-        {
+		var confirmed = await AlertService.DisplayPurchaseExamAlert(new ModelExamPurchaseDialogParam
+			{
+				DiscountedPrice = modelExam.DiscountedPrice,
+				ExamDescription = modelExam.ExamDescription,
+				ExamName = modelExam.ExamName,
+				ValidUpto = modelExam.ValidUpto,
+			});
+		if (confirmed)
+		{
+			var order = await ModelExamDataService.InitiateModelExamOrder(modelExam.ModelExamId);
 
-        }
-    }
+			if (order.IsSuccess)
+			{
+				// TODO: Invoke razor pay payment page
+				NavigationManager.NavigateTo($"/model-exams/order-success?ModelExamOrderId={order.Value.Data}");
+			}
+		}
+	}
 }

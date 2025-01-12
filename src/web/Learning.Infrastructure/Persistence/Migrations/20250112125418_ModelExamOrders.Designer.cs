@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250112125418_ModelExamOrders")]
+    partial class ModelExamOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -872,10 +875,10 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<int>("ModelExamPackageId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("OrderedCompletedOn")
+                    b.Property<DateTime?>("OrderedCompletedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("OrderedInitiatedOn")
+                    b.Property<DateTime>("OrderedInitiatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<short>("Status")
@@ -931,10 +934,10 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("PurchasedOn")
+                    b.Property<DateTime>("PurchasedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ValidTill")
+                    b.Property<DateTime>("ValidTill")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

@@ -29,9 +29,10 @@ public class CheckUserModelExamSubscriptionQueryHandler : IRequestHandler<CheckU
         var userId = await _requestContext.GetUserId();
         var result = await (from ec in _appDbContext.ModelExamConfigurations.IgnoreQueryFilters()
                             join ep in _appDbContext.ModelExamPackages on ec.ModelExamPackageId equals ep.Id
-                            join eph in _appDbContext.ModelExamPurchaseHistory on ep.Id equals eph.ModelExamPackageId
+                            join epo in _appDbContext.ModelExamOrders on ep.Id equals epo.ModelExamPackageId
+                            join eph in _appDbContext.ModelExamPurchaseHistory on epo.Id equals eph.OrderId
                             where ec.Id == request.ModelExamId
-                               && eph.UserId == userId
+                               && epo.UserId == userId
                                && eph.ValidTill >= DateTime.UtcNow.Date
                             select new
                             {

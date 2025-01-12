@@ -3,11 +3,9 @@
 public class ModelExamPurchaseHistory
 {
     public long Id { get; set; }
-    public int ModelExamPackageId { get; set; }
-    public DateTime PurchasedOn { get; set; }
-    public DateTime ValidTill { get; set; }
-    public float Amount { get; set; }
-    public string UserId { get; set; } = string.Empty;
+    public long OrderId { get; set; }
+    public DateTimeOffset PurchasedOn { get; set; }
+    public DateTimeOffset ValidTill { get; set; }
 
-    public ModelExamPackage? ModelExamPackage { get; set; }
+    public ModelExamOrder? ModelExamOrder { get; set; }
 }

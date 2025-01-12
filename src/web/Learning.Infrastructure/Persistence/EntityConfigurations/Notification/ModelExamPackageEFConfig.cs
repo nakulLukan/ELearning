@@ -19,7 +19,7 @@ public class ModelExamPackageEFConfig : IEntityTypeConfiguration<ModelExamPackag
             .HasForeignKey<ModelExamPackage>(x => x.ExamNotificationId)
             .IsRequired(false);
 
-        builder.HasMany(x => x.PurchaseHitories)
+        builder.HasMany(x => x.PurchaseOrders)
             .WithOne(x => x.ModelExamPackage)
             .HasForeignKey(x => x.ModelExamPackageId)
             .IsRequired(false);

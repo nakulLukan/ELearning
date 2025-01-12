@@ -1,0 +1,23 @@
+﻿@page "/model-exams/order-success"
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@inject IModelExamDataService ModelExamDataService
+<AppPage>
+	<div class="pt-9">
+		<MudContainer MaxWidth="MaxWidth.Large" class="en-page-container">
+			<h3>Order #@ModelExamOrderId completed successfully</h3>
+		</MudContainer>
+	</div>
+</AppPage>
+
+@code {
+	[SupplyParameterFromQuery]
+	public long ModelExamOrderId { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var order = await ModelExamDataService.CompleteModelExamOrder(ModelExamOrderId, Shared.Common.Enums.OrderStatusEnum.Completed);
+		if(order.IsSuccess){
+			// TODO: Do something
+		}
+	}
+}
