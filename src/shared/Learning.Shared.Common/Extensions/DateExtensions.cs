@@ -1,11 +1,12 @@
 ﻿using Humanizer;
 using System.Diagnostics.CodeAnalysis;
+using TimeZoneConverter;
 
 namespace Learning.Shared.Common.Extensions;
 
 public static class DateExtensions
 {
-    private static readonly TimeZoneInfo _timeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+    private static readonly TimeZoneInfo _timeZone = TZConvert.GetTimeZoneInfo("India Standard Time");
 
     public static string ToDateString(this DateTimeOffset? dateTime)
     {

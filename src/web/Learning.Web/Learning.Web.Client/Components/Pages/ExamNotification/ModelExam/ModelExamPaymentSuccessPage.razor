@@ -15,7 +15,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		var order = await ModelExamDataService.CompleteModelExamOrder(ModelExamOrderId, Shared.Common.Enums.OrderStatusEnum.Completed);
+		var order = await ModelExamDataService.CompleteModelExamOrder(ModelExamOrderId, Shared.Common.Enums.OrderStatusEnum.Success);
 		if(order.IsSuccess){
 			// TODO: Do something
 		}

@@ -2,6 +2,7 @@
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Dto.Notifications.ExamNotification;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
+using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Refit;
 
 namespace Learning.Web.Client.Services.WebServices;
@@ -28,4 +29,22 @@ public interface IExamNotificationHttpClient
 
     [Post("/api/public/exam-notificaitons/model-exams-orders/{modelExamOrderId}/complete-order")]
     public Task<ModeExamOrderCompleteResponseDto> CompleteModelExamOrder(long modelExamOrderId, [Query] OrderStatusEnum status);
+
+    [Post("/api/public/exam-notificaitons/model-exams/{modelExamId}/begin")]
+    public Task<BeginModelExamResponseDto> BeginModelExam(int modelExamId);
+
+    [Get("/api/public/exam-notificaitons/model-exams/{modelExamId}/associated-questions")]
+    public Task<GetExamQuestionsListItemResponseDto[]> GetExamQuestionsList(int modelExamId);
+
+    [Get("/api/public/model-exams-results/{modelExamResultId}/questions/{questionId}")]
+    public Task<ModelExamSessionQuestionDetailDto> GetModelExamQuestionById(long modelExamResultId, int questionId);
+
+    [Post("/api/public/model-exams-results/{modelExamResultId}/submit-question-response")]
+    public Task<ResponseDto<long>> SubmitExamQuestionResponse(long modelExamResultId, [Body] SubmitExamQuestionResponseRequestDto request);
+
+    [Post("/api/public/model-exams-results/{modelExamResultId}/complete-session")]
+    public Task<ResponseDto<ModelExamSessionStatusEnum>> CompleteModelExamSession(long modelExamResultId);
+
+    [Get("/api/public/model-exams-results/{modelExamResultId}/summary")]
+    public Task<GetModelExamSummaryResponseDto> GetModelExamSummary(long modelExamResultId);
 }

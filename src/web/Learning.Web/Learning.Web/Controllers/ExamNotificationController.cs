@@ -1,5 +1,6 @@
 ﻿using Learning.Business.Requests.Notifications.ExamNotification;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
+using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Shared.Common.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -65,10 +66,32 @@ public class ExamNotificationController : ControllerBase
     [HttpPost("model-exams-orders/{modelExamOrderId:long}/complete-order")]
     public async Task<IActionResult> CompleteModelExamOrder([FromRoute] long modelExamOrderId, [FromQuery] OrderStatusEnum status)
     {
-        var data = await _mediator.Send(new ModelExamOrderCompleteCommand() 
+        var data = await _mediator.Send(new ModelExamOrderCompleteCommand()
         {
             ModelExamOrderId = modelExamOrderId,
             OrderStatus = status
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpPost("model-exams/{modelExamId:int}/begin")]
+    public async Task<IActionResult> BeginModelExam([FromRoute] int modelExamId)
+    {
+        var data = await _mediator.Send(new BeginModelExamSessionCommand()
+        {
+            ModelExamId = modelExamId
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpGet("model-exams/{modelExamId:int}/associated-questions")]
+    public async Task<IActionResult> GetExamQuestionsList([FromRoute] int modelExamId)
+    {
+        var data = await _mediator.Send(new GetExamQuestionsListQuery()
+        {
+            ModelExamId = modelExamId
         }).ConfigureAwait(false);
         return Ok(data);
     }

@@ -1,0 +1,221 @@
+﻿@page "/model-exams/{modelExamId:int}/begin"
+@using Learning.Shared.Common.Extensions
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Layout.ModelExam
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@inject IModelExamDataService ModelExamDataService
+@rendermode InteractiveAuto
+@layout ModelExamSessionLayout
+@attribute [Authorize]
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="en-page-container flex-grow-1 d-flex flex-column flex-grow-1">
+		<AppButton Text="End Exam" OnClick="EndSession"></AppButton>
+		@if (!_sessionDetail.HasValue)
+		{
+		}
+		else
+		{
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
+				<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
+					<MudStack Justify="Justify.SpaceBetween" Row>
+						<h5>Test</h5>
+						<div class="d-flex flex-row align-content-center"><MudIcon Class="align-self-center" Icon="@Icons.Material.Outlined.AccessTime"></MudIcon><span class="app-timer ml-2">05:30</span></div>
+					</MudStack>
+					<h6 class="app-question-label">Question @(_currentQuestionNumber) <span>/@_sessionDetail.Value.TotalQuestions</span></h6>
+
+					<Learning.Web.Client.Components.Controls.DataDisplay.AppUnlistedPagination Class="mt-4 mt-md-3"
+																							   TotalItems="_sessionDetail.Value.TotalQuestions"
+																							   SelectedItem="@_currentQuestionNumber"
+																							   SelectedItemChanged="OnPageSelected" />
+
+					<h4 class="mt-10 mt-md-7">@_selectedQuestion!.Value.QuestionText</h4>
+					<MudGrid Spacing="5">
+						@foreach (var option in _selectedQuestion!.Value.Options)
+						{
+							<MudItem xs="12" md="6">
+								<Learning.Web.Client.Components.Views.QuizSession.AppQuizOptionComponent Text="@option.OptionText"
+																										 IsSelected="@option.IsSelected"
+																										 OptionOrder="option.Order"
+																										 OnSelected="OptionSelected" />
+							</MudItem>
+						}
+					</MudGrid>
+
+					<div class="d-flex align-end mt-20 mt-md-0">
+
+						<MudGrid Spacing="6">
+							<MudItem xs="12" md="6">
+								<AppButton Text="Skip"
+										   ButtonType="Controls.Actions.AppButton.AppButtonType.Secondary" FullWidth
+										   OnClick="OnSkip" />
+							</MudItem>
+							<MudItem xs="12" md="6">
+								<AppButton Text="Submit" FullWidth
+										   Disabled="!_selectedQuestion.Value.Options.Any(x=>x.IsSelected)"
+										   OnClick="OnSubmit" />
+							</MudItem>
+						</MudGrid>
+					</div>
+				</MudStack>
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+		}
+	</MudContainer>
+</AppPage>
+@code {
+	[Parameter]
+	public int ModelExamId { get; set; }
+	private long? modelExamResultId;
+	private SessionDetail? _sessionDetail;
+	private int _currentQuestionNumber = 1;
+	private int? _currentQuestionId;
+	private int totalAttemptedQuestions = 0;
+	/// <summary>
+	/// Question Id, Question Order
+	/// </summary>
+	IDictionary<int, int> questionIdOrderDict = new Dictionary<int, int>();
+
+	/// <summary>
+	/// Question Id, Question Detail
+	/// </summary>
+	IDictionary<int, SessionQuestionDetail> questionIdDetailDict = new Dictionary<int, SessionQuestionDetail>();
+	SessionQuestionDetail? _selectedQuestion;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var details = await ModelExamDataService.BeginModelExam(ModelExamId);
+		if (details.IsFailed)
+		{
+			return;
+		}
+
+		modelExamResultId = details.Value.ModelExamResultId;
+		if (details.Value.Status == Shared.Common.Enums.ModelExamSessionStatusEnum.Completed || details.Value.Status == Shared.Common.Enums.ModelExamSessionStatusEnum.Timeout)
+		{
+			NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
+			return;
+		}
+		totalAttemptedQuestions = details.Value.TotalQuestionsAttempted;
+		var questionsResult = await ModelExamDataService.GetExamQuestionsList(ModelExamId);
+		if (questionsResult.IsFailed)
+		{
+			return;
+		}
+		questionIdOrderDict = questionsResult.Value.OrderBy(x => x.QuestionNumber).ToDictionary(x => x.QuestionId, x => x.QuestionNumber);
+		await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, details.Value.CurrentQuestionId);
+		_sessionDetail = new SessionDetail()
+			{
+				ModelExamResultId = details.Value.ModelExamResultId,
+				StartedOn = details.Value.StartedOn.ToLocalDateTimeString(),
+				TotalQuestions = details.Value.TotalQuestions
+			};
+		StateHasChanged();
+	}
+
+	private async Task SetCurrentSelectedQuestionDetails(long modelExamResultId, int questionId)
+	{
+		_currentQuestionId = questionId;
+		_currentQuestionNumber = questionIdOrderDict[_currentQuestionId.Value];
+
+		if (!questionIdDetailDict.ContainsKey(_currentQuestionId!.Value))
+		{
+			var questionDetailResult = await ModelExamDataService.GetModelExamQuestionById(modelExamResultId, _currentQuestionId.Value);
+			if (questionDetailResult.IsFailed)
+			{ return; }
+			questionIdDetailDict.Add(_currentQuestionId.Value, new SessionQuestionDetail()
+				{
+					QuestionId = questionDetailResult.Value.QuestionId,
+					QuestionText = questionDetailResult.Value.QuestionText,
+					QuestionImageUrl = questionDetailResult.Value.QuestionImageUrl,
+					SelectedOptionId = questionDetailResult.Value.SelectedOptionId,
+					Options = questionDetailResult.Value.Options.Select(y => new SessionOptionDetail
+					{
+						AnswerId = y.AnswerId,
+						OptionImageUrl = y.OptionImageUrl,
+						OptionText = y.OptionText,
+						Order = y.Order,
+						IsSelected = questionDetailResult.Value.SelectedOptionId.HasValue ? questionDetailResult.Value.SelectedOptionId.Value == y.AnswerId : false
+					}).ToArray()
+				});
+		}
+
+		_selectedQuestion = questionIdDetailDict[_currentQuestionId.Value];
+	}
+
+	private void OptionSelected(int selectedOption)
+	{
+		for (int i = 0; i < _selectedQuestion!.Value.Options.Length; i++)
+		{
+			_selectedQuestion.Value.Options[i].IsSelected = _selectedQuestion.Value.Options[i].Order == selectedOption;
+		}
+	}
+
+	private async Task OnPageSelected(int pageNumber)
+	{
+		var questionId = questionIdOrderDict.First(x => x.Value == pageNumber).Key;
+		await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, questionId);
+	}
+
+	private async Task OnSubmit()
+	{
+		await SaveQuestionResponse(false);
+	}
+
+	private async Task OnSkip()
+	{
+		await SaveQuestionResponse(true);
+	}
+
+	private async Task SaveQuestionResponse(bool hasSkipped)
+	{
+		var response = await ModelExamDataService.SubmitExamQuestionResponse(modelExamResultId!.Value
+			, _selectedQuestion!.Value.QuestionId
+			, !hasSkipped ? _selectedQuestion.Value.Options.First(x => x.IsSelected).AnswerId : null
+			, hasSkipped);
+		if (response.IsFailed)
+		{
+			return;
+		}
+
+		var nextQuestion = questionIdOrderDict.FirstOrDefault(x => x.Value == _currentQuestionNumber + 1);
+		if (nextQuestion.Key != 0)
+		{
+			await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, nextQuestion.Key);
+		}
+	}
+
+	private async Task EndSession()
+	{
+		var response = await ModelExamDataService.CompleteModelExamSession(modelExamResultId!.Value);
+		if (response.IsFailed) return;
+		NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
+	}
+
+	#region DTO
+	private record struct SessionDetail
+	{
+		public required long ModelExamResultId { get; set; }
+		public required string StartedOn { get; set; }
+		public required int TotalQuestions { get; set; }
+	}
+
+	private record struct SessionQuestionDetail
+	{
+		public required int QuestionId { get; set; }
+		public required string QuestionText { get; set; }
+		public required string? QuestionImageUrl { get; set; }
+		public required int? SelectedOptionId { get; set; }
+		public required SessionOptionDetail[] Options { get; set; }
+	}
+
+	private record struct SessionOptionDetail
+	{
+		public required int AnswerId { get; set; }
+		public required int Order { get; set; }
+		public required string? OptionText { get; set; }
+		public required string? OptionImageUrl { get; set; }
+		public bool IsSelected { get; set; }
+	}
+	#endregion
+}
+

@@ -1,0 +1,11 @@
+﻿
+.app-question-bar {
+    height: 3px;
+    background-color: #EAEAEA;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.app-question-bar-selected {
+    background-color: #2380E6;
+}

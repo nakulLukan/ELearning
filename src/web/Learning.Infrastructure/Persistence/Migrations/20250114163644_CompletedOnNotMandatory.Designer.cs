@@ -3,6 +3,7 @@ using System;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Learning.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250114163644_CompletedOnNotMandatory")]
+    partial class CompletedOnNotMandatory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1029,9 +1032,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset>("StartedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<short>("Status")
-                        .HasColumnType("smallint");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -1051,9 +1051,6 @@ namespace Learning.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("HasSkipped")
-                        .HasColumnType("boolean");
 
                     b.Property<long>("ModelExamResultId")
                         .HasColumnType("bigint");

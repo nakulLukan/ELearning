@@ -33,7 +33,7 @@ public class ModelExamOrderCompleteCommandHandler : IRequestHandler<ModelExamOrd
 
         var order = await _dbContext.ModelExamOrders.FirstAsync(x => x.Id == request.ModelExamOrderId).ConfigureAwait(false);
         // TODO: Check if the payment is compelted in razorpay
-        order.Status = OrderStatusEnum.Completed;
+        order.Status = OrderStatusEnum.Success;
         order.OrderedCompletedOn = AppDateTime.UtcNow;
 
         // Create purchase history object

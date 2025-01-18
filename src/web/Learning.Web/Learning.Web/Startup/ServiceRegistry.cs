@@ -145,6 +145,8 @@ public static class ServiceRegistry
         builder.Services.AddSingleton<CookieOidcRefresher>();
         builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme).Configure<CookieOidcRefresher>((cookieOptions, refresher) =>
         {
+            cookieOptions.ExpireTimeSpan = TimeSpan.FromDays(1);
+            cookieOptions.SlidingExpiration = true;
             cookieOptions.Events.OnValidatePrincipal = context => refresher.ValidateOrRefreshCookieAsync(context, OpenIdConnectDefaults.AuthenticationScheme);
         });
         builder.Services.AddOptions<OpenIdConnectOptions>().Configure(oidcOptions =>

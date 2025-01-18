@@ -109,7 +109,7 @@
 				var started = await AlertService.DisplayStartModelExamAlert(modelExam.ExamName, modelExam.ExamDescription);
 				if (started)
 				{
-					NavigationManager.NavigateTo("");
+					NavigationManager.NavigateTo($"/model-exams/{modelExam.ModelExamId}/begin");
 				}
 			}
 			return;

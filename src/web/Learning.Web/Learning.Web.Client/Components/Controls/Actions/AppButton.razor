@@ -2,7 +2,7 @@
 {
     <button type="@_buttonFormType"
             id="@Id"
-            class="app-button @_buttonTypeClass @_fullWidthClass @Class"
+            class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer")"
             @onclick="OnClickHandler"
             style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
             disabled="@isInternallyDisabled">
@@ -18,7 +18,7 @@ else
     <a type="@_buttonFormType"
        id="@Id"
        href="@Href"
-       class="app-button @_buttonTypeClass @_fullWidthClass @Class"
+       class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer")"
        @onclick="OnClickHandler"
        style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
        disabled="@isInternallyDisabled"

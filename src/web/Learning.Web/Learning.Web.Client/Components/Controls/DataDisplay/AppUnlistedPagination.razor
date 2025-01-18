@@ -1,0 +1,49 @@
+﻿<div class="d-flex flex-row justify-space-between flex-grow-1 gap-1 @Class">
+	@for (int i = 0; i < TotalItems; i++)
+	{
+		var index = i + 1;
+		if ((i + 1) == SelectedItem)
+		{
+
+			<div class="flex-grow-1 app-question-bar app-question-bar-selected" @onclick="(()=>OnPageSelected(index))"></div>
+		}
+		else
+		{
+			<div class="flex-grow-1 app-question-bar" @onclick="(()=>OnPageSelected(index))"></div>
+		}
+	}
+</div>
+@code {
+
+	[Parameter, EditorRequired]
+	public required int TotalItems { get; set; }
+
+
+	[Parameter]
+	public string? Class { get; set; }
+
+	#region SelectedItem
+	private int selectedItem;
+
+	[Parameter, EditorRequired]
+	public required int SelectedItem
+	{
+		get => selectedItem;
+		set
+		{
+			if (value != selectedItem)
+			{
+				selectedItem = value;
+				SelectedItemChanged.InvokeAsync(value);
+			}
+		}
+	}
+	[Parameter] public EventCallback<int> SelectedItemChanged { get; set; }
+	#endregion
+
+	private void OnPageSelected(int pageNumber)
+	{
+		if (SelectedItem == pageNumber) return;
+		SelectedItem = pageNumber;
+	}
+}

@@ -1,0 +1,85 @@
+﻿@page "/model-exam-results/{modelExamResultId:long}/summary"
+@using Learning.Shared.Common.Enums
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@attribute [Authorize]
+@inject IModelExamDataService ModelExamDataService
+@rendermode InteractiveAuto
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="en-page-container flex-grow-1 d-flex flex-column flex-grow-1">
+		@if (_summary.HasValue)
+		{
+			<h1>Summary</h1>
+			<h6>@_summary.Value.Status</h6>
+		}
+	</MudContainer>
+</AppPage>
+@code {
+
+	[Parameter, EditorRequired]
+	public long ModelExamResultId { get; set; }
+
+	private ModelExamSummary? _summary;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var summaryResponse = await ModelExamDataService.GetModelExamSummary(ModelExamResultId);
+		if (summaryResponse.IsFailed)
+		{
+			return;
+		}
+
+		_summary = new ModelExamSummary
+			{
+				SessionDurationInSeconds = summaryResponse.Value.SessionDurationInSeconds,
+				Status = summaryResponse.Value.Status,
+				TotalTimeLimit = summaryResponse.Value.TotalTimeLimit,
+				QuestionSummary = summaryResponse.Value.QuestionSummary.Select(x => new QuestionSummary
+				{
+					HasSkipped = x.HasSkipped,
+					Order = x.Order,
+					QuestionImageUrl = x.QuestionImageUrl,
+					QuestionText = x.QuestionText,
+					SelectedOptionId = x.SelectedOptionId,
+					OptionSummary = x.OptionSummary.Select(y => new OptionSummary
+					{
+						IsCorrectAnswer = y.IsCorrectAnswer,
+						OptionId = y.OptionId,
+						OptionImageRelativeUrl = y.OptionImageRelativeUrl,
+						OptionText = y.OptionText,
+						Order = y.Order,
+					}).ToArray()
+				}).ToArray()
+			};
+			StateHasChanged();
+	}
+
+	#region DTO
+	public struct ModelExamSummary
+	{
+		public required ModelExamSessionStatusEnum Status { get; set; }
+		public required int TotalTimeLimit { get; set; }
+		public required int? SessionDurationInSeconds { get; set; }
+		public required QuestionSummary[] QuestionSummary { get; set; }
+
+	}
+
+	public struct QuestionSummary
+	{
+		public required int Order { get; set; }
+		public required int? SelectedOptionId { get; set; }
+		public required bool HasSkipped { get; set; }
+		public required string QuestionText { get; set; }
+		public required string? QuestionImageUrl { get; set; }
+		public required OptionSummary[] OptionSummary { get; set; }
+	}
+
+	public struct OptionSummary
+	{
+		public required int OptionId { get; set; }
+		public required int Order { get; set; }
+		public required string? OptionText { get; set; }
+		public required string? OptionImageRelativeUrl { get; set; }
+		public required bool? IsCorrectAnswer { get; set; }
+	}
+	#endregion
+}

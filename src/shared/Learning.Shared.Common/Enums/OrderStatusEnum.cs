@@ -3,6 +3,6 @@
 public enum OrderStatusEnum : short
 {
     Initiated = 1,
-    Completed,
+    Success,
     Failed
 }

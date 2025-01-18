@@ -1,0 +1,25 @@
+﻿
+.app-option-item {
+    width: 28px;
+    height: 28px;
+}
+
+.app-option-border {
+    border: 3px solid #B8D5FC;
+    border-radius: 16px;
+}
+h6{
+    color: inherit !important;
+}
+.app-option-selected {
+    border-color: transparent;
+    background-color: #6689E1;
+    color: white;
+}
+.app-option-round-selected {
+    border-color: white;
+    background-color: white;
+}
+::deep .mud-icon-root.mud-svg-icon {
+    fill: #4F76DC !important;
+}
