@@ -53,7 +53,7 @@
 				return;
 			}
 			var timeLeft = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(TimerInSeconds));
-			_timeLeft = TimerInSeconds > 120 ? timeLeft.ToString("hh:mm") : $"{TimerInSeconds} seconds left";
+			_timeLeft = TimerInSeconds > 120 ? timeLeft.ToString("HH:mm") : $"{TimerInSeconds} seconds left";
 			InvokeAsync(StateHasChanged);
 		}
 		else
