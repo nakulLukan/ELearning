@@ -35,4 +35,5 @@ public class BeginModelExamResponseDto
     public required int CurrentQuestionId { get; set; }
 
     public required int TotalQuestionsAttempted { get; set; }
+    public required string ExamName { get; set; }
 }

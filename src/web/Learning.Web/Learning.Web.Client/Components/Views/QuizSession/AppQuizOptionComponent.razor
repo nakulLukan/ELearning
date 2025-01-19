@@ -1,14 +1,30 @@
 ﻿<div class="px-5 py-4 px-md-6 py-md-5 app-option-border @(IsSelected ? "app-option-selected" : string.Empty)  cursor-pointer" @onclick="OnOptionSelected">
-	<MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-		<h6>@Text</h6>
-		<div class="app-option-item app-option-border @(IsSelected ? "app-option-round-selected" : string.Empty)  d-flex justify-center align-center">
-			@if (IsSelected)
-			{
-				<MudIcon Class="align-item-center" Icon="@Icons.Material.Filled.Check" Style="width: 18px; height:18px;" Size="Size.Large"></MudIcon>
-			}
-		</div>
+	@if (!IsTextOption())
+	{
+		<MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" class="relative">
+			<MudImage Src="@ImageUrl" Height="126" Class="rounded"/>
+			<div class="app-option-item app-option-border @(IsSelected ? "app-option-round-selected" : string.Empty) d-flex justify-center align-center absolute top-0 end-0">
+				@if (IsSelected)
+				{
+					<MudIcon Class="align-item-center" Icon="@Icons.Material.Filled.Check" Style="width: 18px; height:18px;" Size="Size.Large"></MudIcon>
+				}
+			</div>
 
-	</MudStack>
+		</MudStack>
+	}
+	else
+	{
+		<MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+			<h6>@Text</h6>
+			<div class="app-option-item app-option-border @(IsSelected ? "app-option-round-selected" : string.Empty)  d-flex justify-center align-center">
+				@if (IsSelected)
+				{
+					<MudIcon Class="align-item-center" Icon="@Icons.Material.Filled.Check" Style="width: 18px; height:18px;" Size="Size.Large"></MudIcon>
+				}
+			</div>
+
+		</MudStack>
+	}
 </div>
 @code {
 	[Parameter, EditorRequired]
@@ -16,6 +32,9 @@
 
 	[Parameter]
 	public string? Text { get; set; }
+
+	[Parameter]
+	public string? ImageUrl { get; set; }
 
 	[Parameter, EditorRequired]
 	public bool IsSelected { get; set; }
@@ -30,4 +49,6 @@
 			OnSelected.InvokeAsync(OptionOrder);
 		}
 	}
+
+	private bool IsTextOption() => !string.IsNullOrEmpty(Text);
 }

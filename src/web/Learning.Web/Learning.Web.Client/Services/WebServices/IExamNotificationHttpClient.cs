@@ -43,7 +43,7 @@ public interface IExamNotificationHttpClient
     public Task<ResponseDto<long>> SubmitExamQuestionResponse(long modelExamResultId, [Body] SubmitExamQuestionResponseRequestDto request);
 
     [Post("/api/public/model-exams-results/{modelExamResultId}/complete-session")]
-    public Task<ResponseDto<ModelExamSessionStatusEnum>> CompleteModelExamSession(long modelExamResultId);
+    public Task<ResponseDto<ModelExamSessionStatusEnum>> CompleteModelExamSession(long modelExamResultId,[Query] ModelExamSessionStatusEnum status);
 
     [Get("/api/public/model-exams-results/{modelExamResultId}/summary")]
     public Task<GetModelExamSummaryResponseDto> GetModelExamSummary(long modelExamResultId);

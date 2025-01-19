@@ -135,11 +135,11 @@ public class ModelExamRestDataService : IModelExamDataService
         }
     }
 
-    public async Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId)
+    public async Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId, ModelExamSessionStatusEnum status)
     {
         try
         {
-            var result = await _httpClient.CompleteModelExamSession(modelExamResultId);
+            var result = await _httpClient.CompleteModelExamSession(modelExamResultId, status);
             return Result.Ok(result);
         }
         catch (Exception ex)

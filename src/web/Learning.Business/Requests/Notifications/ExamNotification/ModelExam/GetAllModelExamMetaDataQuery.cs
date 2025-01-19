@@ -1,5 +1,6 @@
 ﻿using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Impl.Data;
+using Learning.Shared.Common.Utilities;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,8 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
             var userId = await _requestContext.GetUserId();
             hasPurchased = await _appDbContext.ModelExamPurchaseHistory
                 .AnyAsync(x => x.ModelExamOrder!.UserId == userId
-                    && x.ModelExamOrder.ModelExamPackageId == modelExams.First().ExamPackageId, cancellationToken);
+                    && x.ModelExamOrder.ModelExamPackageId == modelExams.First().ExamPackageId
+                    && x.ValidTill >= AppDateTime.UtcNow, cancellationToken);
         }
 
         return modelExams.Select(x => new GetAllModelExamMetaDataResponseDto

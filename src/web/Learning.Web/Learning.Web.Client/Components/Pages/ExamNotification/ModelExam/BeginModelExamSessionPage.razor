@@ -1,25 +1,33 @@
 ﻿@page "/model-exams/{modelExamId:int}/begin"
+@using Learning.Shared.Common.Enums
 @using Learning.Shared.Common.Extensions
+@using Learning.Shared.Common.Utilities
 @using Learning.Web.Client.Components.Controls.Actions
 @using Learning.Web.Client.Components.Layout.ModelExam
+@using Learning.Web.Client.Contracts.Interop
 @using Learning.Web.Client.Contracts.Services.ExamNotification
 @inject IModelExamDataService ModelExamDataService
+@inject IAppJSInterop AppJSInterop
 @rendermode InteractiveAuto
 @layout ModelExamSessionLayout
 @attribute [Authorize]
 <AppPage Class="d-flex flex-column flex-grow-1">
-	<MudContainer Class="en-page-container flex-grow-1 d-flex flex-column flex-grow-1">
-		<AppButton Text="End Exam" OnClick="EndSession"></AppButton>
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
+
 		@if (!_sessionDetail.HasValue)
 		{
+			<BeginModelExamSessionLoaderComponent />
 		}
 		else
 		{
+			<div class="d-flex justify-end my-5">
+				<AppButton Text="End Exam" OnClick="EndSession"></AppButton>
+			</div>
 			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
 				<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
 					<MudStack Justify="Justify.SpaceBetween" Row>
-						<h5>Test</h5>
-						<div class="d-flex flex-row align-content-center"><MudIcon Class="align-self-center" Icon="@Icons.Material.Outlined.AccessTime"></MudIcon><span class="app-timer ml-2">05:30</span></div>
+						<h5>@(_examName!)</h5>
+						<ModelExamSessionTimerComponent TimerInSeconds="@_totalTimeLeftInSeconds!.Value" TimeoutReached="OnTimeout" />
 					</MudStack>
 					<h6 class="app-question-label">Question @(_currentQuestionNumber) <span>/@_sessionDetail.Value.TotalQuestions</span></h6>
 
@@ -29,6 +37,12 @@
 																							   SelectedItemChanged="OnPageSelected" />
 
 					<h4 class="mt-10 mt-md-7">@_selectedQuestion!.Value.QuestionText</h4>
+					@if (_selectedQuestion!.Value.QuestionImageUrl != null)
+					{
+						<div class="app-question-image py-2">
+							<MudImage Src="@_selectedQuestion.Value.QuestionImageUrl" Class="rounded" Height="169"></MudImage>
+						</div>
+					}
 					<MudGrid Spacing="5">
 						@foreach (var option in _selectedQuestion!.Value.Options)
 						{
@@ -36,6 +50,7 @@
 								<Learning.Web.Client.Components.Views.QuizSession.AppQuizOptionComponent Text="@option.OptionText"
 																										 IsSelected="@option.IsSelected"
 																										 OptionOrder="option.Order"
+																										 ImageUrl="@option.OptionImageUrl"
 																										 OnSelected="OptionSelected" />
 							</MudItem>
 						}
@@ -64,11 +79,14 @@
 @code {
 	[Parameter]
 	public int ModelExamId { get; set; }
+	public string? _examName { get; set; }
 	private long? modelExamResultId;
 	private SessionDetail? _sessionDetail;
 	private int _currentQuestionNumber = 1;
 	private int? _currentQuestionId;
 	private int totalAttemptedQuestions = 0;
+	private int? _totalTimeLeftInSeconds;
+
 	/// <summary>
 	/// Question Id, Question Order
 	/// </summary>
@@ -96,6 +114,8 @@
 			return;
 		}
 		totalAttemptedQuestions = details.Value.TotalQuestionsAttempted;
+		_examName = details.Value.ExamName;
+		_totalTimeLeftInSeconds = (int)(details.Value.TotalTimeInSeconds - (DateTimeOffset.UtcNow - details.Value.StartedOn).TotalSeconds);
 		var questionsResult = await ModelExamDataService.GetExamQuestionsList(ModelExamId);
 		if (questionsResult.IsFailed)
 		{
@@ -122,6 +142,8 @@
 			var questionDetailResult = await ModelExamDataService.GetModelExamQuestionById(modelExamResultId, _currentQuestionId.Value);
 			if (questionDetailResult.IsFailed)
 			{ return; }
+
+			// Keep track of the question in memory
 			questionIdDetailDict.Add(_currentQuestionId.Value, new SessionQuestionDetail()
 				{
 					QuestionId = questionDetailResult.Value.QuestionId,
@@ -148,6 +170,7 @@
 		{
 			_selectedQuestion.Value.Options[i].IsSelected = _selectedQuestion.Value.Options[i].Order == selectedOption;
 		}
+		AppJSInterop.ScrollToBottomOnNavigation();
 	}
 
 	private async Task OnPageSelected(int pageNumber)
@@ -168,6 +191,13 @@
 
 	private async Task SaveQuestionResponse(bool hasSkipped)
 	{
+		// If user has skipped the question then make the selection clear if it is there.
+		if (hasSkipped
+			&& _selectedQuestion!.Value.Options.FirstOrDefault(x => x.IsSelected) is SessionOptionDetail selectedOption
+			&& selectedOption.AnswerId > 0)
+		{
+			selectedOption.IsSelected = false;
+		}
 		var response = await ModelExamDataService.SubmitExamQuestionResponse(modelExamResultId!.Value
 			, _selectedQuestion!.Value.QuestionId
 			, !hasSkipped ? _selectedQuestion.Value.Options.First(x => x.IsSelected).AnswerId : null
@@ -177,16 +207,30 @@
 			return;
 		}
 
+		// Load the next question. If it is the last question then there will be no questions to load
 		var nextQuestion = questionIdOrderDict.FirstOrDefault(x => x.Value == _currentQuestionNumber + 1);
 		if (nextQuestion.Key != 0)
 		{
+			// Update the screen with new question
 			await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, nextQuestion.Key);
 		}
+
+		await AppJSInterop.ScrollToTopOnNavigation();
 	}
 
 	private async Task EndSession()
 	{
-		var response = await ModelExamDataService.CompleteModelExamSession(modelExamResultId!.Value);
+		await CompleteSession(ModelExamSessionStatusEnum.Completed).ConfigureAwait(false);
+	}
+
+	private async Task OnTimeout()
+	{
+		await CompleteSession(ModelExamSessionStatusEnum.Timeout).ConfigureAwait(false);
+	}
+
+	private async Task CompleteSession(ModelExamSessionStatusEnum status)
+	{
+		var response = await ModelExamDataService.CompleteModelExamSession(modelExamResultId!.Value, status);
 		if (response.IsFailed) return;
 		NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
 	}

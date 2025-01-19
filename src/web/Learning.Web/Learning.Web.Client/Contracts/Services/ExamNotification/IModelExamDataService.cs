@@ -20,6 +20,6 @@ public interface IModelExamDataService
         int questionId,
         int? selectedAnswerId,
         bool hasSkipped);
-    public Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId);
+    public Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId, ModelExamSessionStatusEnum status);
     public Task<Result<GetModelExamSummaryResponseDto>> GetModelExamSummary(long modelExamResultId);
 }

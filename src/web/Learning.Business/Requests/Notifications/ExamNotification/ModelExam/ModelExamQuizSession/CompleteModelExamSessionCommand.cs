@@ -12,6 +12,7 @@ namespace Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Mo
 public class CompleteModelExamSessionCommand : IRequest<ResponseDto<ModelExamSessionStatusEnum>>
 {
     public required long ModelExamResultId { get; set; }
+    public required ModelExamSessionStatusEnum Status { get; set; }
 }
 public class CompleteModelExamSessionCommandHandler : IRequestHandler<CompleteModelExamSessionCommand, ResponseDto<ModelExamSessionStatusEnum>>
 {
@@ -48,7 +49,7 @@ public class CompleteModelExamSessionCommandHandler : IRequestHandler<CompleteMo
             throw new AppApiException(HttpStatusCode.BadRequest, "ME41", "Cannot model exam status");
         }
 
-        var status = (AppDateTime.UtcNow - modelExamResult.StartedOn).TotalSeconds >= modelExamResult.TotalTimeLimit + 10 ? ModelExamSessionStatusEnum.Timeout : ModelExamSessionStatusEnum.Completed;
+        var status = (AppDateTime.UtcNow - modelExamResult.StartedOn).TotalSeconds >= modelExamResult.TotalTimeLimit + 10 || request.Status == ModelExamSessionStatusEnum.Timeout ? ModelExamSessionStatusEnum.Timeout : ModelExamSessionStatusEnum.Completed;
 
         await _dbContext.ModelExamResults
             .Where(x => x.Id == request.ModelExamResultId)

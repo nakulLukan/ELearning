@@ -1,0 +1,40 @@
+﻿<div class="d-flex justify-end my-5">
+	<MudSkeleton Height="54px" Width="250px" />
+</div>
+<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
+	<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
+		<MudStack Justify="Justify.SpaceBetween" Row>
+			<MudSkeleton Height="24px" Width="89px" />
+
+			<MudSkeleton Height="20px" Width="67px" />
+
+		</MudStack>
+		<MudSkeleton Height="17px" Width="89px" />
+		<MudSkeleton Height="3px" Width="100%" />
+
+		<MudSkeleton Height="29px" Width="100%" Class="mt-10 mt-md-7" />
+
+		<MudGrid Spacing="5">
+			@for (int i = 0; i < 4; i++)
+			{
+				<MudItem xs="12" md="6">
+					<MudSkeleton Height="64px" Width="100%" />
+				</MudItem>
+			}
+		</MudGrid>
+
+		<div class="d-flex align-end mt-20 mt-md-0">
+
+			<MudGrid Spacing="6">
+				<MudItem xs="12" md="6">
+					<MudSkeleton Height="64px" Width="100%" />
+
+				</MudItem>
+				<MudItem xs="12" md="6">
+					<MudSkeleton Height="64px" Width="100%" />
+
+				</MudItem>
+			</MudGrid>
+		</div>
+	</MudStack>
+</Learning.Web.Client.Components.Controls.Containers.PlainCard>

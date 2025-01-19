@@ -1,4 +1,5 @@
 ﻿using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+using Learning.Shared.Common.Enums;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -44,9 +45,21 @@ public class ModelExamController : ControllerBase
 
     [Authorize]
     [HttpPost("model-exams-results/{modelExamResultId:int}/complete-session")]
-    public async Task<IActionResult> CompleteModelExamSession([FromRoute] int modelExamResultId)
+    public async Task<IActionResult> CompleteModelExamSession([FromRoute] int modelExamResultId, [FromQuery] ModelExamSessionStatusEnum status)
     {
         var data = await _mediator.Send(new CompleteModelExamSessionCommand()
+        {
+            ModelExamResultId = modelExamResultId,
+            Status = status
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpGet("model-exams-results/{modelExamResultId:int}/summary")]
+    public async Task<IActionResult> GetModelExamSummary([FromRoute] int modelExamResultId)
+    {
+        var data = await _mediator.Send(new GetModelExamSummaryQuery()
         {
             ModelExamResultId = modelExamResultId,
         }).ConfigureAwait(false);

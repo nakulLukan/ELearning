@@ -74,13 +74,14 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
                                      IsFree = mec.IsFree,
                                      TotalQuestions = _dbContext.ModelExamQuestionConfigurations
                                                          .Count(x => x.ExamConfigId == mec.Id),
-                                     TotalTimeInSeconds = mec.TotalTimeLimit
+                                     TotalTimeInSeconds = mec.TotalTimeLimit,
+                                     ExamName = mec.ExamName
                                  }).FirstAsync(cancellationToken);
 
         // The user should be able to attend the exam only if the exam is free or exam package has been purchased
-        if (!examDetails.IsFree || examDetails.OrderValidTill < DateTimeOffset.UtcNow)
+        if (!examDetails.IsFree && examDetails.OrderValidTill.HasValue &&  examDetails.OrderValidTill < DateTimeOffset.UtcNow)
         {
-            throw new AppException("This model exam is not available for you. Please purchase the model exam package to access this model exam.");
+            throw new AppApiException( System.Net.HttpStatusCode.BadRequest, "BME01", "This model exam is not available for you. Please purchase the model exam package to access this model exam.");
         }
 
         // Check if an session for given model exam is already present
@@ -139,6 +140,7 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
             Status = sessionStatus,
             CurrentQuestionId = currentQuestionId!.Value,
             TotalQuestionsAttempted = existingSession.AttemptedQuestions.Length,
+            ExamName = examDetails.ExamName
         };
     }
 

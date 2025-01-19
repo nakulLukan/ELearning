@@ -1,16 +1,4 @@
-﻿::deep .mud-icon-root.mud-svg-icon {
-    fill: #6C6C6C !important;
-}
-
-.app-timer {
-    color: #1E1E1E;
-    font-family: var(--ff-700);
-    font-size: 0.875rem;
-    line-height: 1.4rem;
-    text-align: left;
-    align-self: center;
-}
-
+﻿
 .app-question-label {
     font-family: var(--ff-700);
     font-size: 0.875rem;
@@ -29,3 +17,10 @@
         margin: 0px;
     }
 
+.app-question-image {
+    border-radius: 12px;
+    background-color: #B8B8B833;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

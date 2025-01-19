@@ -157,13 +157,14 @@ public class ModelExamDataService : IModelExamDataService
         }
     }
 
-    public async Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId)
+    public async Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId, ModelExamSessionStatusEnum status)
     {
         try
         {
             var result = await _mediator.Send(new CompleteModelExamSessionCommand()
             {
                 ModelExamResultId = modelExamResultId,
+                Status = status
             }).ConfigureAwait(false);
             return result;
         }

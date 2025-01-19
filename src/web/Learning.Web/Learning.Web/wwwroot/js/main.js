@@ -13,3 +13,7 @@ function isMobile() {
 window.scrollToTopOnNavigation = function () {
     window.scroll({ top: 0, left: 0, behavior: 'smooth' });
 };
+
+window.scrollToBottomOnNavigation = function () {
+    window.scroll({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
+};
