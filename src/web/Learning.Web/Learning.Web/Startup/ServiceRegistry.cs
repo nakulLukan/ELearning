@@ -192,6 +192,7 @@ public static class ServiceRegistry
         });
         #endregion CORS
 
+        builder.Services.AddBlazorBootstrap();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllersWithViews();
         builder.Services.AddAntiforgery();

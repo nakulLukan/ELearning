@@ -1,38 +1,42 @@
-﻿<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundColor="#000000" 
-    >
-    <div class="d-flex justify-center align-stretch align-stretch cover-main-container">
-        <MudGrid Justify="Justify.Center" Class="align-center h-100 ma-0">
-            <MudItem xs="12" md="7" Class="overflow-hidden h-100 w-100 pa-0 relative d-flex align-stretch">
-                <div id="carouselVideoPreview" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
-                        </div>
-                        <div class="carousel-item">
-                            <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
-                        </div>
-                        <div class="carousel-item">
-                            <video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
-                        </div>
-                    </div>
-                </div>
+﻿@using BlazorBootstrap
+<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundColor="#000000">
+	<div class="d-flex justify-center align-stretch align-stretch cover-main-container">
+		<MudGrid Justify="Justify.Center" Class="align-center h-100 ma-0">
+			<MudItem xs="12" md="7" Class="overflow-hidden h-100 w-100 pa-0 relative d-flex align-stretch">
+				<Carousel Id="carouselVideoPreview" Autoplay="CarouselAutoPlay.StartOnPageLoad" ShowIndicators="false" ShowPreviousNextControls="false">
 
-                <div class="absolute app-video-shader"/>
-            </MudItem>
+					<CarouselItem Active="true" Interval="10000">
+						<video autoplay muted src="https://btss3storage.s3.ap-south-1.amazonaws.com/public/Bts+Web+V1+5mb+5.mp4" />
 
-            <MudItem xs="12" md="5" Class="pa-4 pl-md-0 pt-md-15 pb-md-15 pr-md-15">
-                <MudStack Justify="Justify.Center" Spacing="4" Class="text-center">
-                    <h2 class="app-text-center">
-                        BTS: Where aspiration
-                        meets the result!!
-                    </h2>
-                    <p class="app-text-center">
-                        Our mentors with their broad spectrum of experience are committed to guiding the energy and passion of young blood of the country in the direction of nation building and national security
-                    </p>
-                </MudStack>
-            </MudItem>
-        </MudGrid>
-    </div>
+					</CarouselItem>
+
+					<CarouselItem Interval="10000">
+						<video autoplay muted src="https://btss3storage.s3.ap-south-1.amazonaws.com/public/BTS+WEB+V1.mp4" />
+
+					</CarouselItem>
+
+					<CarouselItem  Interval="15000">
+						<video autoplay muted src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" />
+
+					</CarouselItem>
+				</Carousel>
+
+				<div class="absolute app-video-shader" />
+			</MudItem>
+
+			<MudItem xs="12" md="5" Class="pa-4 pl-md-0 pt-md-15 pb-md-15 pr-md-15">
+				<MudStack Justify="Justify.Center" Spacing="4" Class="text-center">
+					<h2 class="app-text-center">
+						BTS: Where aspiration
+						meets the result!!
+					</h2>
+					<p class="app-text-center">
+						Our mentors with their broad spectrum of experience are committed to guiding the energy and passion of young blood of the country in the direction of nation building and national security
+					</p>
+				</MudStack>
+			</MudItem>
+		</MudGrid>
+	</div>
 </Learning.Web.Client.Components.Pages.General.AppContainer>
 @code {
 

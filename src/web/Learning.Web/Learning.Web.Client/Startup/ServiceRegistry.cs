@@ -48,6 +48,7 @@ internal static class ServiceRegistry
                         .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
         #endregion
 
+        builder.Services.AddBlazorBootstrap();
         builder.Services.AddMudServices();
         builder.Services.AddBlazoredLocalStorageAsSingleton();
     }
