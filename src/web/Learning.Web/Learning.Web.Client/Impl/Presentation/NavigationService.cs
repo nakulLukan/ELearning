@@ -24,4 +24,16 @@ public class NavigationService : INavigationService
     {
         _navigationManager.NavigateTo($"/login?redirectUrl={_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}", true);
     }
+
+    public string? GetTargetFragmentInRoute()
+    {
+        var uri = new Uri(_navigationManager.Uri);
+        if (!string.IsNullOrEmpty(uri.Fragment))
+        {
+            var targetId = uri.Fragment.TrimStart('#');
+            return !string.IsNullOrEmpty(targetId) ? targetId : null;
+        }
+
+        return null;
+    }
 }

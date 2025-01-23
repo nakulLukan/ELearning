@@ -1,11 +1,14 @@
 ﻿@using Learning.Shared.Contracts.HttpContext
 @using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Contracts.Interop
 @using Learning.Web.Client.Contracts.Presentation
 @using Learning.Web.Client.Contracts.Services.ExamNotification
 @using Learning.Web.Client.Dto.ExamNotifications.ModelExam
+@using Learning.Web.Client.Impl.Interop
 @inject IModelExamDataService ModelExamDataService
 @inject IAlertService AlertService
 @inject IRequestContext RequestContext
+@inject IAppJSInterop AppJSInterop
 
 <div class="d-flex flex-column gap-6 mt-20">
 
@@ -50,7 +53,7 @@
 									</div>
 									<div class="d-flex flex-column gap-4">
 										<h4 class="me-card-title">@modelExam.ExamName</h4>
-										<AppButton Text="Start Exam Now" OnClick="@(()=> StartExamClicked(modelExam))" />
+										<AppButton Text="Start Exam Now" OnClick="@(()=> StartExamClicked(modelExam))" id="@(modelExam.IsFree ? "free-exam" : string.Empty)" />
 									</div>
 								</div>
 							</div>
@@ -89,6 +92,12 @@
 						ValidUpto = x.ValidUpto
 					}).ToArray();
 				StateHasChanged();
+
+				// If the user has chosen to start a free exam then navigate to the free exam component
+				if (NavigationManager.GetTargetFragmentInRoute() is string route)
+				{
+					await AppJSInterop.ScrollToTarget("free-exam");
+				}
 			}
 		}
 	}

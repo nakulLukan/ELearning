@@ -17,3 +17,12 @@ window.scrollToTopOnNavigation = function () {
 window.scrollToBottomOnNavigation = function () {
     window.scroll({ top: document.body.scrollHeight, left: 0, behavior: 'smooth' });
 };
+
+window.scrollToTarget = function (targetId){
+    const element = document.getElementById(targetId);
+    console.log({ element })
+    if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        element.focus();
+    }
+}

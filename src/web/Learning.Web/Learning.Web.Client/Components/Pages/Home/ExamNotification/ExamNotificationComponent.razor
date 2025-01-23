@@ -16,8 +16,8 @@
 				</p>
 				<div>
 					<Learning.Web.Client.Components.Controls.Actions.AppButton ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-					Text="Join Us"
-					Padding="75.5px" />
+																			   Text="Join Us"
+																			   Padding="75.5px" />
 				</div>
 			</div>
 			<div class="d-flex justify-center w-100">
@@ -26,7 +26,7 @@
 					<div class="app-exam-notification-container d-flex flex-column app-en-gap">
 						<h3>Exam notifications</h3>
 						<Carousel Autoplay="CarouselAutoPlay.StartOnPageLoad" ShowIndicators="true" ShowPreviousNextControls="false"
-						Class="d-flex flex-column-reverse" Onslide="OnSlide">
+								  Class="d-flex flex-column-reverse" Onslide="OnSlide">
 							@foreach (var notification in _examNotifications)
 							{
 								var notificationIndex = _examNotifications.IndexOf(notification);
@@ -34,8 +34,8 @@
 
 								<CarouselItem Active="@(notificationIndex == 0)" Interval="5000">
 									<MudImage ObjectFit="ObjectFit.Cover"
-									Src="@notification.ImagePath"
-									Class="app-exam-notification-image" />
+											  Src="@notification.ImagePath"
+											  Class="app-exam-notification-image" />
 									<div class="carousel-caption" style="position:unset">
 										<h6>@notification.Title </h6>
 										<p data-full-text="@notification.Description" class="mt-2">@notification.Description</p>
@@ -43,11 +43,12 @@
 								</CarouselItem>
 							}
 						</Carousel>
-						<AppButton Text="Attend free model exam"></AppButton>
+						<AppButton Text="Attend free model exam"
+								   OnClick="FreeExamSelected"></AppButton>
 						<AppButton Id="viewDetailsButton"
-						Text="View details"
-						ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-						OnClick="ViewDetailsSelected"></AppButton>
+								   Text="View details"
+								   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+								   OnClick="ViewDetailsSelected"></AppButton>
 					</div>
 				}
 				else
@@ -70,7 +71,7 @@
 
 @code {
 	private List<ExamNotificationDto>? _examNotifications;
-	int selectedItem = 1;
+	int selectedItem = 0;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -92,8 +93,14 @@
 		selectedItem = args.To;
 	}
 
-	private void ViewDetailsSelected(){
+	private void ViewDetailsSelected()
+	{
 		NavigationManager.NavigateTo($"/exam-notifications/{_examNotifications![selectedItem].ExamNotificationId}/apply");
+	}
+
+	private void FreeExamSelected()
+	{
+		NavigationManager.NavigateTo($"/exam-notifications/{_examNotifications![selectedItem].ExamNotificationId}/apply#free-exam");
 	}
 
 	public class ExamNotificationDto

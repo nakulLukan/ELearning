@@ -36,4 +36,8 @@ public class AppJSInterop : IAppJSInterop
     {
         await _jsRuntime.InvokeVoidAsync("scrollToBottomOnNavigation");
     }
+    public async Task ScrollToTarget(string targetId)
+    {
+        await _jsRuntime.InvokeVoidAsync("scrollToTarget", targetId);
+    }
 }

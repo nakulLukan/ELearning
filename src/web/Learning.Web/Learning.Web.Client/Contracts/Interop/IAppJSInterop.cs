@@ -6,5 +6,6 @@ public interface IAppJSInterop
     public Task CopyTextToClipboard(string text);
     public Task ScrollToTopOnNavigation();
     public Task ScrollToBottomOnNavigation();
+    public Task ScrollToTarget(string targetId);
     public Task<bool> IsMobile();
 }
