@@ -193,6 +193,11 @@ Resources:
             Principal: '*'
             Resource: 
               - !Sub "arn:aws:s3:::${FileStorageBuckNameParam}/public/*"
+            Condition:
+              StringLike:
+                'aws:Referer':
+                  - 'https://localhost:5000/*'
+                  - !Join [ "", ['https://', !GetAtt EC2WebServer.PublicIp ,'/*']]
             
   RdsDB:
     Type: AWS::RDS::DBInstance
