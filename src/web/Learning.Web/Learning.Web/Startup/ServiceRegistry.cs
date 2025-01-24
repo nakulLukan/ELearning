@@ -97,20 +97,8 @@ public static class ServiceRegistry
                     options.Scope.Add(scope);
                 }
 
-
                 options.Events = new OpenIdConnectEvents()
                 {
-                    OnTokenValidated = (context) =>
-                    {
-                        var idToken = context.SecurityToken;
-                        if (idToken != null)
-                        {
-                            MapClaim(context, idToken, ClaimConstant.AwsRoleClaim);
-                            MapClaim(context, idToken, ClaimConstant.PhoneNumber);
-                            MapClaim(context, idToken, ClaimConstant.IsPhoneNumberVerifiedClaim);
-                        }
-                        return Task.CompletedTask;
-                    },
                     OnRedirectToIdentityProvider = context =>
                     {
                         context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http://", "https://");
@@ -145,16 +133,9 @@ public static class ServiceRegistry
         builder.Services.AddSingleton<CookieOidcRefresher>();
         builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme).Configure<CookieOidcRefresher>((cookieOptions, refresher) =>
         {
-            cookieOptions.ExpireTimeSpan = TimeSpan.FromDays(1);
+            cookieOptions.ExpireTimeSpan = TimeSpan.FromDays(7);
             cookieOptions.SlidingExpiration = true;
             cookieOptions.Events.OnValidatePrincipal = context => refresher.ValidateOrRefreshCookieAsync(context, OpenIdConnectDefaults.AuthenticationScheme);
-        });
-        builder.Services.AddOptions<OpenIdConnectOptions>().Configure(oidcOptions =>
-        {
-            // Request a refresh_token.
-            oidcOptions.Scope.Add(OpenIdConnectScope.OfflineAccess);
-            // Store the refresh_token.
-            oidcOptions.SaveTokens = true;
         });
 
         builder.Services.AddCascadingAuthenticationState();
@@ -220,21 +201,5 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IModelExamDataService, ModelExamDataService>();
         builder.Services.AddScoped<IBrowserStorage, BrowserLocalStorage>();
         builder.Services.AddTransient<IAppJSInterop, AppJSInterop>();
-    }
-
-
-    private static void MapClaim(TokenValidatedContext context, JwtSecurityToken idToken, string claim)
-    {
-        var roleClaim = idToken.Claims.FirstOrDefault(c => c.Type == claim);
-        if (roleClaim != null)
-        {
-            var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
-            claimsIdentity.AddClaim(new Claim(claim, roleClaim.Value));
-        }
-        else
-        {
-            var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
-            claimsIdentity.AddClaim(new Claim(claim, RoleConstant.User));
-        }
     }
 }

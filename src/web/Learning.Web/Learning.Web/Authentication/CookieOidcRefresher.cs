@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Learning.Web;
 internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> oidcOptionsMonitor)
@@ -34,9 +34,15 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
             return;
         }
 
+        string? refreshToken = validateContext.Properties.GetTokenValue("refresh_token");
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            validateContext.RejectPrincipal();
+            return;
+        }
+
         var oidcConfiguration = await oidcOptions.ConfigurationManager!.GetConfigurationAsync(validateContext.HttpContext.RequestAborted);
         var tokenEndpoint = oidcConfiguration.TokenEndpoint ?? throw new InvalidOperationException("Cannot refresh cookie. TokenEndpoint missing!");
-
         using var refreshResponse = await oidcOptions.Backchannel.PostAsync(tokenEndpoint,
             new FormUrlEncodedContent(new Dictionary<string, string?>()
             {
@@ -44,7 +50,7 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
                 ["client_id"] = oidcOptions.ClientId,
                 ["client_secret"] = oidcOptions.ClientSecret,
                 ["scope"] = string.Join(" ", oidcOptions.Scope),
-                ["refresh_token"] = validateContext.Properties.GetTokenValue("refresh_token"),
+                ["refresh_token"] = refreshToken,
             }));
 
         if (!refreshResponse.IsSuccessStatusCode)
