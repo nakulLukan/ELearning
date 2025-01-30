@@ -127,7 +127,7 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
                 sessionStatus = existingSession.Status;
                 var lastAttemptedQuestion = existingSession.AttemptedQuestions.OrderBy(x => x.Order).LastOrDefault(x => x.HasSkipped || x.SelectedAnswerId.HasValue);
                 var indexOfLastAttemptedQuestion = lastAttemptedQuestion != null ? existingSession.AttemptedQuestions.ToList().IndexOf(lastAttemptedQuestion) : existingSession.AttemptedQuestions.Length;
-                currentQuestionId = indexOfLastAttemptedQuestion + 1 < existingSession.AttemptedQuestions.Length ? existingSession.AttemptedQuestions[indexOfLastAttemptedQuestion + 1].QuestionId : await GetFirstQuestion(request.ModelExamId, cancellationToken);
+                currentQuestionId = existingSession.AttemptedQuestions.Any() ? existingSession.AttemptedQuestions[indexOfLastAttemptedQuestion].QuestionId : await GetFirstQuestion(request.ModelExamId, cancellationToken);
             }
         }
 

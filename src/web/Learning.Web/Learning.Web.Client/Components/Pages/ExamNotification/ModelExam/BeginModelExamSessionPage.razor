@@ -11,6 +11,8 @@
 @rendermode InteractiveAuto
 @layout ModelExamSessionLayout
 @attribute [Authorize]
+<ModelExamSessionNavBar EndExamChanged="EndSession" />
+
 <AppPage Class="d-flex flex-column flex-grow-1">
 	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
 
@@ -20,9 +22,7 @@
 		}
 		else
 		{
-			<div class="d-flex justify-end my-5">
-				<AppButton Text="End Exam" OnClick="EndSession"></AppButton>
-			</div>
+			<div class="my-17"></div>
 			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
 				<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
 					<MudStack Justify="Justify.SpaceBetween" Row>
@@ -48,7 +48,7 @@
 						{
 							<MudItem xs="12" md="6">
 								<Learning.Web.Client.Components.Views.QuizSession.AppQuizOptionComponent Text="@option.OptionText"
-																										 IsSelected="@option.IsSelected"
+																										 State="@(option.IsSelected ? Enums.QuizOptionSelectionStateEnum.Selected : Enums.QuizOptionSelectionStateEnum.UnSelected)"
 																										 OptionOrder="option.Order"
 																										 ImageUrl="@option.OptionImageUrl"
 																										 OnSelected="OptionSelected" />
@@ -86,6 +86,9 @@
 	private int? _currentQuestionId;
 	private int totalAttemptedQuestions = 0;
 	private int? _totalTimeLeftInSeconds;
+
+	[CascadingParameter]
+	public bool EndExam { get; set; }
 
 	/// <summary>
 	/// Question Id, Question Order

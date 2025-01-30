@@ -77,6 +77,9 @@
     <Content Update="Components\Controls\Input\AppTextFieldV2.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Components\Layout\ModelExam\ModelExamSessionNavBar.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

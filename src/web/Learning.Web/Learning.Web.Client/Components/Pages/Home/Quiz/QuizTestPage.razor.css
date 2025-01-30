@@ -1,0 +1,8 @@
+﻿
+.app-question-image {
+    border-radius: 12px;
+    background-color: #B8B8B833;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

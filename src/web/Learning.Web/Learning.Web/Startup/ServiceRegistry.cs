@@ -133,8 +133,13 @@ public static class ServiceRegistry
         builder.Services.AddSingleton<CookieOidcRefresher>();
         builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme).Configure<CookieOidcRefresher>((cookieOptions, refresher) =>
         {
-            cookieOptions.ExpireTimeSpan = TimeSpan.FromDays(7);
+            cookieOptions.ExpireTimeSpan = TimeSpan.FromDays(10);
             cookieOptions.SlidingExpiration = true;
+            cookieOptions.Events.OnSigningIn = context =>
+            {
+                context.Properties.IsPersistent = true;
+                return Task.CompletedTask;
+            };
             cookieOptions.Events.OnValidatePrincipal = context => refresher.ValidateOrRefreshCookieAsync(context, OpenIdConnectDefaults.AuthenticationScheme);
         });
 

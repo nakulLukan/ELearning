@@ -1,11 +1,11 @@
 ﻿@if (Href == null)
 {
     <button type="@_buttonFormType"
-            id="@Id"
-            class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer")"
-            @onclick="OnClickHandler"
-            style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
-            disabled="@isInternallyDisabled">
+    id="@Id"
+    class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
+    @onclick="OnClickHandler"
+    style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+    disabled="@isInternallyDisabled">
         <div class="d-flex align-center gap-1">
             <span class="@(!isInternallyDisabled ? "" : "loader")">
             </span>
@@ -16,13 +16,13 @@
 else
 {
     <a type="@_buttonFormType"
-       id="@Id"
-       href="@Href"
-       class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer")"
-       @onclick="OnClickHandler"
-       style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
-       disabled="@isInternallyDisabled"
-       target="@Target">
+    id="@Id"
+    href="@Href"
+       class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
+    @onclick="OnClickHandler"
+    style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+    disabled="@isInternallyDisabled"
+    target="@Target">
         <div class="d-flex justify-center gap-1">
             <span class="@(!isInternallyDisabled ? "" : "loader")">
             </span>
@@ -58,6 +58,9 @@ else
 
     [Parameter]
     public string? Icon { get; set; }
+
+    [Parameter]
+    public ButtonSize Size { get; set; } = ButtonSize.Default;
 
     #region TextTransform
     [Parameter]
@@ -160,6 +163,12 @@ else
         Upper,
         None
     }
+
+    public enum ButtonSize 
+    {
+        Default,
+        Small
+    }
     #endregion
 
     #region StyleClassNameConstants
@@ -171,6 +180,8 @@ else
         public const string Reset = "reset";
         public const string Button = "button";
         public const string Submit = "submit";
+
+        public const string AppButtonSmall = "app-button-small";
 
     }
     #endregion

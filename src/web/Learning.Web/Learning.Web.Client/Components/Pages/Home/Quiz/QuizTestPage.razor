@@ -3,147 +3,301 @@
 @using Learning.Shared.Common.Utilities
 @using Learning.Shared.Dto.Quiz.QuickTest.Public
 @using Learning.Shared.Enums
+@using Learning.Web.Client.Components.Controls.Actions
 @using Learning.Web.Client.Contracts.Persistance
 @using Learning.Web.Client.Contracts.Services.Quiz
 @using Learning.Web.Client.Contracts.Services.Subscription
 @using Learning.Web.Client.Dto.Quiz
+@using Learning.Web.Client.Enums
 @using Learning.Web.Client.Impl.Persistance
 @using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizResultComponent
-@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestOptionComponent
-@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizTestQuestionComponent
 @rendermode InteractiveWebAssembly
 @inject IQuizManager QuizManager
 @inject IBrowserStorage LocalStorage
 @inject IQuizDataService QuizDataService
 @inject ICouponCodeDataService CouponCodeDataService
-<MudDialogProvider />
-<AppPage BackgroundColor="var(--green-gray-50)">
-    <MudContainer MaxWidth="MaxWidth.Medium" Style="height: auto">
-        <MudGrid>
-            <MudItem xs="12">
-                @if (_quizMetaData != null && !Result.MarkScored.HasValue)
-                {
-                    @foreach (var question in _questions)
-                    {
-                        if (_currentQuestionNumer == question.QuestionNumber)
-                        {
-                            <QuizTestQuestionComponent Question="question"
-                                                       TotalQuestions="_quizMetaData.TotalQuestions"
-                                                       IsActiveQuestion="@((question.QuestionNumber == _currentQuestionNumer)|| question.Answered)"
-                                                       OnAnswerSubmit="AnswerSubmitted" />
-                        }
-                    }
-                }
-                else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
-                {
-                    <QuizResultComponent Result="Result" />
-                }
-                else
-                {
-                    <QuizPageLoaderComponent />
-                }
-            </MudItem>
-        </MudGrid>
-    </MudContainer>
+
+<AppPage Class="d-flex flex-column flex-grow-1 pt-9">
+	<MudContainer Class="en-page-container flex-grow-1 d-flex flex-column flex-grow-1">
+
+		@if (_quizMetaData != null && !Result.MarkScored.HasValue)
+		{
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
+				<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
+					<MudStack Justify="Justify.SpaceBetween" Row>
+						<h5>Weekly Quiz</h5>
+						<QuizSessionTimerComponent @ref="_timer" @bind-TimerInSeconds="_selectedQuestion!.TimeLimitInSeconds" TimeoutReached="OnTimeout" />
+					</MudStack>
+					<h6 class="app-question-label">Question @(_currentQuestionNumber) <span>/@_quizMetaData.TotalQuestions</span></h6>
+
+					<Learning.Web.Client.Components.Controls.DataDisplay.AppUnlistedPagination Class="mt-4 mt-md-3"
+																							   TotalItems="_quizMetaData.TotalQuestions"
+																							   SelectedItem="@_currentQuestionNumber" />
+
+					<h4 class="mt-10 mt-md-7">@_selectedQuestion!.Question</h4>
+					@if (_selectedQuestion!.QuestionImage != null)
+					{
+						<div class="app-question-image py-2">
+							<MudImage Src="@_selectedQuestion.QuestionImage" Class="rounded" Height="169"></MudImage>
+						</div>
+					}
+					<MudGrid Spacing="5">
+						@foreach (var option in _selectedQuestion!.Options!)
+						{
+							<MudItem xs="12" md="6">
+								<Learning.Web.Client.Components.Views.QuizSession.AppQuizOptionComponent Text="@option.Option"
+																										 OptionOrder="option.Order"
+																										 ImageUrl="@option.OptionAbsUrl"
+																										 State="@option.State"
+																										 SelectionDisabled="_selectionDisabled"
+																										 OnSelected="AnswerSubmitted" />
+							</MudItem>
+						}
+					</MudGrid>
+
+					<div class="d-flex align-end mt-20 mt-md-0">
+
+						<MudGrid Spacing="6">
+							<MudItem xs="12" md="6">
+								<AppButton Text="Skip"
+										   ButtonType="Controls.Actions.AppButton.AppButtonType.Secondary" FullWidth
+										   Disabled="_selectionDisabled"
+										   OnClick="OnSkip" />
+							</MudItem>
+							<MudItem xs="12" md="6">
+								@if (!_optionSubmitted)
+								{
+
+									<AppButton Text="Submit" FullWidth
+											   Disabled="!_selectedQuestion!.Options!.Any(x=>x.Order == _selectedQuestion.SelectedOptionOrder)"
+											   OnClick="OnSubmit" />
+								}
+								else
+								{
+									<AppButton Text="Continue" FullWidth
+											   Disabled="!_selectedQuestion!.Options!.Any(x=>x.Order == _selectedQuestion.SelectedOptionOrder)"
+											   OnClick="OnContinue" />
+								}
+							</MudItem>
+						</MudGrid>
+					</div>
+				</MudStack>
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+		}
+		else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+		{
+			<QuizResultComponent Result="Result" />
+		}
+		else
+		{
+			<QuizTestLoaderComponent />
+		}
+	</MudContainer>
 </AppPage>
 
 @code {
-    QuizMetaDataDto? _quizMetaData;
-    List<QuestionDto>? _questions = null;
-    int _currentQuestionNumer = 1;
+	QuizSessionTimerComponent? _timer;
+	QuizMetaDataDto? _quizMetaData;
+	List<QuestionDto>? _questions = null;
+	int _currentQuestionNumber = 1;
+	QuestionDto? _selectedQuestion = null;
+	bool _optionSubmitted = false;
+	bool _selectionDisabled = false;
 
-    QuizAttempStatusEnum quizAttempStatusEnum;
-    ResultModel Result = new();
+	QuizAttempStatusEnum quizAttempStatusEnum;
+	ResultModel Result = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        var config = await QuizManager.GetQuizModel();
-        quizAttempStatusEnum = config.Status;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var config = await QuizManager.GetQuizModel();
+		quizAttempStatusEnum = config.Status;
 
-        _quizMetaData = (await QuizDataService.GetQuizMetaData()).Value;
+		_quizMetaData = (await QuizDataService.GetQuizMetaData()).Value;
 
-        if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
-        {
-            config = InitQuiz();
-            await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
-        }
-        else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
-        {
-            Result.MarkScored = config.MarkScored;
-            Result.MaxScore = _quizMetaData?.TotalMarks;
-            Result.Discount = config.TotalDiscount;
-            Result.CouponCode = config.DiscountCode;
-        }
-        else if (_quizMetaData.QuizVersionNumber != config.QuizVersionNumber)
-        {
-            config = InitQuiz();
-            await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
-        }
-        else
-        {
-            quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
-            Result.MarkScored = 0;
-            Result.MaxScore = _quizMetaData?.TotalMarks;
-            Result.Discount = 0;
-            Result.CouponCode = string.Empty;
-        }
+		if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
+		{
+			config = InitQuiz();
+			await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
 
-        _questions = new List<QuestionDto>(_quizMetaData?.TotalQuestions ?? 0);
-        for (int i = 0; i < _quizMetaData.TotalQuestions; i++)
-        {
-            _questions.Add(new()
-                {
-                    Mark = 0,
-                    Question = string.Empty,
-                    QuestionId = 0,
-                    QuestionImage = null,
-                    QuestionNumber = i + 1,
-                    TimeLimitInSeconds = 0,
-                    Answered = false,
-                    QuizConfigId = _quizMetaData.QuizConfigId
-                });
-        }
+			_questions = new List<QuestionDto>(_quizMetaData!.TotalQuestions);
+			await LoadSelectedQuestion();
+		}
+		else if (_quizMetaData.QuizVersionNumber != config.QuizVersionNumber)
+		{
+			config = InitQuiz();
+			await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
 
-        StateHasChanged();
-    }
+			_questions = new List<QuestionDto>(_quizMetaData!.TotalQuestions);
+			await LoadSelectedQuestion();
+		}
+		else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+		{
+			Result.MarkScored = config.MarkScored;
+			Result.MaxScore = _quizMetaData?.TotalMarks;
+			Result.Discount = config.TotalDiscount;
+			Result.CouponCode = config.DiscountCode;
+		}
+		else
+		{
+			quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
+			Result.MarkScored = 0;
+			Result.MaxScore = _quizMetaData?.TotalMarks;
+			Result.Discount = 0;
+			Result.CouponCode = string.Empty;
+		}
 
-    private QuizLocalStorageModel InitQuiz()
-    {
-        QuizLocalStorageModel config = new();
-        config.Status = QuizAttempStatusEnum.Started;
-        config.QuizVersionNumber = _quizMetaData.QuizVersionNumber;
-        config.TotalMark = _quizMetaData.TotalMarks;
-        config.CurrentQuestionNumber = 1;
-        config.MarkScored = 0;
-        config.TotalDiscount = 0;
-        config.DiscountCode = null;
+		StateHasChanged();
+	}
 
-        return config;
-    }
+	private QuizLocalStorageModel InitQuiz()
+	{
+		QuizLocalStorageModel config = new();
+		config.Status = QuizAttempStatusEnum.Started;
+		config.QuizVersionNumber = _quizMetaData!.QuizVersionNumber;
+		config.TotalMark = _quizMetaData.TotalMarks;
+		config.CurrentQuestionNumber = 1;
+		config.MarkScored = 0;
+		config.TotalDiscount = 0;
+		config.DiscountCode = null;
 
-    private async Task AnswerSubmitted(int questionNumber)
-    {
-        if (questionNumber < _quizMetaData?.TotalQuestions)
-        {
-            _currentQuestionNumer = questionNumber + 1;
-        }
-        else
-        {
-            var config = await QuizManager.GetQuizModel();
-            config = QuizManager.FinishQuiz(config, _quizMetaData?.TotalDiscount ?? 0);
-            await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
-            quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
-            Result.MaxScore = config.TotalMark;
-            Result.MarkScored = config.MarkScored;
-            Result.Discount = config.TotalDiscount;
-            Result.CouponCode = config.DiscountCode;
+		return config;
+	}
 
-            var result = await CouponCodeDataService.SaveCouponCode(config.DiscountCode ?? throw new ArgumentNullException(), config.TotalDiscount);
-            if (result.IsFailed)
-            {
-                Console.WriteLine("oops! something went wrong.");
-            }
-        }
-    }
+	private async Task LoadSelectedQuestion()
+	{
+		if (!_questions!.Any(x => x.QuestionNumber == _currentQuestionNumber))
+		{
+			var response = await QuizDataService.GetQuestionByNumber(_quizMetaData!.QuizConfigId, _currentQuestionNumber);
+			if (response.IsFailed) { return; }
+
+			_questions!.Add(new QuestionDto()
+				{
+					Mark = response.Value.Mark,
+					Question = response.Value.Question,
+					QuestionId = response.Value.QuestionId,
+					QuestionImage = response.Value.QuestionImageAbsUrl,
+					QuestionNumber = _currentQuestionNumber,
+					QuizConfigId = _quizMetaData.QuizConfigId,
+					TimeLimitInSeconds = response.Value.TimeLimitInSeconds,
+					Options = response.Value.Options.Select(y => new OptionDto
+					{
+						IsCorrectAnswer = y.IsCorrectOption,
+						Option = y.OptionText,
+						OptionAbsUrl = y.OptionImageAbsUrl,
+						OptionId = y.OptionId,
+						Order = y.Order,
+						State = Enums.QuizOptionSelectionStateEnum.UnSelected
+					}).ToArray()
+				});
+
+		}
+
+		_selectedQuestion = _questions!.First(x => x.QuestionNumber == _currentQuestionNumber);
+	}
+
+	private void AnswerSubmitted(int optionOrder)
+	{
+		_selectedQuestion!.SelectedOptionOrder = optionOrder;
+		foreach (var option in _selectedQuestion.Options!)
+		{
+			option.State = option.Order == optionOrder ? Enums.QuizOptionSelectionStateEnum.Selected : Enums.QuizOptionSelectionStateEnum.UnSelected;
+		}
+	}
+
+	private async Task OnTimeout()
+	{
+		await OnSkip();
+	}
+
+	private async Task OnSkip()
+	{
+		var correctOption = _selectedQuestion!.Options!.First(x => x.IsCorrectAnswer);
+		await MarkUserResponse(0);
+		await OnContinue();
+	}
+
+	private async Task OnSubmit()
+	{
+		var correctOption = _selectedQuestion!.Options!.First(x => x.IsCorrectAnswer);
+		if (_selectedQuestion.SelectedOptionOrder == correctOption.Order)
+		{
+			correctOption.State = Enums.QuizOptionSelectionStateEnum.CorrectOption;
+			await MarkUserResponse(_selectedQuestion.Mark);
+		}
+		else
+		{
+			correctOption.State = Enums.QuizOptionSelectionStateEnum.CorrectOption;
+			_selectedQuestion.Options!.First(x => x.Order == _selectedQuestion.SelectedOptionOrder).State = Enums.QuizOptionSelectionStateEnum.IncorrectOption;
+			await MarkUserResponse(0);
+		}
+		_timer!.Pause();
+		_optionSubmitted = true;
+		_selectionDisabled = true;
+	}
+
+	private async Task MarkUserResponse(int score)
+	{
+		var config = await LocalStorage.Get<QuizLocalStorageModel>(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey);
+		config = QuizManager.SubmitQuestionScore(config!, _currentQuestionNumber, score);
+
+		await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
+	}
+
+	private async Task OnContinue()
+	{
+		_optionSubmitted = false;
+		_selectionDisabled = false;
+		if (_currentQuestionNumber < _quizMetaData?.TotalQuestions)
+		{
+			_currentQuestionNumber = _currentQuestionNumber + 1;
+			await LoadSelectedQuestion();
+			_timer!.Start();
+		}
+		else
+		{
+			var config = await QuizManager.GetQuizModel();
+			config = QuizManager.FinishQuiz(config, _quizMetaData?.TotalDiscount ?? 0);
+			await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
+			quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
+			Result.MaxScore = config.TotalMark;
+			Result.MarkScored = config.MarkScored;
+			Result.Discount = config.TotalDiscount;
+			Result.CouponCode = config.DiscountCode;
+
+			var result = await CouponCodeDataService.SaveCouponCode(config.DiscountCode ?? throw new ArgumentNullException(), config.TotalDiscount);
+			if (result.IsFailed)
+			{
+				Console.WriteLine("oops! something went wrong.");
+			}
+
+			NavigationManager.NavigateTo("quiz/result");
+		}
+	}
+
+	#region DTO
+	public class QuestionDto
+	{
+		public required int QuizConfigId { get; set; }
+		public required int QuestionId { get; set; }
+		public required int QuestionNumber { get; set; }
+		public required string Question { get; set; }
+		public required string? QuestionImage { get; set; }
+		public required int Mark { get; set; }
+		public required int TimeLimitInSeconds { get; set; }
+		public bool Answered { get; set; }
+		public int SelectedOptionOrder { get; set; }
+		public OptionDto[]? Options { get; set; }
+	}
+
+	public class OptionDto
+	{
+		public required int OptionId { get; set; }
+		public required string? Option { get; set; }
+		public required string? OptionAbsUrl { get; set; }
+		public required int Order { get; set; }
+		public required bool IsCorrectAnswer { get; set; }
+		public required QuizOptionSelectionStateEnum State { get; set; }
+	}
+	#endregion
 }

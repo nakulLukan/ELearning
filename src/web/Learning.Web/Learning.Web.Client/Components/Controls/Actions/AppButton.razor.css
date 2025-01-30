@@ -17,6 +17,11 @@
     color: #FFFFFF;
     box-shadow: 0px 4px 14px 0px #00000040;
 }
+.app-button-small {
+    background: #E05B5B;
+    height: 50px;
+    font-size: 0.875rem;
+}
 
 .app-button-secondary {
     font-family: SemiBold;
@@ -54,5 +59,10 @@
         line-height: 16.94px;
         padding-top: 16.5px;
         padding-bottom: 16.5px;
+    }
+
+    .app-button-small {
+        height: 40px;
+        font-size: 0.75rem;
     }
 }

@@ -1,0 +1,79 @@
+﻿
+<div class="d-flex flex-row align-content-center">
+	<MudIcon Class="align-self-center" Icon="@Icons.Material.Outlined.AccessTime">
+	</MudIcon>
+	<span class="app-timer ml-2">@(_timeLeft!)</span>
+</div>
+
+@code {
+
+	#region TimerInSeconds
+	[Parameter]
+	[EditorRequired]
+	public int TimerInSeconds
+	{
+		get => _timerInSeconds; set
+		{
+			if (value != _timerInSeconds)
+			{
+				_timerInSeconds = value;
+				InvokeAsync(() => TimerInSecondsChanged.InvokeAsync(value));
+			}
+		}
+	}
+	private int _timerInSeconds;
+
+	[Parameter]
+	public EventCallback<int> TimerInSecondsChanged { get; set; }
+	#endregion
+
+	[Parameter]
+	public EventCallback TimeoutReached { get; set; }
+	public string? _timeLeft { get; set; }
+
+	private System.Timers.Timer? timer;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		timer = new System.Timers.Timer(1000);
+		timer.Elapsed += TimerElapsed;
+		Start();
+	}
+
+
+	private void TimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
+	{
+		if (TimerInSeconds > 0)
+		{
+			TimerInSeconds--;
+			if (TimerInSeconds <= 0 && TimeoutReached.HasDelegate)
+			{
+				InvokeAsync(TimeoutReached.InvokeAsync);
+				return;
+			}
+			var timeLeft = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(TimerInSeconds));
+			_timeLeft = TimerInSeconds > 120 ? timeLeft.ToString("HH:mm") : $"{TimerInSeconds} seconds left";
+			InvokeAsync(StateHasChanged);
+		}
+		else
+		{
+			timer?.Stop();
+		}
+	}
+
+	public void Pause()
+	{
+		timer?.Stop();
+	}
+
+	public void TurnOff()
+	{
+		timer?.Stop();
+		TimerInSeconds = 0;
+	}
+
+	public void Start(){
+		timer!.Start();
+	}
+}

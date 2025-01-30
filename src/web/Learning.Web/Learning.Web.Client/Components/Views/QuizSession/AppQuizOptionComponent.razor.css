@@ -16,10 +16,29 @@ h6{
     background-color: #6689E1;
     color: white;
 }
+
+.app-option-correct {
+    border-color: transparent;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.app-option-incorrect {
+    border-color: transparent;
+    background-color: #E14B4B;
+    color: white;
+}
+
 .app-option-round-selected {
     border-color: white;
     background-color: white;
 }
+
+.app-option-round-transparent {
+    border-color: transparent;
+    background-color: transparent;
+}
+
 ::deep .mud-icon-root.mud-svg-icon {
     fill: #4F76DC !important;
 }

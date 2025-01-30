@@ -1,10 +1,11 @@
-﻿<div class="px-5 py-4 px-md-6 py-md-5 app-option-border @(IsSelected ? "app-option-selected" : string.Empty)  cursor-pointer" @onclick="OnOptionSelected">
+﻿@using Learning.Web.Client.Enums
+<div class="px-5 py-4 px-md-6 py-md-5 app-option-border @GetOptionBgClassByState() @GetCursorClass() " @onclick="OnOptionSelected">
 	@if (!IsTextOption())
 	{
 		<MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" class="relative">
-			<MudImage Src="@ImageUrl" Height="126" Class="rounded"/>
-			<div class="app-option-item app-option-border @(IsSelected ? "app-option-round-selected" : string.Empty) d-flex justify-center align-center absolute top-0 end-0">
-				@if (IsSelected)
+			<MudImage Src="@ImageUrl" Height="126" Class="rounded" />
+			<div class="app-option-item app-option-border @GetOptionRoundClassByState() d-flex justify-center align-center absolute top-0 end-0">
+				@if (State == QuizOptionSelectionStateEnum.Selected)
 				{
 					<MudIcon Class="align-item-center" Icon="@Icons.Material.Filled.Check" Style="width: 18px; height:18px;" Size="Size.Large"></MudIcon>
 				}
@@ -16,8 +17,8 @@
 	{
 		<MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
 			<h6>@Text</h6>
-			<div class="app-option-item app-option-border @(IsSelected ? "app-option-round-selected" : string.Empty)  d-flex justify-center align-center">
-				@if (IsSelected)
+			<div class="app-option-item app-option-border @GetOptionRoundClassByState() d-flex justify-center align-center">
+				@if (State == QuizOptionSelectionStateEnum.Selected)
 				{
 					<MudIcon Class="align-item-center" Icon="@Icons.Material.Filled.Check" Style="width: 18px; height:18px;" Size="Size.Large"></MudIcon>
 				}
@@ -36,14 +37,20 @@
 	[Parameter]
 	public string? ImageUrl { get; set; }
 
-	[Parameter, EditorRequired]
-	public bool IsSelected { get; set; }
+	[Parameter]
+	public bool SelectionDisabled { get; set; }
 
 	[Parameter, EditorRequired]
 	public EventCallback<int> OnSelected { get; set; }
 
+	[Parameter]
+	public QuizOptionSelectionStateEnum State { get; set; } = QuizOptionSelectionStateEnum.UnSelected;
+
 	private void OnOptionSelected()
 	{
+		if(SelectionDisabled){
+			return;
+		}
 		if (OnSelected.HasDelegate)
 		{
 			OnSelected.InvokeAsync(OptionOrder);
@@ -51,4 +58,40 @@
 	}
 
 	private bool IsTextOption() => !string.IsNullOrEmpty(Text);
+
+	private string GetOptionBgClassByState()
+	{
+		if (State == QuizOptionSelectionStateEnum.Selected)
+		{
+			return "app-option-selected";
+		}
+		else if (State == QuizOptionSelectionStateEnum.CorrectOption)
+		{
+			return "app-option-correct";
+		}
+		else if (State == QuizOptionSelectionStateEnum.IncorrectOption)
+		{
+			return "app-option-incorrect";
+		}
+		else
+		{
+			return string.Empty;
+		}
+	}
+
+	private string GetOptionRoundClassByState()
+	{
+		if (State == QuizOptionSelectionStateEnum.Selected)
+		{
+			return "app-option-round-selected";
+		}
+		else
+		{
+			return "app-option-round-transparent";
+		}
+	}
+
+	private string GetCursorClass(){
+		return !SelectionDisabled ? "cursor-pointer" : "cursor-not-allowed";
+	}
 }
