@@ -78,7 +78,7 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
         // When user ends exam without answering any questions then load the questions from configuration.
         // Mark all questions as skipped.
         var questionIds = sessionDetail.Details?.Select(x => x.QuestionId)?.ToArray() ?? [];
-        QuestionSummary[] untouchedQuestions = await GetUnTouchedQuestions(sessionDetail, questionIds, cancellationToken);
+        QuestionSummary[] untouchedQuestions = await GetUnTouchedQuestions(sessionDetail.ModelExamId, questionIds, cancellationToken);
 
         (int? nextExamId, string? nextExamName) = await GetNextModelExamDetails(
             sessionDetail.ModelExamId,
@@ -117,9 +117,9 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
         return result;
     }
 
-    private async Task<QuestionSummary[]> GetUnTouchedQuestions(object sessionDetail, int[] questionIds, CancellationToken cancellationToken)
+    private async Task<QuestionSummary[]> GetUnTouchedQuestions(int modelExamId, int[] questionIds, CancellationToken cancellationToken)
     {
-        return await _dbContext.ModelExamQuestionConfigurations.Where(x => x.ExamConfigId == sessionDetail.ModelExamId
+        return await _dbContext.ModelExamQuestionConfigurations.Where(x => x.ExamConfigId == modelExamId
                     && !questionIds.Contains(x.Id)).Select(x => new QuestionSummary
                     {
                         HasSkipped = true,
