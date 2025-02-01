@@ -1,0 +1,43 @@
+﻿
+<div class="relative app-progress-bar">
+
+	<MudProgressCircular Size="Size.Large"
+						 StrokeWidth="4"
+						 Value="100"
+						 Color="Color.Surface"
+						 Class="@($"w-100 h-100 absolute app-progress-bar-bg")" />
+	<MudProgressCircular Size="Size.Large"
+						 StrokeWidth="4"
+						 Value="Percentage"
+						 Color="Color.Inherit"
+						 Class="@($"w-100 h-100 absolute {fgColorClass}")" />
+	<span class="@($"absolute app-progress-value {textColorClass}")">@(Percentage)%</span>
+</div>
+
+@code {
+	[Parameter, EditorRequired]
+	public int Percentage { get; set; }
+	private int lastPercentage;
+
+	[Parameter]
+	public int MiniumSuccessPercentage { get; set; }
+
+	const string FgColorClassName = "app-progress-bar-fg";
+	const string FgColorErrorClassName = "app-progress-bar-fg-error";
+	string fgColorClass = FgColorClassName;
+
+	const string TextColorClassName = "app-progress-bar-text";
+	const string TextColorErrorClassName = "app-progress-bar-text-error";
+	string textColorClass = TextColorClassName;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (lastPercentage != Percentage)
+		{
+			fgColorClass = Percentage >= MiniumSuccessPercentage ? FgColorClassName : FgColorErrorClassName;
+			textColorClass = Percentage >= MiniumSuccessPercentage ? TextColorClassName : TextColorErrorClassName;
+			lastPercentage = Percentage;
+		}
+	}
+}

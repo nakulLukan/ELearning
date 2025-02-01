@@ -189,4 +189,20 @@ public class ModelExamDataService : IModelExamDataService
             return Result.Fail(ex.Message);
         }
     }
+
+    public async Task<Result<ResponseDto<bool>>> DeleteModelExamSession(long modelExamResultId)
+    {
+        try
+        {
+            var result = await _mediator.Send(new DeleteModelExamSessionCommand()
+            {
+                ModelExamResultId = modelExamResultId,
+            }).ConfigureAwait(false);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
 }

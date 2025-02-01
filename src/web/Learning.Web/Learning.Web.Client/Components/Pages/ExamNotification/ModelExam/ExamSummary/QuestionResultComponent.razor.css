@@ -1,0 +1,35 @@
+﻿div{
+    width: 100%;
+}
+h6 {
+    font-family: var(--ff-600);
+    font-size: 1.125rem;
+    color: #444444;
+}
+p {
+    color:#757575;
+}
+    p > span {
+        font-family: var(--ff-600);
+        font-size: 1.125rem;
+        color: #444444;
+    }
+
+    p > a {
+        font-family: var(--ff-600);
+        font-size: 1.125rem;
+        color: #6689E1;
+        text-decoration: underline;
+    }
+
+@media (max-width: 960px){
+    h6 {
+        font-size: 0.75rem;
+    }
+    p > span {
+        font-size: 0.75rem;
+    }
+    p > a {
+        font-size: 0.75rem;
+    }
+}

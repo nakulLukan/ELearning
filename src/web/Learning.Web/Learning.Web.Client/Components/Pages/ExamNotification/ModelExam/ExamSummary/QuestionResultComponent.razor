@@ -1,0 +1,81 @@
+﻿<div class="d-flex gap-2 ">
+	<MudIcon Icon="@(IsCorrect ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)" Color="@(IsCorrect ? Color.Success : Color.Error)"></MudIcon>
+	<div class="d-flex flex-column gap-2 gap-md-4">
+		<h6>@(QuestionNumber). @QuestionText</h6>
+		@if (!IsCorrect)
+		{
+			<MudGrid Spacing="2">
+				<MudItem xs="12" md="6">
+					@if (SelectedOptionOrder.HasValue)
+					{
+						@if (!string.IsNullOrEmpty(SelectedOptionText))
+						{
+							<p class="d-inline">Selected: <span class="d-inline">@SelectedOptionOrder) @(SelectedOptionText)</span></p>
+						}
+						else
+						{
+							<p class="d-inline">Selected: <a class="d-inline" href="@SelectedOptionImageUrl" target="_blank">Option @SelectedOptionOrder</a></p>
+						}
+					}
+					else
+					{
+						<p class="d-inline">Not Answered</p>
+					}
+				</MudItem>
+				<MudItem xs="12" md="6">
+					@if (!string.IsNullOrEmpty(CorrectOptionText))
+					{
+						<p class="d-inline">Ans: <span class="d-inline">@CorrectOptionOrder) @(CorrectOptionText!)</span></p>
+					}
+					else
+					{
+						<p class="d-inline">Ans: <a class="d-inline" href="@CorrectOptionImageUrl" target="_blank">Option @CorrectOptionOrder)</a></p>
+					}
+				</MudItem>
+			</MudGrid>
+		}
+		else
+		{
+			@if (!string.IsNullOrEmpty(CorrectOptionText))
+			{
+				<p class="d-inline">Ans: <span class="d-inline">@CorrectOptionOrder) @(CorrectOptionText!)</span></p>
+			}
+			else
+			{
+				<p class="d-inline">Ans: <a class="d-inline" href="@CorrectOptionImageUrl" target="_blank">Option @CorrectOptionOrder</a></p>
+			}
+		}
+	</div>
+</div>
+@code {
+	[Parameter, EditorRequired]
+	public bool IsCorrect { get; set; }
+
+	[Parameter, EditorRequired]
+	public int? SelectedOptionOrder { get; set; }
+
+	[Parameter, EditorRequired]
+	public int CorrectOptionOrder { get; set; }
+
+	[Parameter, EditorRequired]
+	public int QuestionNumber { get; set; }
+
+	[Parameter, EditorRequired]
+	public required string QuestionText { get; set; }
+
+	[Parameter, EditorRequired]
+	public required string QuestionImageUrl { get; set; }
+
+	[Parameter, EditorRequired]
+	public string? SelectedOptionText { get; set; }
+
+	[Parameter, EditorRequired]
+	public string? CorrectOptionText { get; set; }
+
+	[Parameter, EditorRequired]
+	public string? SelectedOptionImageUrl { get; set; }
+
+	[Parameter, EditorRequired]
+	public string? CorrectOptionImageUrl { get; set; }
+
+}

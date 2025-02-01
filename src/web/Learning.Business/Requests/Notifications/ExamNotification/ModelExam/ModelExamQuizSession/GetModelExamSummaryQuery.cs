@@ -35,6 +35,9 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
             .Where(x => x.Id == request.ModelExamResultId && x.UserId == userId)
             .Select(x => new
             {
+                ModelExamId = x.ExamConfigId,
+                ModelExamPackageId = x.ExamConfig!.ModelExamPackageId,
+                x.ExamConfig!.ExamName,
                 x.Status,
                 x.ExamConfig!.TotalTimeLimit,
                 x.StartedOn,
@@ -42,6 +45,8 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
                 Details = x.ModelExamResultDetails != null ? x.ModelExamResultDetails!
                 .Select(y => new
                 {
+                    y.QuestionId,
+                    y.Question!.Score,
                     Order = y.Question!.Order,
                     SelectedOptionId = y.SelectedAnswerId,
                     HasSkipped = y.HasSkipped,
@@ -70,13 +75,28 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
             throw new AppApiException(System.Net.HttpStatusCode.BadRequest, "MES102", "Session is still in progress");
         }
 
-        return new GetModelExamSummaryResponseDto
+        // When user ends exam without answering any questions then load the questions from configuration.
+        // Mark all questions as skipped.
+        var questionIds = sessionDetail.Details?.Select(x => x.QuestionId)?.ToArray() ?? [];
+        QuestionSummary[] untouchedQuestions = await GetUnTouchedQuestions(sessionDetail, questionIds, cancellationToken);
+
+        (int? nextExamId, string? nextExamName) = await GetNextModelExamDetails(
+            sessionDetail.ModelExamId,
+            sessionDetail.ModelExamPackageId,
+            cancellationToken);
+
+        var result = new GetModelExamSummaryResponseDto
         {
+            NextModelExamId = nextExamId,
+            NextModelExamName = nextExamName,
+            ModelExamId = sessionDetail.ModelExamId,
+            ExamName = sessionDetail.ExamName,
             Status = sessionDetail.Status,
             TotalTimeLimit = sessionDetail.TotalTimeLimit,
             SessionDurationInSeconds = sessionDetail.CompletedOn.HasValue ? (int)(sessionDetail.CompletedOn.Value - sessionDetail.StartedOn).TotalSeconds : null,
             QuestionSummary = sessionDetail.Details!.Select(x => new QuestionSummary()
             {
+                Score = x.Score,
                 HasSkipped = x.HasSkipped,
                 SelectedOptionId = x.SelectedOptionId,
                 QuestionText = x.QuestionText!,
@@ -90,8 +110,49 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
                     Order = y.Order,
                     OptionImageRelativeUrl = y.OptionImageRelativePath != null ? _fileStorage.GetPresignedUrl(y.OptionImageRelativePath) : null
                 }).ToArray()
-            }).ToArray()
+            }).ToList()
         };
+
+        result.QuestionSummary.AddRange(untouchedQuestions);
+        return result;
+    }
+
+    private async Task<QuestionSummary[]> GetUnTouchedQuestions(object sessionDetail, int[] questionIds, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ModelExamQuestionConfigurations.Where(x => x.ExamConfigId == sessionDetail.ModelExamId
+                    && !questionIds.Contains(x.Id)).Select(x => new QuestionSummary
+                    {
+                        HasSkipped = true,
+                        OptionSummary = x.ModelExamAnswers != null ? x.ModelExamAnswers!.Select(y => new OptionSummary
+                        {
+                            IsCorrectAnswer = y.IsCorrectAnswer,
+                            OptionId = y.Id,
+                            OptionText = y.AnswerText,
+                            Order = y.Order,
+                            OptionImageRelativeUrl = y.AnswerImage != null ? _fileStorage.GetPresignedUrl(y.AnswerImage.RelativePath) : null,
+                        }).ToArray() : new OptionSummary[0],
+                        Order = x.Order,
+                        QuestionImageUrl = x.QuestionImage != null ? _fileStorage.GetPresignedUrl(x.QuestionImage.RelativePath) : null,
+                        QuestionText = x.QuestionText!,
+                        Score = x.Score,
+                        SelectedOptionId = null
+                    })
+                    .ToArrayAsync(cancellationToken);
+    }
+
+    private async Task<(int? nextExamId, string? nextExamName)> GetNextModelExamDetails(int modelExamId, int modelExamPackageId, CancellationToken cancellationToken)
+    {
+        var nextModelExams = await _dbContext.ModelExamConfigurations
+                    .Where(x => x.ModelExamPackageId == modelExamPackageId
+                        && x.Id != modelExamId)
+                    .OrderBy(x => x.Id)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.ExamName
+                    }).ToArrayAsync(cancellationToken);
+        var nextExam = nextModelExams.FirstOrDefault(x => x.Id > modelExamId);
+        return (nextExam?.Id, nextExam?.ExamName);
     }
 }
 

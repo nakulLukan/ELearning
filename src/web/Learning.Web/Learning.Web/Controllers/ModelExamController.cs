@@ -56,10 +56,21 @@ public class ModelExamController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("model-exams-results/{modelExamResultId:int}/summary")]
-    public async Task<IActionResult> GetModelExamSummary([FromRoute] int modelExamResultId)
+    [HttpGet("model-exams-results/{modelExamResultId:long}/summary")]
+    public async Task<IActionResult> GetModelExamSummary([FromRoute] long modelExamResultId)
     {
         var data = await _mediator.Send(new GetModelExamSummaryQuery()
+        {
+            ModelExamResultId = modelExamResultId,
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpDelete("model-exams-results/{modelExamResultId:long}")]
+    public async Task<IActionResult> DeleteModelExamSession([FromRoute] long modelExamResultId)
+    {
+        var data = await _mediator.Send(new DeleteModelExamSessionCommand()
         {
             ModelExamResultId = modelExamResultId,
         }).ConfigureAwait(false);

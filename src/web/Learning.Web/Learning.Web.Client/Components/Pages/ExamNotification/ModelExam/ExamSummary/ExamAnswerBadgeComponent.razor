@@ -1,0 +1,13 @@
+﻿<div class="d-flex gap-10 align-center"> 
+	<h5>@Title</h5>
+	<div class="app-badge d-flex flex-column justify-center align-center">
+		<span>@Value</span>
+	</div>
+</div>
+@code {
+	[Parameter, EditorRequired]
+	public required string Title { get; set; }
+
+	[Parameter, EditorRequired]
+	public int Value { get; set; }
+}

@@ -160,4 +160,17 @@ public class ModelExamRestDataService : IModelExamDataService
             return Result.Fail(ex.Message);
         }
     }
+
+    public async Task<Result<ResponseDto<bool>>> DeleteModelExamSession(long modelExamResultId)
+    {
+        try
+        {
+            var result = await _httpClient.DeleteModelExamSession(modelExamResultId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
 }

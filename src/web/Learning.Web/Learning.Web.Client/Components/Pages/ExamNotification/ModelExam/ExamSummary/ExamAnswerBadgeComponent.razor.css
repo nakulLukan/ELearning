@@ -1,0 +1,25 @@
+﻿.app-badge {
+    background: #B8B8B833;
+    border-radius: 11px;
+    height: 40px;
+    width:40px;
+}
+
+span {
+    color: #757575;
+    font-family: var(--ff-600);
+    font-size: 1.25rem;
+}
+
+h5 {
+    color: #757575;
+}
+
+@media (max-width:960px){
+    h5 {
+        font-size: 0.875rem;
+    }
+    span {
+        font-size: 0.875rem;
+    }
+}

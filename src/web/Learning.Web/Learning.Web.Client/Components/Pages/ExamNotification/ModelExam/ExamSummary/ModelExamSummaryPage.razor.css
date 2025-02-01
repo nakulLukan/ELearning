@@ -1,0 +1,39 @@
+﻿.app-summary-container {
+    min-width: 374px !important;
+}
+
+.app-summary-header {
+    font-family: var(--ff-600);
+    font-size: 1.25rem;
+    color: #757575;
+}
+
+.app-summary-value {
+    font-family: var(--ff-700);
+    font-size: 1.25rem;
+    color: #444444;
+}
+
+.app-mobile-view-retry {
+    background: #FFFFFF;
+    border: 1px solid #FFFFFF80;
+    padding: 34px;
+    padding-top: 0px;
+    border-radius: 24px;
+}
+
+@media (max-width: 960px){
+
+    .app-summary-header {
+        font-size: 0.875rem;
+    }
+
+    .app-summary-value {
+        font-size: 0.875rem;
+    }
+    .app-mobile-view-retry {
+        padding: 26px;
+        padding-top: 0px;
+        border-radius: 24px;
+    }
+}

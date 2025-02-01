@@ -4,10 +4,14 @@ namespace Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExam
 
 public class GetModelExamSummaryResponseDto
 {
+    public required int ModelExamId { get; set; }
+    public required string ExamName { get; set; }
     public required ModelExamSessionStatusEnum Status { get; set; }
     public required int TotalTimeLimit { get; set; }
     public required int? SessionDurationInSeconds { get; set; }
-    public required QuestionSummary[] QuestionSummary { get; set; }
+    public required List<QuestionSummary> QuestionSummary { get; set; }
+    public required int? NextModelExamId { get; set; }
+    public required string? NextModelExamName { get; set; }
 
 }
 
@@ -18,6 +22,7 @@ public class QuestionSummary
     public required bool HasSkipped { get; set; }
     public required string QuestionText { get; set; }
     public required string? QuestionImageUrl { get; set; }
+    public required int Score { get; set; }
     public required OptionSummary[] OptionSummary { get; set; }
 }
 

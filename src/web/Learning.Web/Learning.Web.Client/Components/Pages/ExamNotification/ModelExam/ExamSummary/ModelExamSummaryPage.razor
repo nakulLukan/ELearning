@@ -1,0 +1,226 @@
+﻿@page "/model-exam-results/{modelExamResultId:long}/summary"
+@using Learning.Shared.Common.Enums
+@using Learning.Shared.Common.Extensions
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@attribute [Authorize]
+@inject IModelExamDataService ModelExamDataService
+@rendermode InteractiveServer
+
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
+
+		@if (_summary == null)
+		{
+			<BeginModelExamSessionLoaderComponent />
+		}
+		else
+		{
+			<div class="my-10 my-md-17"></div>
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1 pa-0 pb-14">
+				<div class="flex-grow-1 ma-6 mx-md-20 mt-md-18">
+					<div class="d-flex flex-column gap-6 gap-md-10">
+						<div>
+							<div class="d-none d-md-flex justify-space-between">
+								<div class="d-flex flex-column gap-6 app-summary-container">
+									<h3>Summary</h3>
+									<MudStack Spacing="4">
+										<div class="d-flex justify-space-between">
+											<p class="app-summary-header">Exam name</p>
+											<p class="app-summary-value">@(_summary.Value.ExamName)</p>
+										</div>
+										<div class="d-flex justify-space-between">
+											<p class="app-summary-header">Time taken</p>
+											<p class="app-summary-value">@(_sessionDurationString!)</p>
+										</div>
+										<div class="d-flex justify-space-between">
+											<p class="app-summary-header">Answered</p>
+											<p class="app-summary-value">@_answerdCount/@_totalCount</p>
+										</div>
+									</MudStack>
+									<MudStack Row Class="w-100">
+										<AppButton FullWidth Text="Retry Exam" ButtonType="AppButton.AppButtonType.Secondary" OnClick="RetryExam"></AppButton>
+
+										@if (_summary.Value.NextModelExamId.HasValue)
+										{
+											<AppButton FullWidth Text="@($"Next Exam - {_summary.Value.NextModelExamName}")" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
+										}
+									</MudStack>
+
+								</div>
+
+								<Learning.Web.Client.Components.Controls.Feedback.AppRoundProgressBar MiniumSuccessPercentage="50" Percentage="_scorePercentage" />
+							</div>
+
+							<div class="d-flex flex-column gap-4 d-md-none justify-space-between">
+								<MudStack Row Justify="Justify.SpaceBetween">
+									<h5>Summary</h5>
+									<Learning.Web.Client.Components.Controls.Feedback.AppRoundProgressBar MiniumSuccessPercentage="50" Percentage="_scorePercentage" />
+								</MudStack>
+								<MudStack Spacing="3">
+									<div class="d-flex justify-space-between">
+										<p class="app-summary-header">Exam name</p>
+										<p class="app-summary-value">@(_summary.Value.ExamName)</p>
+									</div>
+									<div class="d-flex justify-space-between">
+										<p class="app-summary-header">Time taken</p>
+										<p class="app-summary-value">@(_sessionDurationString!)</p>
+									</div>
+									<div class="d-flex justify-space-between">
+										<p class="app-summary-header">Answered</p>
+										<p class="app-summary-value">@_answerdCount/@_totalCount</p>
+									</div>
+								</MudStack>
+							</div>
+						</div>
+						<div class="w-100" style="height: 1px; background-color: #8080808C"></div>
+						<MudStack>
+							<h5>Answers</h5>
+							<div class="d-flex gap-6 gap-md-18 mt-3 mt-md-6">
+								<ExamAnswerBadgeComponent Title="Correct" Value="@_answerdCount" />
+								<ExamAnswerBadgeComponent Title="Wrong" Value="@_wrongCount" />
+							</div>
+							<MudStack Class="mt-8 mt-md-11" Spacing="8">
+								@foreach (var question in _summary.Value.QuestionSummary)
+								{
+									<QuestionResultComponent IsCorrect="@question.IsCorrect"
+															 QuestionNumber="@question.Order"
+															 QuestionText="@question.QuestionText"
+															 SelectedOptionOrder="@question.SelectedOptionOrder"
+															 CorrectOptionOrder="@question.CorrectOptionOrder"
+															 CorrectOptionImageUrl="@question.CorrectOptionImageUrl"
+															 CorrectOptionText="@question.CorrectOptionText"
+															 QuestionImageUrl="@question.QuestionImageUrl"
+															 SelectedOptionImageUrl="@question.SelectedOptionImageUrl"
+															 SelectedOptionText="@question.SelectedOptionText" />
+								}
+							</MudStack>
+						</MudStack>
+					</div>
+				</div>
+
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="d-lg-none fixed bottom-0 start-0 end-0 w-100 rounded-0 py-3">
+				<MudStack Row Spacing="3">
+					<AppButton FullWidth Text="Retry Exam" ButtonType="AppButton.AppButtonType.Secondary"
+							   OnClick="RetryExam"></AppButton>
+
+					@if (_summary.Value.NextModelExamId.HasValue)
+					{
+						<AppButton FullWidth Text="@($"Next Exam - {_summary.Value.NextModelExamName}")" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
+					}
+				</MudStack>
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+
+
+		}
+	</MudContainer>
+</AppPage>
+@code {
+
+	[Parameter, EditorRequired]
+	public long ModelExamResultId { get; set; }
+
+	private ModelExamSummary? _summary;
+	private string? _sessionDurationString;
+	private int _answerdCount;
+	private int _wrongCount;
+	private int _totalCount;
+	private int _scorePercentage;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var summaryResponse = await ModelExamDataService.GetModelExamSummary(ModelExamResultId);
+		if (summaryResponse.IsFailed)
+		{
+			return;
+		}
+
+		_summary = new ModelExamSummary
+			{
+				NextModelExamId = summaryResponse.Value.NextModelExamId,
+				NextModelExamName = summaryResponse.Value.NextModelExamName,
+				ModelExamId = summaryResponse.Value.ModelExamId,
+				ExamName = summaryResponse.Value.ExamName,
+				SessionDurationInSeconds = summaryResponse.Value.SessionDurationInSeconds,
+				Status = summaryResponse.Value.Status,
+				TotalTimeLimit = summaryResponse.Value.TotalTimeLimit,
+				QuestionSummary = summaryResponse.Value.QuestionSummary.Select(x => new QuestionSummary
+				{
+					HasSkipped = x.HasSkipped,
+					Order = x.Order,
+					QuestionImageUrl = x.QuestionImageUrl,
+					QuestionText = x.QuestionText,
+					SelectedOptionId = x.SelectedOptionId,
+					IsCorrect = x.SelectedOptionId == x.OptionSummary.First(y => y.IsCorrectAnswer!.Value).OptionId,
+					SelectedOptionOrder = x.OptionSummary.FirstOrDefault(y => x.SelectedOptionId == y.OptionId)?.Order,
+					CorrectOptionOrder = x.OptionSummary.First(y => y.IsCorrectAnswer!.Value).Order,
+					CorrectOptionText = x.OptionSummary.First(y => y.IsCorrectAnswer!.Value).OptionText,
+					SelectedOptionText = x.OptionSummary.FirstOrDefault(y => y.OptionId == x.SelectedOptionId)?.OptionText,
+					CorrectOptionImageUrl = x.OptionSummary.First(y => y.IsCorrectAnswer!.Value).OptionImageRelativeUrl,
+					SelectedOptionImageUrl = x.OptionSummary.FirstOrDefault(y => y.OptionId == x.SelectedOptionId)?.OptionImageRelativeUrl,
+					Score = x.Score
+				}).ToArray()
+			};
+		_totalCount = _summary.Value.QuestionSummary.Count();
+		_answerdCount = _summary.Value.QuestionSummary.Count(x => x.IsCorrect);
+		_wrongCount = _summary.Value.QuestionSummary.Count(x => !x.IsCorrect && !x.HasSkipped);
+		_sessionDurationString = _summary.Value.SessionDurationInSeconds!.Value.ToDurationString();
+		var totalScore = _summary.Value.QuestionSummary.Sum(x => x.Score);
+		var score = _summary.Value.QuestionSummary.Where(x => x.IsCorrect).Sum(x => x.Score);
+
+		StateHasChanged();
+
+		await InvokeAsync(async () =>
+		{
+			await Task.Delay(100);
+			_scorePercentage = (int)((float)score * 100 / (float)totalScore);
+			StateHasChanged();
+		});
+
+
+		StateHasChanged();
+	}
+
+	private async Task RetryExam()
+	{
+		await ModelExamDataService.DeleteModelExamSession(ModelExamResultId);
+		NavigationManager.NavigateTo($"/model-exams/{_summary!.Value.ModelExamId}/begin");
+	}
+
+	private void NextExam()
+	{
+		NavigationManager.NavigateTo($"/model-exams/{_summary!.Value.NextModelExamId!.Value}/begin");
+	}
+	#region DTO
+	public struct ModelExamSummary
+	{
+		public required int ModelExamId { get; set; }
+		public required string ExamName { get; set; }
+		public required ModelExamSessionStatusEnum Status { get; set; }
+		public required int TotalTimeLimit { get; set; }
+		public required int? SessionDurationInSeconds { get; set; }
+		public required QuestionSummary[] QuestionSummary { get; set; }
+		public required int? NextModelExamId { get; set; }
+		public required string? NextModelExamName { get; set; }
+	}
+
+	public struct QuestionSummary
+	{
+		public required int Order { get; set; }
+		public required int? SelectedOptionId { get; set; }
+		public required bool IsCorrect { get; set; }
+		public required int? SelectedOptionOrder { get; set; }
+		public required int CorrectOptionOrder { get; set; }
+		public required bool HasSkipped { get; set; }
+		public required string QuestionText { get; set; }
+		public required string? QuestionImageUrl { get; set; }
+		public required string? CorrectOptionText { get; set; }
+		public required string? SelectedOptionText { get; set; }
+		public required string? CorrectOptionImageUrl { get; set; }
+		public required string? SelectedOptionImageUrl { get; set; }
+		public required int Score { get; set; }
+
+	}
+	#endregion
+}
