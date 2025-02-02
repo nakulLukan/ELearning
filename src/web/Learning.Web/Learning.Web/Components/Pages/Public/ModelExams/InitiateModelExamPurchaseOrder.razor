@@ -1,0 +1,98 @@
+﻿@page "/model-exams/{modelExamOrderId:long}/initiate-order"
+@using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment
+@using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment
+@using Razorpay.Api
+@inject IMediator Mediator
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+<div>
+	Hello
+</div>
+<script>
+	var options = {
+	"name": "DJ Tiesto",
+	"description": "Tron Legacy",
+	"order_id": null,
+	"image": "https://s29.postimg.org/r6dj1g85z/daft_punk.jpg",
+	"prefill": {
+	"name": "Daft Punk",
+	"email": "customer@merchant.com",
+	"contact": "+919999999999",
+	},
+	"notes": {
+	"address": "Hello World",
+	"merchant_order_id": "12312321",
+	},
+	"theme": {
+	"color": "#F37254"
+	}
+	}
+	// Boolean whether to show image inside a white frame. (default: true)
+	options.theme.image_padding = false;
+	options.handler = function (response) {
+	document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+	document.getElementById('razorpay_order_id').value = orderId;
+	document.getElementById('razorpay_signature').value = response.razorpay_signature;
+	document.razorpayForm.submit();
+	};
+	options.modal = {
+	ondismiss: function () {
+	console.log("This code runs when the popup is closed");
+	},
+	// Boolean indicating whether pressing escape key
+	// should close the checkout form. (default: true)
+	escape: true,
+	// Boolean indicating whether clicking translucent blank
+	// space outside checkout form should close the form. (default: false)
+	backdropclose: false
+	};
+
+	function initInvoke(orderId){
+	options.order_id = orderId;
+	openRazorpay(options);
+	}
+</script>
+@code {
+	[Parameter]
+	public long ModelExamOrderId { get; set; }
+
+	private ModelExamOrderStepDetailDto? _orderDetails;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_orderDetails = await Mediator.Send(new GetModelExamOrderByIdQuery
+			{
+				ModelExamOrderId = ModelExamOrderId
+			});
+
+		if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
+		{
+			string key = "";
+			string secret = "";
+			var client = new RazorpayClient(key, secret);
+
+			Dictionary<string, object> options = new()
+			{
+				{ "amount", 100 }, // Convert amount to paise
+                { "currency", "INR" },
+				{ "receipt", ModelExamOrderId.ToString() },
+				{ "payment_capture", 1 } // Auto-capture
+            };
+
+			Order order = client.Order.Create(options);
+			var razorPayOrderId = order["id"].ToString();
+			_orderDetails = await Mediator.Send(new UpdateRzrpayOrderCommand
+				{
+					ModelExamOrderId = ModelExamOrderId,
+					RazorpayOrderId = razorPayOrderId
+				});
+
+		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		await JSRuntime.InvokeVoidAsync("initInvoke", _orderDetails!.RazorpayOrderId);
+	}
+}

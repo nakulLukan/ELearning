@@ -143,11 +143,10 @@
 		if (confirmed)
 		{
 			var order = await ModelExamDataService.InitiateModelExamOrder(modelExam.ModelExamId);
-
 			if (order.IsSuccess)
 			{
 				// TODO: Invoke razor pay payment page
-				NavigationManager.NavigateTo($"/model-exams/order-success?ModelExamOrderId={order.Value.Data}");
+				NavigationManager.NavigateTo($"/model-exams/{order.Value.Data}/initiate-order", true);
 			}
 		}
 	}

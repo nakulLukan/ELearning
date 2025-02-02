@@ -11,6 +11,11 @@ public class ModelExamOrder
     public float Amount { get; set; }
     public OrderStatusEnum Status { get; set; }
     public string UserId { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// This is set only when razorpay API is invoked
+    /// </summary>
+    public string? RzrpayOrderId { get; set; }
 
     public ModelExamPackage? ModelExamPackage { get; set; }
     public ApplicationUser? User { get; set; }

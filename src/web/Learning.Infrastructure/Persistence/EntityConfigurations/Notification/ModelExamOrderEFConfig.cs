@@ -11,6 +11,9 @@ public class ModelExamOrderEFConfig : IEntityTypeConfiguration<ModelExamOrder>
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.UserId).IsRequired(true).HasMaxLength(36);
         builder.Property(x => x.OrderedCompletedOn).IsRequired(false);
+        builder.Property(x => x.RzrpayOrderId)
+            .HasMaxLength(40)
+            .IsRequired(false);
 
         builder.HasOne(x => x.User)
             .WithMany()
