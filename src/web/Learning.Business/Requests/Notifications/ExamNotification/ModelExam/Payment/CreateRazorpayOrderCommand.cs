@@ -1,0 +1,59 @@
+﻿using Learning.Business.Contracts.HttpContext;
+using Learning.Business.Contracts.PaymentGateway;
+using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment;
+using Learning.Business.Impl.Data;
+using Learning.Shared.Common.Utilities;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
+
+public class CreateRazorpayOrderCommand : IRequest<ModelExamOrderStepDetailDto>
+{
+    public required long ModelExamOrderId { get; set; }
+}
+
+public class CreateRazorpayOrderCommandHandler : IRequestHandler<CreateRazorpayOrderCommand, ModelExamOrderStepDetailDto>
+{
+    private readonly IAppDbContext _appDbContext;
+    private readonly IApiRequestContext _requestContext;
+    private readonly IAppPaymentGateway _paymentGateway;
+
+    public CreateRazorpayOrderCommandHandler(
+        IAppDbContextFactory appDbContext,
+        IApiRequestContext requestContext,
+        IAppPaymentGateway paymentGateway)
+    {
+        _appDbContext = appDbContext.CreateDbContext();
+        _requestContext = requestContext;
+        _paymentGateway = paymentGateway;
+    }
+
+    public async Task<ModelExamOrderStepDetailDto> Handle(CreateRazorpayOrderCommand request, CancellationToken cancellationToken)
+    {
+        var userId = await _requestContext.GetUserId();
+        var emailId = await _requestContext.GetEmail();
+        var phoneNumber = await _requestContext.GetPhoneNumber();
+        var name = await _requestContext.GetName();
+
+        var orderDetails = await _appDbContext.ModelExamOrders
+            .AsTracking()
+            .FirstOrDefaultAsync(x => x.Id == request.ModelExamOrderId && x.UserId == userId, cancellationToken) ?? throw new AppApiException(System.Net.HttpStatusCode.BadRequest, "CRP001", "Order not found");
+
+        var amountInPaisa = _paymentGateway.ConvertInrToPaisa(orderDetails.Amount);
+        var rzrpayOrderId = _paymentGateway.CreateOrder(request.ModelExamOrderId.ToString(), amountInPaisa);
+        orderDetails.RzrpayOrderId = rzrpayOrderId;
+        orderDetails.Status = Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated;
+        await _appDbContext.SaveAsync(cancellationToken);
+        return new ModelExamOrderStepDetailDto
+        {
+            AmountInPaisa = amountInPaisa,
+            ModelExamOrderId = orderDetails.Id,
+            RazorpayOrderId = rzrpayOrderId,
+            Status = orderDetails.Status,
+            Email = emailId,
+            Name = name,
+            PhoneNumber = phoneNumber
+        };
+    }
+}

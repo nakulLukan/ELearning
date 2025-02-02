@@ -1,4 +1,6 @@
-﻿using Learning.Business.Impl.Data;
+﻿using Learning.Business.Contracts.PaymentGateway;
+using Learning.Business.Impl.Data;
+using Learning.Infrastructure.Impl.PaymentGateway;
 using Learning.Infrasture.Persistence;
 using Learning.Shared.Application.Contracts.Identity;
 using Learning.Shared.Application.Contracts.Storage;
@@ -28,5 +30,6 @@ public static class ServiceRegistry
         services.AddSingleton<IAppDbContextFactory, ApplicationDbContextFactory>();
         services.AddScoped<IFileStorage, AwsStorage>();
         services.AddScoped<IExternalIdentityProvider, AwsCognitoIdentityProvider>();
+        services.AddScoped<IAppPaymentGateway, RazorpayPaymentGateway>();
     }
 }

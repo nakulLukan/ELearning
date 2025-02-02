@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Blazor.SubtleCrypto;
+﻿using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using Learning.Business;
 using Learning.Business.Contracts.HttpContext;
@@ -37,6 +34,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
+using System.Globalization;
 namespace Learning.Web;
 
 public static class ServiceRegistry

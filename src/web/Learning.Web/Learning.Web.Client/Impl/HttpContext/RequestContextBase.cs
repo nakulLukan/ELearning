@@ -68,4 +68,18 @@ public abstract class RequestContextBase
         var name = _authState.User.Claims.First(x => x.Type == ClaimConstant.Name);
         return name.Value;
     }
+
+    public async Task<string?> GetEmail()
+    {
+        if (!await IsAuthenticated()) return string.Empty;
+        var email = _authState.User.Claims.FirstOrDefault(x => x.Type == ClaimConstant.EmailClaim);
+        return email?.Value;
+    }
+
+    public async Task<string> GetPhoneNumber()
+    {
+        if (!await IsAuthenticated()) return string.Empty;
+        var phoneNumber = _authState.User.Claims.First(x => x.Type == ClaimConstant.PhoneNumber);
+        return phoneNumber.Value;
+    }
 }

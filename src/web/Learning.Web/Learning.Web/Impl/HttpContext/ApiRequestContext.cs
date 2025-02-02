@@ -15,9 +15,19 @@ public class ApiRequestContext : IApiRequestContext
         throw new NotImplementedException();
     }
 
+    public Task<string?> GetEmail()
+    {
+        return Task.FromResult(_contextAccessor!.HttpContext!.User!.Claims.FirstOrDefault(x => x.Type == ClaimConstant.EmailClaim)?.Value);
+    }
+
     public Task<string> GetName()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.Name).Value);
+    }
+
+    public Task<string> GetPhoneNumber()
+    {
+        return Task.FromResult(_contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.PhoneNumber).Value);
     }
 
     public Task<string> GetUserId()

@@ -12,4 +12,8 @@ public class AppSettingsKeyConstant
     public const string ExternalIdentity_Aws_SecretKey = "ExternalIdentity:Aws:SecretKey";
     public const string ExternalIdentity_Aws_Region = "ExternalIdentity:Aws:Region";
     public const string ExternalIdentity_Aws_UseBasicCredentialAuthentication = "ExternalIdentity:Aws:UseBasicCredentialAuthentication";
+
+    public const string PaymentGateway_AccessKey = "PaymentGateway:AccessKey";
+    public const string PaymentGateway_SecretKey = "PaymentGateway:SecretKey";
+
 }

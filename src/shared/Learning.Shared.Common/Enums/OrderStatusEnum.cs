@@ -5,5 +5,5 @@ public enum OrderStatusEnum : short
     Initiated = 1,
     Success = 2,
     Failed = 3,
-    RzrpayOrder = 4
+    RzrpayOrderCreated = 4
 }
