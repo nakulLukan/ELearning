@@ -2,6 +2,8 @@
 using Learning.Business.Contracts.PaymentGateway;
 using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Business.Impl.Data;
+using Learning.Domain.Notification;
+using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,17 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
     private readonly IApiRequestContext _requestContext;
     private readonly IAppPaymentGateway _paymentGateway;
 
+    public class OrderQueryDto
+    {
+        public required long OrderId { get; set; }
+        public required OrderStatusEnum Status { get; set; }
+        public required float Amount { get; set; }
+        public required string? RzrpayOrderId { get; set; }
+        public required DateTimeOffset? OrderCompletedOn { get; set; }
+        public required string ExamNotificationTitle { get; set; }
+        public required DateTimeOffset? Validity { get; set; }
+    }
+
     public GetModelExamOrderByIdQueryHandler(
         IAppDbContextFactory appDbContext,
         IApiRequestContext requestContext,
@@ -33,29 +46,36 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
     {
         var userId = await _requestContext.GetUserId();
         var order = await _appDbContext.ModelExamOrders
-            .FirstOrDefaultAsync(x => x.Id == request.ModelExamOrderId
-                && x.UserId == userId, cancellationToken) ?? throw new AppApiException(System.Net.HttpStatusCode.NotFound, "MEO001", "Order not found");
+            .Where(x => x.Id == request.ModelExamOrderId
+                && x.UserId == userId)
+            .Select(x => new OrderQueryDto
+            {
+                OrderId = x.Id,
+                Status = x.Status,
+                Amount = x.Amount,
+                RzrpayOrderId = x.RzrpayOrderId,
+                OrderCompletedOn = x.OrderedCompletedOn,
+                ExamNotificationTitle = x.ModelExamPackage!.ExamNotification!.NotificationTitle,
+                Validity = x.ModelExamPurchaseHistory != null ? x.ModelExamPurchaseHistory!.ValidTill : null
+            })
+            .FirstOrDefaultAsync(cancellationToken) ?? throw new AppApiException(System.Net.HttpStatusCode.NotFound, "MEO001", "Order not found");
 
-        if (order.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated && !string.IsNullOrEmpty(order.RzrpayOrderId))
+        if (order.Status == OrderStatusEnum.RzrpayOrderCreated && !string.IsNullOrEmpty(order.RzrpayOrderId))
         {
             var orderStatus = _paymentGateway.GetOrderStatus(order.RzrpayOrderId!);
             switch (orderStatus)
             {
                 case Shared.Enums.PaymentGatewayOrderStatusEnum.Paid:
                     order.Status = Shared.Common.Enums.OrderStatusEnum.Success;
-                    order.OrderedCompletedOn = AppDateTime.UtcNow;
+                    order.OrderCompletedOn = AppDateTime.UtcNow;
                     break;
                 case Shared.Enums.PaymentGatewayOrderStatusEnum.Attempted:
                     order.Status = Shared.Common.Enums.OrderStatusEnum.Failed;
-                    order.OrderedCompletedOn = AppDateTime.UtcNow;
+                    order.OrderCompletedOn = AppDateTime.UtcNow;
                     break;
                 default: break;
             }
-
-            await _appDbContext.ModelExamOrders.Where(x => x.Id == request.ModelExamOrderId)
-                .ExecuteUpdateAsync(x => 
-                    x.SetProperty(prop => prop.Status, order.Status)
-                    .SetProperty(prop => prop.OrderedCompletedOn, order.OrderedCompletedOn), cancellationToken);
+            await CreateModelExamPurchaseHistory(request, order, cancellationToken).ConfigureAwait(false);
         }
         return new ModelExamOrderStepDetailDto
         {
@@ -65,7 +85,31 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
             Status = order.Status,
             Email = null,
             Name = null,
-            PhoneNumber = null
+            PhoneNumber = null,
+            NotificationTitle = order.ExamNotificationTitle,
+            OrderCompletedOn = order.OrderCompletedOn,
         };
+    }
+
+    private async Task CreateModelExamPurchaseHistory(GetModelExamOrderByIdQuery request, OrderQueryDto order, CancellationToken cancellationToken)
+    {
+        if (order.Status == Shared.Common.Enums.OrderStatusEnum.Success || order.Status == Shared.Common.Enums.OrderStatusEnum.Failed)
+        {
+            await _appDbContext.ModelExamOrders.Where(x => x.Id == request.ModelExamOrderId)
+                .ExecuteUpdateAsync(x =>
+                    x.SetProperty(prop => prop.Status, order.Status)
+                    .SetProperty(prop => prop.OrderedCompletedOn, order.OrderCompletedOn), cancellationToken);
+
+            // Create purchase history object
+            ModelExamPurchaseHistory purchaseHistory = new ModelExamPurchaseHistory
+            {
+                OrderId = order.OrderId,
+                PurchasedOn = order.OrderCompletedOn!.Value,
+                ValidTill = AppDateTime.UtcNow.AddYears(1),
+            };
+
+            _appDbContext.ModelExamPurchaseHistory.Add(purchaseHistory);
+            await _appDbContext.SaveAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 }

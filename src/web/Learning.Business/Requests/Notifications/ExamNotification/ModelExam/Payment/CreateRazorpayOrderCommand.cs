@@ -53,7 +53,9 @@ public class CreateRazorpayOrderCommandHandler : IRequestHandler<CreateRazorpayO
             Status = orderDetails.Status,
             Email = emailId,
             Name = name,
-            PhoneNumber = phoneNumber
+            PhoneNumber = phoneNumber,
+            NotificationTitle = null,
+            OrderCompletedOn = null
         };
     }
 }

@@ -11,7 +11,7 @@ public class ModelExamPurchaseHistoryEFCOnfig : IEntityTypeConfiguration<ModelEx
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.HasOne(x => x.ModelExamOrder)
-            .WithOne()
+            .WithOne(x => x.ModelExamPurchaseHistory)
             .HasForeignKey<ModelExamPurchaseHistory>(x => x.OrderId)
             .IsRequired(true);
     }

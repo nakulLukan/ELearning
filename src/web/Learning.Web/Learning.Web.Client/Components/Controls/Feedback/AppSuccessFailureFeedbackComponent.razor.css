@@ -1,0 +1,15 @@
+﻿:root {
+    --size: 150px;
+}
+::deep .mud-icon-size-medium {
+    font-size: 2.25rem !important;
+}
+@media (max-width:960px){
+    :root {
+        --size: 92px;
+    }
+
+    ::deep .mud-icon-size-medium {
+        font-size: 2rem !important;
+    }
+}

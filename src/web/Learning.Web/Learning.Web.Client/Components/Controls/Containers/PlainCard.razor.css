@@ -4,6 +4,7 @@
     padding: 34px;
     padding-top: 67px;
     border-radius: 24px;
+    overflow: clip;
 }
 
 @media(max-width: 960px){

@@ -1,0 +1,59 @@
+﻿.app-status-progess-bg {
+    background: #e3e2e2;
+}
+
+.app-status-success-bg {
+    background: #249F43;
+}
+
+.app-status-failure-bg {
+    background: #D94239;
+}
+
+.app-status-bg {
+    min-height: 400px;
+}
+
+.app-line-separator {
+    height:1px;
+    background: #D7D7D78C;
+}
+
+.app-title {
+    font-family: var(--ff-500);
+    font-size: 1.25rem;
+    color: #444444;
+}
+.app-value {
+    font-family: var(--ff-700);
+    font-size: 1.25rem;
+    color: #444444;
+}
+
+.app-detail-card {
+    border-radius: 32px;
+}
+
+.app-banner-title {
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.app-banner-subtitle {
+    color: #FFFFFF;
+    text-align:center;
+}
+
+@media (max-width:960px) {
+    .app-title {
+        font-size: 0.875rem;
+    }
+
+    .app-value {
+        font-size: 0.875rem;
+    }
+
+    .app-detail-card {
+        border-radius: 16px;
+    }
+}

@@ -1,0 +1,46 @@
+﻿<div class="relative" style="width: var(--app-success-failure-feedback-component); height: var(--app-success-failure-feedback-component);">
+	<svg style="width:100%; height: 100%">
+		<circle style="cx: calc(var(--app-success-failure-feedback-component)/2); cy: calc(var(--app-success-failure-feedback-component)/2); r: calc(var(--app-success-failure-feedback-component)/2);" fill="#FFFFFF61" />
+		<circle style="cx: calc(var(--app-success-failure-feedback-component)/2); cy: calc(var(--app-success-failure-feedback-component)/2); r: calc((var(--app-success-failure-feedback-component)/2) * 0.8);" fill="#FFFFFF45" />
+		<circle style="cx: calc(var(--app-success-failure-feedback-component)/2); cy: calc(var(--app-success-failure-feedback-component)/2); r: calc((var(--app-success-failure-feedback-component)/2) * 0.53);" fill="#FFFFFFD4" />
+	</svg>
+	<div class="absolute text-center" style="left: 50%; top:50%;transform: translate(-50%, -50%);">
+		<MudIcon Icon="@GetIcon()"
+				 Style="@($"fill: {GetIconColor()} !important")"
+				 Color="Color.Inherit" />
+	</div>
+</div>
+@code {
+
+	[Parameter]
+	public Status State { get; set; } = Status.Success;
+
+	private string GetIconColor()
+	{
+		switch (State)
+		{
+			case Status.Success: return "#34C759";
+			case Status.Failure: return "#D94239";
+			default: return "";
+		}
+	}
+
+	private string GetIcon()
+	{
+		switch (State)
+		{
+			case Status.Success: return Icons.Material.Rounded.Check;
+			case Status.Failure: return Icons.Material.Rounded.Close;
+			default: return "";
+		}
+	}
+	#region CLASSES
+
+	public enum Status
+	{
+		InProgress,
+		Success,
+		Failure
+	}
+	#endregion
+}

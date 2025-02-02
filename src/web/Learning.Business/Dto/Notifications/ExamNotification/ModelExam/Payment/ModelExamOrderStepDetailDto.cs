@@ -12,4 +12,7 @@ public class ModelExamOrderStepDetailDto
     public required string? Name { get; set; }
     public required string? Email { get; set; }
     public required string? PhoneNumber { get; set; }
+
+    public required string? NotificationTitle { get; set; }
+    public required DateTimeOffset? OrderCompletedOn { get; set; }
 }

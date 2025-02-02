@@ -18,5 +18,6 @@ public class ModelExamOrder
     public string? RzrpayOrderId { get; set; }
 
     public ModelExamPackage? ModelExamPackage { get; set; }
+    public ModelExamPurchaseHistory? ModelExamPurchaseHistory { get; set; }
     public ApplicationUser? User { get; set; }
 }
