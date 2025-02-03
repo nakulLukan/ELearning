@@ -1,0 +1,18 @@
+﻿:root {
+    --mud-default-borderradius: 24px !important;
+}
+
+.mud-grid-item {
+    height: unset !important;
+}
+
+.gap-5 {
+    gap: 20px !important;
+}
+
+p {
+    color: #222222 !important;
+}
+p, h2 {
+    text-align: center !important;
+}

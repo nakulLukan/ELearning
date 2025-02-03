@@ -31,6 +31,26 @@ public class AlertService : IAlertService
         return res!.Data is bool action && action;
     }
 
+    public async Task<bool> DisplayPublicUserGeneralAlert(string title, string description, string ok)
+    {
+        var options = new DialogOptions()
+        {
+            BackdropClick = true,
+            NoHeader = true,
+            Position = DialogPosition.Center,
+            CloseButton = true
+        };
+
+        DialogParameters parameters = new DialogParameters()
+        {
+            { nameof(PublicUserGeneralDialog.Title), title },
+            { nameof(PublicUserGeneralDialog.Description), description },
+        };
+        var dialog = await _dialogService.ShowAsync<PublicUserGeneralDialog>(string.Empty, parameters, options);
+        var res = (await dialog.Result);
+        return res!.Data is bool action && action;
+    }
+
     public async Task<bool> DisplayNewQuizAlert()
     {
         var options = new DialogOptions()

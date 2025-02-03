@@ -74,6 +74,9 @@
     <Content Update="Components\Controls\Alerts\NewQuizDialog.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Components\Controls\Alerts\PublicUserGeneralDialog.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Components\Controls\Input\AppTextFieldV2.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

@@ -10,9 +10,13 @@
 		<DialogContent>
 			<div class="d-flex flex-column mx-5 my-7 ma-md-20">
 				<div class="d-flex flex-column align-center gap-4 gap-md-5">
-					<h2>@ModelExamName</h2>
-					<p class="px-8">@ModelExamDescription</p>
-					<AppButton Text="Start Exam" OnClick="Submit" FullWidth />
+					<h2>@Title</h2>
+					<p class="px-8">@Description</p>
+					<div class="d-flex flex-column flex-md-row w-100 gap-2 gap-md-4">
+						<AppButton Text="Cancel" OnClick="Cancel" FullWidth ButtonType="AppButton.AppButtonType.Secondary" />
+						<AppButton Text="@ConfirmText" OnClick="Submit" FullWidth />
+
+					</div>
 				</div>
 			</div>
 
@@ -28,10 +32,13 @@
 	private MudDialogInstance? MudDialog { get; set; }
 
 	[Parameter]
-	public string ModelExamName { get; set; } = string.Empty;
+	public string Title { get; set; } = string.Empty;
 
 	[Parameter]
-	public string ModelExamDescription { get; set; } = string.Empty;
+	public string Description { get; set; } = string.Empty;
+
+	[Parameter]
+	public string ConfirmText { get; set; } = "Confirm";
 
 	private void Submit() => MudDialog!.Close(DialogResult.Ok(true));
 

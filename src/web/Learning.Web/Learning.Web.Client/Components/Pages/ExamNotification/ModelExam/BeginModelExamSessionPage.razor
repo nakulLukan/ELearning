@@ -15,259 +15,271 @@
 <ModelExamSessionNavBar EndExamChanged="EndSession" />
 
 <AppPage Class="d-flex flex-column flex-grow-1">
-    <MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
 
-        @if (!_sessionDetail.HasValue)
-        {
-            <BeginModelExamSessionLoaderComponent />
-        }
-        else
-        {
-            <div class="my-17"></div>
-            <Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
-                <MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
-                    <MudStack Justify="Justify.SpaceBetween" Row>
-                     <h5>@(_examName!)</h5>
-                     <ModelExamSessionTimerComponent TimerInSeconds="@_totalTimeLeftInSeconds!.Value" TimeoutReached="OnTimeout" />
-                 </MudStack>
-                 <h6 class="app-question-label">Question @(_currentQuestionNumber) <span>/@_sessionDetail.Value.TotalQuestions</span></h6>
+		@if (!_sessionDetail.HasValue)
+		{
+			<BeginModelExamSessionLoaderComponent />
+		}
+		else
+		{
+			<div class="my-17"></div>
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-6 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
+				<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
+					<MudStack Justify="Justify.SpaceBetween" Row>
+						<h5>@(_examName!)</h5>
+						<ModelExamSessionTimerComponent TimerInSeconds="@_totalTimeLeftInSeconds!.Value" TimeoutReached="OnTimeout" />
+					</MudStack>
+					<h6 class="app-question-label">Question @(_currentQuestionNumber) <span>/@_sessionDetail.Value.TotalQuestions</span></h6>
 
-                    <Learning.Web.Client.Components.Controls.DataDisplay.AppUnlistedPagination Class="mt-4 mt-md-3"
-                                                                                               TotalItems="_sessionDetail.Value.TotalQuestions"
-                                                                                               SelectedItem="@_currentQuestionNumber"
-                                                                                               SelectedItemChanged="OnPageSelected" />
+					<Learning.Web.Client.Components.Controls.DataDisplay.AppUnlistedPagination Class="mt-4 mt-md-3"
+																							   TotalItems="_sessionDetail.Value.TotalQuestions"
+																							   SelectedItem="@_currentQuestionNumber"
+																							   SelectedItemChanged="OnPageSelected" />
 
-                    <h4 class="mt-10 mt-md-7">@_selectedQuestion!.Value.QuestionText</h4>
-                    @if (_selectedQuestion!.Value.QuestionImageUrl != null)
-                    {
-                        <div class="app-question-image py-2">
-                            <MudImage Src="@_selectedQuestion.Value.QuestionImageUrl" Class="rounded" Height="169"></MudImage>
-                        </div>
-                    }
-                    <MudGrid Spacing="5">
-                        @foreach (var option in _selectedQuestion!.Value.Options)
-                        {
-                            <MudItem xs="12" md="6">
-                                <Learning.Web.Client.Components.Views.QuizSession.AppQuizOptionComponent Text="@option.OptionText"
-                                                                                                         State="@(option.IsSelected ? Enums.QuizOptionSelectionStateEnum.Selected : Enums.QuizOptionSelectionStateEnum.UnSelected)"
-                                                                                                         OptionOrder="option.Order"
-                                                                                                         ImageUrl="@option.OptionImageUrl"
-                                                                                                         OnSelected="OptionSelected" />
-                            </MudItem>
-                        }
-                    </MudGrid>
+					<h4 class="mt-10 mt-md-7">@_selectedQuestion!.Value.QuestionText</h4>
+					@if (_selectedQuestion!.Value.QuestionImageUrl != null)
+					{
+						<div class="app-question-image py-2">
+							<MudImage Src="@_selectedQuestion.Value.QuestionImageUrl" Class="rounded" Height="169"></MudImage>
+						</div>
+					}
+					<MudGrid Spacing="5">
+						@foreach (var option in _selectedQuestion!.Value.Options)
+						{
+							<MudItem xs="12" md="6">
+								<Learning.Web.Client.Components.Views.QuizSession.AppQuizOptionComponent Text="@option.OptionText"
+																										 State="@(option.IsSelected ? Enums.QuizOptionSelectionStateEnum.Selected : Enums.QuizOptionSelectionStateEnum.UnSelected)"
+																										 OptionOrder="option.Order"
+																										 ImageUrl="@option.OptionImageUrl"
+																										 OnSelected="OptionSelected" />
+							</MudItem>
+						}
+					</MudGrid>
 
-                    <div class="d-flex align-end mt-20 mt-md-0">
+					<div class="d-flex align-end mt-20 mt-md-0">
 
-                        <MudGrid Spacing="6">
-                            <MudItem xs="12" md="6">
-                                <AppButton Text="Skip"
-                                           ButtonType="Controls.Actions.AppButton.AppButtonType.Secondary" FullWidth
-                                            OnClick="OnSkip" />
-                             </MudItem>
-                             <MudItem xs="12" md="6">
-                                 <AppButton Text="Submit" FullWidth
-                                            Disabled="!_selectedQuestion.Value.Options.Any(x=>x.IsSelected)"
-                                            OnClick="OnSubmit" />
-                             </MudItem>
-                         </MudGrid>
-                     </div>
-                 </MudStack>
-             </Learning.Web.Client.Components.Controls.Containers.PlainCard>
-        }
-    </MudContainer>
+						<MudGrid Spacing="6">
+							<MudItem xs="12" md="6">
+								<AppButton Text="Skip"
+										   ButtonType="Controls.Actions.AppButton.AppButtonType.Secondary" FullWidth
+										   OnClick="OnSkip" />
+							</MudItem>
+							<MudItem xs="12" md="6">
+								<AppButton Text="Submit" FullWidth
+										   Disabled="!_selectedQuestion.Value.Options.Any(x=>x.IsSelected)"
+										   OnClick="OnSubmit" />
+							</MudItem>
+						</MudGrid>
+					</div>
+				</MudStack>
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+		}
+	</MudContainer>
 </AppPage>
 @code {
-    [Parameter]
-    public int ModelExamId { get; set; }
-    public string? _examName { get; set; }
-    private long? modelExamResultId;
-    private SessionDetail? _sessionDetail;
-    private int _currentQuestionNumber = 1;
-    private int? _currentQuestionId;
-    private int totalAttemptedQuestions = 0;
-    private int? _totalTimeLeftInSeconds;
+	[Parameter]
+	public int ModelExamId { get; set; }
+	public string? _examName { get; set; }
+	private long? modelExamResultId;
+	private SessionDetail? _sessionDetail;
+	private int _currentQuestionNumber = 1;
+	private int? _currentQuestionId;
+	private int totalAttemptedQuestions = 0;
+	private int? _totalTimeLeftInSeconds;
 
-    [CascadingParameter]
-    public bool EndExam { get; set; }
+	[CascadingParameter]
+	public bool EndExam { get; set; }
 
-    /// <summary>
-    /// Question Id, Question Order
-    /// </summary>
-    IDictionary<int, int> questionIdOrderDict = new Dictionary<int, int>();
+	/// <summary>
+	/// Question Id, Question Order
+	/// </summary>
+	IDictionary<int, int> questionIdOrderDict = new Dictionary<int, int>();
 
-    /// <summary>
-    /// Question Id, Question Detail
-    /// </summary>
-    IDictionary<int, SessionQuestionDetail> questionIdDetailDict = new Dictionary<int, SessionQuestionDetail>();
-    SessionQuestionDetail? _selectedQuestion;
+	/// <summary>
+	/// Question Id, Question Detail
+	/// </summary>
+	IDictionary<int, SessionQuestionDetail> questionIdDetailDict = new Dictionary<int, SessionQuestionDetail>();
+	SessionQuestionDetail? _selectedQuestion;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        var details = await ModelExamDataService.BeginModelExam(ModelExamId);
-        if (details.IsFailed)
-        {
-            return;
-        }
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var details = await ModelExamDataService.BeginModelExam(ModelExamId);
+		if (details.IsFailed)
+		{
+			return;
+		}
 
-        modelExamResultId = details.Value.ModelExamResultId;
-        if (details.Value.Status == Shared.Common.Enums.ModelExamSessionStatusEnum.Completed || details.Value.Status == Shared.Common.Enums.ModelExamSessionStatusEnum.Timeout)
-        {
-            NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
-            return;
-        }
-        totalAttemptedQuestions = details.Value.TotalQuestionsAttempted;
-        _examName = details.Value.ExamName;
-        _totalTimeLeftInSeconds = (int)(details.Value.TotalTimeInSeconds - (DateTimeOffset.UtcNow - details.Value.StartedOn).TotalSeconds);
-        var questionsResult = await ModelExamDataService.GetExamQuestionsList(ModelExamId);
-        if (questionsResult.IsFailed)
-        {
-            return;
-        }
-        questionIdOrderDict = questionsResult.Value.OrderBy(x => x.QuestionNumber).ToDictionary(x => x.QuestionId, x => x.QuestionNumber);
-        await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, details.Value.CurrentQuestionId);
-        _sessionDetail = new SessionDetail()
-            {
-                ModelExamResultId = details.Value.ModelExamResultId,
-                StartedOn = details.Value.StartedOn.ToLocalDateTimeString(),
-                TotalQuestions = details.Value.TotalQuestions
-            };
-        StateHasChanged();
-    }
+		modelExamResultId = details.Value.ModelExamResultId;
+		if (details.Value.Status == Shared.Common.Enums.ModelExamSessionStatusEnum.Completed || details.Value.Status == Shared.Common.Enums.ModelExamSessionStatusEnum.Timeout)
+		{
+			NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
+			return;
+		}
+		totalAttemptedQuestions = details.Value.TotalQuestionsAttempted;
+		_examName = details.Value.ExamName;
+		_totalTimeLeftInSeconds = (int)(details.Value.TotalTimeInSeconds - (DateTimeOffset.UtcNow - details.Value.StartedOn).TotalSeconds);
+		var questionsResult = await ModelExamDataService.GetExamQuestionsList(ModelExamId);
+		if (questionsResult.IsFailed)
+		{
+			return;
+		}
+		questionIdOrderDict = questionsResult.Value.OrderBy(x => x.QuestionNumber).ToDictionary(x => x.QuestionId, x => x.QuestionNumber);
+		await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, details.Value.CurrentQuestionId);
+		_sessionDetail = new SessionDetail()
+			{
+				ModelExamResultId = details.Value.ModelExamResultId,
+				StartedOn = details.Value.StartedOn.ToLocalDateTimeString(),
+				TotalQuestions = details.Value.TotalQuestions
+			};
+		StateHasChanged();
+	}
 
-    private async Task SetCurrentSelectedQuestionDetails(long modelExamResultId, int questionId)
-    {
-        _currentQuestionId = questionId;
-        _currentQuestionNumber = questionIdOrderDict[_currentQuestionId.Value];
+	private async Task SetCurrentSelectedQuestionDetails(long modelExamResultId, int questionId)
+	{
+		_currentQuestionId = questionId;
+		_currentQuestionNumber = questionIdOrderDict[_currentQuestionId.Value];
 
-        if (!questionIdDetailDict.ContainsKey(_currentQuestionId!.Value))
-        {
-            var questionDetailResult = await ModelExamDataService.GetModelExamQuestionById(modelExamResultId, _currentQuestionId.Value);
-            if (questionDetailResult.IsFailed)
-            { return; }
+		if (!questionIdDetailDict.ContainsKey(_currentQuestionId!.Value))
+		{
+			var questionDetailResult = await ModelExamDataService.GetModelExamQuestionById(modelExamResultId, _currentQuestionId.Value);
+			if (questionDetailResult.IsFailed)
+			{ return; }
 
-            // Keep track of the question in memory
-            questionIdDetailDict.Add(_currentQuestionId.Value, new SessionQuestionDetail()
-                {
-                    QuestionId = questionDetailResult.Value.QuestionId,
-                    QuestionText = questionDetailResult.Value.QuestionText,
-                    QuestionImageUrl = questionDetailResult.Value.QuestionImageUrl,
-                    SelectedOptionId = questionDetailResult.Value.SelectedOptionId,
-                    Options = questionDetailResult.Value.Options.Select(y => new SessionOptionDetail
-                    {
-                        AnswerId = y.AnswerId,
-                        OptionImageUrl = y.OptionImageUrl,
-                        OptionText = y.OptionText,
-                        Order = y.Order,
-                        IsSelected = questionDetailResult.Value.SelectedOptionId.HasValue ? questionDetailResult.Value.SelectedOptionId.Value == y.AnswerId : false
-                    }).ToArray()
-                });
-        }
+			// Keep track of the question in memory
+			questionIdDetailDict.Add(_currentQuestionId.Value, new SessionQuestionDetail()
+				{
+					QuestionId = questionDetailResult.Value.QuestionId,
+					QuestionText = questionDetailResult.Value.QuestionText,
+					QuestionImageUrl = questionDetailResult.Value.QuestionImageUrl,
+					SelectedOptionId = questionDetailResult.Value.SelectedOptionId,
+					Options = questionDetailResult.Value.Options.Select(y => new SessionOptionDetail
+					{
+						AnswerId = y.AnswerId,
+						OptionImageUrl = y.OptionImageUrl,
+						OptionText = y.OptionText,
+						Order = y.Order,
+						IsSelected = questionDetailResult.Value.SelectedOptionId.HasValue ? questionDetailResult.Value.SelectedOptionId.Value == y.AnswerId : false
+					}).ToArray()
+				});
+		}
 
-        _selectedQuestion = questionIdDetailDict[_currentQuestionId.Value];
-    }
+		_selectedQuestion = questionIdDetailDict[_currentQuestionId.Value];
+	}
 
-    private void OptionSelected(int selectedOption)
-    {
-        for (int i = 0; i < _selectedQuestion!.Value.Options.Length; i++)
-        {
-            _selectedQuestion.Value.Options[i].IsSelected = _selectedQuestion.Value.Options[i].Order == selectedOption;
-        }
-        AppJSInterop.ScrollToBottomOnNavigation();
-    }
+	private void OptionSelected(int selectedOption)
+	{
+		for (int i = 0; i < _selectedQuestion!.Value.Options.Length; i++)
+		{
+			_selectedQuestion.Value.Options[i].IsSelected = _selectedQuestion.Value.Options[i].Order == selectedOption;
+		}
+		AppJSInterop.ScrollToBottomOnNavigation();
+	}
 
-    private async Task OnPageSelected(int pageNumber)
-    {
-        var questionId = questionIdOrderDict.First(x => x.Value == pageNumber).Key;
-        await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, questionId);
-    }
+	private async Task OnPageSelected(int pageNumber)
+	{
+		var questionId = questionIdOrderDict.First(x => x.Value == pageNumber).Key;
+		await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, questionId);
+	}
 
-    private async Task OnSubmit()
-    {
-        await SaveQuestionResponse(false);
-        if (_currentQuestionNumber == _sessionDetail.Value.TotalQuestions)
-        {
-            await AlertService.DisplayAlert("End Exam", "You have reached the end of this exam. Do you want to end the exam?", "Yes", Enums.AlertTypeEnum.Warning);
-        }
-    }
+	private async Task OnSubmit()
+	{
+		var currentQuestionNumber = _currentQuestionNumber;
+		await SaveQuestionResponse(false);
+		await DisplayExamEndReachedAlert(currentQuestionNumber);
+	}
 
-    private async Task OnSkip()
-    {
-        await SaveQuestionResponse(true);
-    }
+	private async Task OnSkip()
+	{
+		var currentQuestionNumber = _currentQuestionNumber;
+		await SaveQuestionResponse(true);
+		await DisplayExamEndReachedAlert(currentQuestionNumber);
+	}
 
-    private async Task SaveQuestionResponse(bool hasSkipped)
-    {
-        // If user has skipped the question then make the selection clear if it is there.
-        if (hasSkipped
-            && _selectedQuestion!.Value.Options.FirstOrDefault(x => x.IsSelected) is SessionOptionDetail selectedOption
-            && selectedOption.AnswerId > 0)
-        {
-            selectedOption.IsSelected = false;
-        }
-        var response = await ModelExamDataService.SubmitExamQuestionResponse(modelExamResultId!.Value
-            , _selectedQuestion!.Value.QuestionId
-            , !hasSkipped ? _selectedQuestion.Value.Options.First(x => x.IsSelected).AnswerId : null
-            , hasSkipped);
-        if (response.IsFailed)
-        {
-            return;
-        }
+	private async Task DisplayExamEndReachedAlert(int currentQuestionNumber)
+	{
+		if (currentQuestionNumber >= _sessionDetail!.Value.TotalQuestions)
+		{
+			var confirm = await AlertService.DisplayPublicUserGeneralAlert("End Exam", "You have reached the end of this exam. Do you want to end the exam?", "Yes");
+			if (confirm)
+			{
+				await EndSession();
+			}
+		}
+	}
 
-        // Load the next question. If it is the last question then there will be no questions to load
-        var nextQuestion = questionIdOrderDict.FirstOrDefault(x => x.Value == _currentQuestionNumber + 1);
-        if (nextQuestion.Key != 0)
-        {
-            // Update the screen with new question
-            await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, nextQuestion.Key);
-        }
+	private async Task SaveQuestionResponse(bool hasSkipped)
+	{
+		// If user has skipped the question then make the selection clear if it is there.
+		if (hasSkipped
+			&& _selectedQuestion!.Value.Options.FirstOrDefault(x => x.IsSelected) is SessionOptionDetail selectedOption
+			&& selectedOption.AnswerId > 0)
+		{
+			selectedOption.IsSelected = false;
+		}
+		var response = await ModelExamDataService.SubmitExamQuestionResponse(modelExamResultId!.Value
+			, _selectedQuestion!.Value.QuestionId
+			, !hasSkipped ? _selectedQuestion.Value.Options.First(x => x.IsSelected).AnswerId : null
+			, hasSkipped);
+		if (response.IsFailed)
+		{
+			return;
+		}
 
-        await AppJSInterop.ScrollToTopOnNavigation();
-    }
+		// Load the next question. If it is the last question then there will be no questions to load
+		var nextQuestion = questionIdOrderDict.FirstOrDefault(x => x.Value == _currentQuestionNumber + 1);
+		if (nextQuestion.Key != 0)
+		{
+			// Update the screen with new question
+			await SetCurrentSelectedQuestionDetails(modelExamResultId!.Value, nextQuestion.Key);
+		}
 
-    private async Task EndSession()
-    {
-        await CompleteSession(ModelExamSessionStatusEnum.Completed).ConfigureAwait(false);
-    }
+		await AppJSInterop.ScrollToTopOnNavigation();
+	}
 
-    private async Task OnTimeout()
-    {
-        await CompleteSession(ModelExamSessionStatusEnum.Timeout).ConfigureAwait(false);
-    }
+	private async Task EndSession()
+	{
+		await CompleteSession(ModelExamSessionStatusEnum.Completed).ConfigureAwait(false);
+	}
 
-    private async Task CompleteSession(ModelExamSessionStatusEnum status)
-    {
-        var response = await ModelExamDataService.CompleteModelExamSession(modelExamResultId!.Value, status);
-        if (response.IsFailed) return;
-        NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
-    }
+	private async Task OnTimeout()
+	{
+		await CompleteSession(ModelExamSessionStatusEnum.Timeout).ConfigureAwait(false);
+	}
 
-    #region DTO
-    private record struct SessionDetail
-    {
-        public required long ModelExamResultId { get; set; }
-        public required string StartedOn { get; set; }
-        public required int TotalQuestions { get; set; }
-    }
+	private async Task CompleteSession(ModelExamSessionStatusEnum status)
+	{
+		var response = await ModelExamDataService.CompleteModelExamSession(modelExamResultId!.Value, status);
+		if (response.IsFailed) return;
+		NavigationManager.NavigateTo($"model-exam-results/{modelExamResultId}/summary");
+	}
 
-    private record struct SessionQuestionDetail
-    {
-        public required int QuestionId { get; set; }
-        public required string QuestionText { get; set; }
-        public required string? QuestionImageUrl { get; set; }
-        public required int? SelectedOptionId { get; set; }
-        public required SessionOptionDetail[] Options { get; set; }
-    }
+	#region DTO
+	private record struct SessionDetail
+	{
+		public required long ModelExamResultId { get; set; }
+		public required string StartedOn { get; set; }
+		public required int TotalQuestions { get; set; }
+	}
 
-    private record struct SessionOptionDetail
-    {
-        public required int AnswerId { get; set; }
-        public required int Order { get; set; }
-        public required string? OptionText { get; set; }
-        public required string? OptionImageUrl { get; set; }
-        public bool IsSelected { get; set; }
-    }
-    #endregion
+	private record struct SessionQuestionDetail
+	{
+		public required int QuestionId { get; set; }
+		public required string QuestionText { get; set; }
+		public required string? QuestionImageUrl { get; set; }
+		public required int? SelectedOptionId { get; set; }
+		public required SessionOptionDetail[] Options { get; set; }
+	}
+
+	private record struct SessionOptionDetail
+	{
+		public required int AnswerId { get; set; }
+		public required int Order { get; set; }
+		public required string? OptionText { get; set; }
+		public required string? OptionImageUrl { get; set; }
+		public bool IsSelected { get; set; }
+	}
+	#endregion
 }
 
