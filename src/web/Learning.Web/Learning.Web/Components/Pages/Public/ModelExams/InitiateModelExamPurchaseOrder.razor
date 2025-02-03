@@ -1,6 +1,7 @@
 ﻿@page "/model-exams/{modelExamOrderId:long}/initiate-order"
 @using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment
 @using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment
+@using Learning.Shared.Extensions
 @using Learning.Web.Client.Components.Controls.Feedback
 @using Learning.Web.Client.Components.Pages
 @using Learning.Web.Client.Components.Pages.ExamNotification.ModelExam
@@ -10,120 +11,158 @@
 @inject IMediator Mediator
 @inject IAppJSInterop JSRuntime
 @rendermode InteractiveServer
-
+@attribute [Authorize]
 <AppPage Class="d-flex flex-column flex-grow-1">
-	<MudContainer Gutters="false" Class="flex-grow-1 d-flex flex-column flex-grow-1">
+    <MudContainer Gutters="false" Class="flex-grow-1 d-flex flex-column flex-grow-1">
 
-		@if (_orderDetails == null
-				|| _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated
-				|| _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
-		{
-			<BeginModelExamSessionLoaderComponent />
-		}
-		else
-		{
-			<div class="my-0 my-md-17"></div>
-			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-0 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
-				<MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
-					<div class="flex-grow-1 d-flex flex-column justify-center align-center app-status-bg @statusBgColor">
-						<div class="d-flex flex-column gap-4 gap-md-6 align-center mb-8">
-							<AppSuccessFailureFeedbackComponent State="_bannerState" />
-							<MudStack Spacing="3">
-								<h2 class="app-banner-title">Exam purchase successful</h2>
-								<h6 class="app-banner-subtitle">You have unlocked 8 exams</h6>
-							</MudStack>
-						</div>
-					</div>
-					<div class="flex-grow-1 d-flex flex-column justify-space-between px-6 px-md-20 gap-19 gap-md-8">
-						<div class="d-flex flex-column bg-white gap-3 gap-md-4 pa-6 px-md-10 py-md-12 mt-n20 app-detail-card">
-							@* Exam name*@
-							<div class="d-flex justify-space-between">
-								<span class="app-title">Exam name</span>
-								<h6 class="app-value">Army GD Exam</h6>
-							</div>
-							<div class="app-line-separator"></div>
+        @if (_orderDetails == null
+        || _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
+        {
+            <BeginModelExamSessionLoaderComponent/>
+        }
+        else if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
+        {
+            <div class="my-0 my-md-17"></div>
+            <Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-0 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
+                <MudStack Class="flex-grow-1" StretchItems="StretchItems.End" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    <div class="d-flex flex-column justify-center align-center">
 
-							@* Validity*@
-							<div class="d-flex justify-space-between">
-								<span class="app-title">Validity</span>
-								<h6 class="app-value">Army GD Exam</h6>
-							</div>
-							<div class="app-line-separator"></div>
+                        <Learning.Web.Client.Components.Controls.Actions.AppButton Text="Cancel"
+                                                                                   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+                                                                                   Href="javascript:history.back()"></Learning.Web.Client.Components.Controls.Actions.AppButton>
+                    </div>
+                </MudStack>
+            </Learning.Web.Client.Components.Controls.Containers.PlainCard>
+        }
+        else
+        {
+            <div class="my-0 my-md-17"></div>
+            <Learning.Web.Client.Components.Controls.Containers.PlainCard Class="pa-0 flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1">
+                <MudStack Class="flex-grow-1" StretchItems="StretchItems.End">
+                    <div class="flex-grow-1 d-flex flex-column justify-center align-center app-status-bg @statusBgColor">
+                        <div class="d-flex flex-column gap-4 gap-md-6 align-center mb-8">
+                            <AppSuccessFailureFeedbackComponent State="_bannerState" />
 
-							@* Order number*@
-							<div class="d-flex justify-space-between">
-								<span class="app-title">Order number</span>
-								<h6 class="app-value">Army GD Exam</h6>
-							</div>
-							<div class="app-line-separator"></div>
+                            @if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success)
+                            {
+                                <MudStack Spacing="3">
+                                    <h2 class="app-banner-title">Exam purchase successful</h2>
+                                    <h6 class="app-banner-subtitle">You have unlocked @_orderDetails.TotalPaidExamsInPackage exams</h6>
+                                </MudStack>
+                            }
+                            else
+                            {
+                                <MudStack Spacing="3">
+                                    <h2 class="app-banner-title">Exam purchase failed</h2>
+                                    <h6 class="app-banner-subtitle">Retry again to purchase exams</h6>
+                                </MudStack>
+                            }
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 d-flex flex-column justify-space-between px-6 px-md-20 gap-19 gap-md-8">
+                        <div class="d-flex flex-column bg-white gap-3 gap-md-4 pa-6 px-md-10 py-md-12 mt-n20 app-detail-card">
+                            @* Exam name*@
+                            <div class="d-flex justify-space-between">
+                                <span class="app-title">Exam name</span>
+                                <h6 class="app-value">@_orderDetails.NotificationTitle</h6>
+                            </div>
+                            <div class="app-line-separator"></div>
 
-							@* Order Recipet *@
-							<div class="d-flex justify-space-between">
-								<span class="app-title">Order receipt</span>
-								<h6 class="app-value">Army GD Exam</h6>
-							</div>
-						</div>
-						<div class="pb-14 d-flex flex-column justify-space-between">
+                            @* Validity*@
+                            <div class="d-flex justify-space-between">
+                                <span class="app-title">Validity</span>
+                                <h6 class="app-value">
+                                    @(_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? $"Upto {DateOnly.FromDateTime(_orderDetails.Validity!.Value.Date).ToDateString()}" : "-")
+                                </h6>
+                            </div>
+                            <div class="app-line-separator"></div>
 
-							<MudGrid Spacing="4">
-								<MudItem xs="12" md="6">
+                            @* Order number*@
+                            <div class="d-flex justify-space-between">
+                                <span class="app-title">Order number</span>
+                                <h6 class="app-value">#ME@(_orderDetails.ModelExamOrderId)</h6>
+                            </div>
 
-									<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Go to Exam Listing"
-																							   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-																							   FullWidth="true" />
-								</MudItem>
-								<MudItem xs="12" md="6">
-									<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Start Exam"
-																							   FullWidth="true" />
-								</MudItem>
-							</MudGrid>
-						</div>
-					</div>
-				</MudStack>
-			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
-		}
-	</MudContainer>
+                            @if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success)
+                            {
+                                <div class="app-line-separator"></div>
+                                @* Order Recipet *@
+                                <div class="d-flex justify-space-between">
+                                    <span class="app-title">Order receipt</span>
+                                    <h6 class="app-value">Download</h6>
+                                </div>
+                            }
+                        </div>
+                        <div class="pb-14 d-flex flex-column justify-space-between">
+                            <MudGrid Spacing="4">
+                                <MudItem xs="12" md="6">
+
+                                    <Learning.Web.Client.Components.Controls.Actions.AppButton Text="Go to Exam Listing"
+                                                                                               ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+                                                                                               FullWidth="true" />
+                                </MudItem>
+                                <MudItem xs="12" md="6">
+                                    @if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success)
+                                    {
+                                        <Learning.Web.Client.Components.Controls.Actions.AppButton Text="Start Exam"
+                                                                                                   Href="@($"/model-exams/{_orderDetails.ModelExamId}/begin")"
+                                                                                                   FullWidth="true" />
+                                    }
+                                    else
+                                    {
+                                        <Learning.Web.Client.Components.Controls.Actions.AppButton Text="Retry Purchase"
+                                                                                                   FullWidth="true" />
+                                    }
+                                </MudItem>
+                            </MudGrid>
+
+                        </div>
+                    </div>
+                </MudStack>
+            </Learning.Web.Client.Components.Controls.Containers.PlainCard>
+        }
+    </MudContainer>
 </AppPage>
 @code {
-	[Parameter]
-	public long ModelExamOrderId { get; set; }
+    [Parameter]
+    public long ModelExamOrderId { get; set; }
 
-	private ModelExamOrderStepDetailDto? _orderDetails;
-	private AppSuccessFailureFeedbackComponent.Status _bannerState;
+    private ModelExamOrderStepDetailDto? _orderDetails;
+    private AppSuccessFailureFeedbackComponent.Status _bannerState;
 
-	private const string statusSuccessBgColor = "app-status-success-bg";
-	private const string statusFailureBgColor = "app-status-failure-bg";
-	private const string statusProgressBgColor = "app-status-progess-bg";
-	private string statusBgColor = statusProgressBgColor;
+    private const string statusSuccessBgColor = "app-status-success-bg";
+    private const string statusFailureBgColor = "app-status-failure-bg";
+    private const string statusProgressBgColor = "app-status-progess-bg";
+    private string statusBgColor = statusProgressBgColor;
 
-	protected override async Task OnInitializedAsync()
-	{
-		_orderDetails = await Mediator.Send(new GetModelExamOrderByIdQuery
-			{
-				ModelExamOrderId = ModelExamOrderId
-			});
+    protected override async Task OnInitializedAsync()
+    {
+        _orderDetails = await Mediator.Send(new GetModelExamOrderByIdQuery
+            {
+                ModelExamOrderId = ModelExamOrderId
+            });
 
-		if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
-		{
-			_orderDetails = await Mediator.Send(new CreateRazorpayOrderCommand
-				{
-					ModelExamOrderId = ModelExamOrderId
-				});
-		}
+        if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
+        {
+            _orderDetails = await Mediator.Send(new CreateRazorpayOrderCommand
+                {
+                    ModelExamOrderId = ModelExamOrderId
+                });
+        }
 
-		if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success || _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Failed)
-		{
-			_bannerState = _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? AppSuccessFailureFeedbackComponent.Status.Success : AppSuccessFailureFeedbackComponent.Status.Failure;
-			statusBgColor = _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? statusSuccessBgColor : statusFailureBgColor;
-		}
-	}
+        if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success || _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Failed)
+        {
+            _bannerState = _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? AppSuccessFailureFeedbackComponent.Status.Success : AppSuccessFailureFeedbackComponent.Status.Failure;
+            statusBgColor = _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? statusSuccessBgColor : statusFailureBgColor;
+        }
+    }
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (!firstRender) return;
-		if (_orderDetails != null && _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
-		{
-			await JSRuntime.InitRazorpayPopup(UIConstant.AppName, _orderDetails!.RazorpayOrderId!, _orderDetails.Name, _orderDetails.Email, _orderDetails.PhoneNumber!, $"#ME{_orderDetails.ModelExamOrderId}");
-		}
-	}
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        if (_orderDetails != null && _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
+        {
+            await JSRuntime.InitRazorpayPopup(UIConstant.AppName, _orderDetails!.RazorpayOrderId!, _orderDetails.Name, _orderDetails.Email, _orderDetails.PhoneNumber!, $"#ME{_orderDetails.ModelExamOrderId}");
+        }
+    }
 }

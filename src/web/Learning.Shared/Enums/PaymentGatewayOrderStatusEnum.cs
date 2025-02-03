@@ -6,4 +6,5 @@ public enum PaymentGatewayOrderStatusEnum
     Created = 1,
     Attempted = 2, 
     Paid = 3,
+    Canceled = 4
 }

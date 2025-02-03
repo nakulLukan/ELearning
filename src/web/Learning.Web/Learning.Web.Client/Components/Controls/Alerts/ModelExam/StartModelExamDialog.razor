@@ -6,25 +6,24 @@
 
 </style>
 <span>
-    <MudDialog Class="ma-9" ContentClass="ma-0 pa-0">
+    <MudDialog Class="mx-8 ma-md-0 w-100" ContentClass="ma-0 pa-0 relative">
         <DialogContent>
+                <div class="d-flex flex-column mx-5 my-7 ma-md-20">
+                    <div class="d-flex flex-column align-center gap-5">
+                        <h2>@ModelExamName</h2>
+                        <p class="px-8">@ModelExamDescription</p>
+                        <AppButton Text="Start Exam" OnClick="Submit" FullWidth />
+                     </div>
+                 </div>
 
-            <MudIconButton Icon="@Icons.Material.Filled.Close"
-                           Class="absolute end-0 top-0 ma-5"
-                           OnClick="Cancel"></MudIconButton>
-            <div class="d-flex flex-column ma-20">
-                <div class="d-flex flex-column align-center gap-5">
-                    <h2>@ModelExamName</h2>
-                    <p class="px-8">@ModelExamDescription</p>
-                    <AppButton Text="Start Exam" OnClick="Submit" FullWidth />
-                </div>
-            </div>
+             <MudIconButton Icon="@Icons.Material.Filled.Close"
+                            Class="absolute end-0 top-0 ma-5 ma-md-8"
+                            OnClick="Cancel"></MudIconButton>
+         </DialogContent>
+     </MudDialog>
+ </span>
 
-        </DialogContent>
-    </MudDialog>
-</span>
-
-@code {
+ @code {
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
 

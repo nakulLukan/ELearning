@@ -1,19 +1,6 @@
 ﻿
 window.openRazorpay = function openRazorpay(options) {
     var rzp = new Razorpay(options);
-    rzp.on('payment.success', function (response) {
-        console.log("Payment popup closed by user.");
-        console.log({ response });
-    });
-
-    rzp.on('payment.failed', function (response) {
-        console.log("Payment popup closed by user.");
-        console.log({ response });
-    });
-
-    rzp.on('external.close', function () {
-        console.log("Payment popup closed by user.");
-    });
     rzp.open();
 }
 
@@ -45,10 +32,12 @@ window.initRazorpayPopup = function initRazorpayPopup(appName
     options.theme.image_padding = false;
     options.handler = function (response) {
         console.log({ response });
+        location.reload();
     };
     options.modal = {
         ondismiss: function () {
-            console.log('payment process completed. Refreshing page');
+            console.log('payment cancelled');
+            history.back();
         },
         // Boolean indicating whether pressing escape key
         // should close the checkout form. (default: true)

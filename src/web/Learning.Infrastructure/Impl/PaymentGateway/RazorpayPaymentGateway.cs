@@ -49,7 +49,7 @@ public class RazorpayPaymentGateway : IAppPaymentGateway
             {
                 return PaymentGatewayOrderStatusEnum.Paid;
             }
-            else if (status == "attempted")
+            else if (status == "attempted" )
             {
                 return PaymentGatewayOrderStatusEnum.Attempted;
             }

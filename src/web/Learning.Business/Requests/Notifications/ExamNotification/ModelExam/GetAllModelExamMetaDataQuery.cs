@@ -40,7 +40,7 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
                 Price = x.ModelExamPackage!.Price,
                 ExamPackageId = x.ModelExamPackageId,
                 DiscountedPrice = x.ModelExamPackage.DiscountedPrice,
-                ValidUpto = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(2))
+                ValidUpto = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1))
             })
             .ToListAsync(cancellationToken);
 

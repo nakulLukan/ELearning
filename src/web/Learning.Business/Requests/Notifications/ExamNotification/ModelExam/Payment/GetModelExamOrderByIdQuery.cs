@@ -30,6 +30,8 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
         public required DateTimeOffset? OrderCompletedOn { get; set; }
         public required string ExamNotificationTitle { get; set; }
         public required DateTimeOffset? Validity { get; set; }
+        public required int TotalExamsInPackage { get; set; }
+        public required int ModelExamId { get; set; }
     }
 
     public GetModelExamOrderByIdQueryHandler(
@@ -56,7 +58,9 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
                 RzrpayOrderId = x.RzrpayOrderId,
                 OrderCompletedOn = x.OrderedCompletedOn,
                 ExamNotificationTitle = x.ModelExamPackage!.ExamNotification!.NotificationTitle,
-                Validity = x.ModelExamPurchaseHistory != null ? x.ModelExamPurchaseHistory!.ValidTill : null
+                Validity = x.ModelExamPurchaseHistory != null ? x.ModelExamPurchaseHistory!.ValidTill : null,
+                TotalExamsInPackage = x.ModelExamPackage.ModelExamConfigs!.Where(x => !x.IsFree).Count(),
+                ModelExamId = x.ModelExamPackage.ModelExamConfigs!.First(y=>!y.IsFree).Id
             })
             .FirstOrDefaultAsync(cancellationToken) ?? throw new AppApiException(System.Net.HttpStatusCode.NotFound, "MEO001", "Order not found");
 
@@ -88,6 +92,9 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
             PhoneNumber = null,
             NotificationTitle = order.ExamNotificationTitle,
             OrderCompletedOn = order.OrderCompletedOn,
+            Validity = order.Validity,
+            TotalPaidExamsInPackage = order.TotalExamsInPackage,
+            ModelExamId = order.ModelExamId
         };
     }
 
@@ -110,6 +117,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
 
             _appDbContext.ModelExamPurchaseHistory.Add(purchaseHistory);
             await _appDbContext.SaveAsync(cancellationToken).ConfigureAwait(false);
+            order.Validity = purchaseHistory.ValidTill;
         }
     }
 }
