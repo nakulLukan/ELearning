@@ -12,6 +12,9 @@
 @rendermode InteractiveAuto
 @layout ModelExamSessionLayout
 @attribute [Authorize]
+<NavigationLock ConfirmExternalNavigation="true" >
+</NavigationLock>
+
 <ModelExamSessionNavBar EndExamChanged="EndSession" />
 
 <AppPage Class="d-flex flex-column flex-grow-1">

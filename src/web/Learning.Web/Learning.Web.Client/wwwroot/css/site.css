@@ -6,6 +6,7 @@
     --green-gray-200: #dfe9df;
     --mud-appbar-height: 99px !important;
     --app-success-failure-feedback-component: 150px;
+    --app-mud-default-borderradius: 24px !important;
 }
 
 html, body{
@@ -58,6 +59,7 @@ body {
     :root {
         --mud-appbar-height: 60px !important;
         --app-success-failure-feedback-component: 92px;
+        --app-mud-default-borderradius: 12px !important;
     }
 
     .app-nav-menu {

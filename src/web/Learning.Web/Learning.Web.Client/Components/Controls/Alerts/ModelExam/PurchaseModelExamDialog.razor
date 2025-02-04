@@ -2,15 +2,14 @@
 @using Learning.Web.Client.Components.Controls.Actions
 @using Learning.Shared.Extensions;
 <style>
-    :root {
-        --mud-default-borderradius: 24px !important;
+    :root{
+        --mud-default-borderradius: var(--app-mud-default-borderradius);
     }
-
 </style>
 <span>
-    <MudDialog Class="ma-9" ContentClass="ma-0 pa-0">
+    <MudDialog Class="ma-8" ContentClass="ma-0 pa-0">
         <DialogContent>
-            <div class="d-flex flex-column ma-9">
+            <div class="d-flex flex-column ma-5 ma-md-9">
                 <div class="d-flex flex-column align-start gap-4">
                     <div class="d-flex flex-column gap-3">
                         <h4>Purchase Model Exams</h4>
@@ -28,7 +27,7 @@
                         <h6>Valid Upto</h6>
                         <p>@ValidUpto!.Value.ToDateString() (1 Year)</p>
                     </div>
-                    <div class="d-flex gap-4 mt-11">
+                    <div class="d-flex flex-column flex-md-row gap-3 gap-md-4 mt-11">
                         <AppButton Text="Cancel" OnClick="Cancel" ButtonType="AppButton.AppButtonType.Secondary" Class="px-12"/>
                         <AppButton Text="Confirm Purchase" OnClick="Submit" Class="px-12" />
                     </div>
