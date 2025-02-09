@@ -4,19 +4,22 @@
 @using Learning.Shared.Dto.Quiz.QuickTest.Public
 @using Learning.Shared.Enums
 @using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Contracts.Interop
 @using Learning.Web.Client.Contracts.Persistance
 @using Learning.Web.Client.Contracts.Services.Quiz
 @using Learning.Web.Client.Contracts.Services.Subscription
 @using Learning.Web.Client.Dto.Quiz
 @using Learning.Web.Client.Enums
+@using Learning.Web.Client.Impl.Interop
 @using Learning.Web.Client.Impl.Persistance
 @using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizResultComponent
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveServer
 @inject IQuizManager QuizManager
 @inject IBrowserStorage LocalStorage
 @inject IQuizDataService QuizDataService
 @inject ICouponCodeDataService CouponCodeDataService
-
+@inject IAppJSInterop AppJSInterop
+@attribute [Authorize]
 <AppPage Class="d-flex flex-column flex-grow-1 pt-9">
 	<MudContainer Class="en-page-container flex-grow-1 d-flex flex-column flex-grow-1">
 
@@ -84,10 +87,6 @@
 				</MudStack>
 			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
 		}
-		else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
-		{
-			<QuizResultComponent Result="Result" />
-		}
 		else
 		{
 			<QuizTestLoaderComponent />
@@ -105,7 +104,11 @@
 	bool _selectionDisabled = false;
 
 	QuizAttempStatusEnum quizAttempStatusEnum;
-	ResultModel Result = new();
+	ResultModel Result = new()
+		{
+			TotalCorrectQuestions = 0,
+			TotalQuestions = 0,
+		};
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -118,6 +121,7 @@
 		if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
 		{
 			config = InitQuiz();
+			quizAttempStatusEnum = config.Status;
 			await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
 
 			_questions = new List<QuestionDto>(_quizMetaData!.TotalQuestions);
@@ -126,6 +130,7 @@
 		else if (_quizMetaData.QuizVersionNumber != config.QuizVersionNumber)
 		{
 			config = InitQuiz();
+			quizAttempStatusEnum = config.Status;
 			await LocalStorage.Set(BrowserStorageKeys.QuizDataLocalStorageKey, BrowserStorageKeys.QuizDataLocalStorageEncryptionKey, config);
 
 			_questions = new List<QuestionDto>(_quizMetaData!.TotalQuestions);
@@ -137,6 +142,8 @@
 			Result.MaxScore = _quizMetaData?.TotalMarks;
 			Result.Discount = config.TotalDiscount;
 			Result.CouponCode = config.DiscountCode;
+			Result.TotalQuestions = _quizMetaData!.TotalQuestions;
+			Result.TotalCorrectQuestions = config.TotalCorrectQuestions;
 		}
 		else
 		{
@@ -145,6 +152,11 @@
 			Result.MaxScore = _quizMetaData?.TotalMarks;
 			Result.Discount = 0;
 			Result.CouponCode = string.Empty;
+		}
+
+		if (quizAttempStatusEnum  == QuizAttempStatusEnum.Completed)
+		{
+			NavigationManager.NavigateTo("quiz/result");
 		}
 
 		StateHasChanged();
@@ -160,6 +172,7 @@
 		config.MarkScored = 0;
 		config.TotalDiscount = 0;
 		config.DiscountCode = null;
+		config.TotalQuestions = _quizMetaData.TotalQuestions;
 
 		return config;
 	}
@@ -196,13 +209,15 @@
 		_selectedQuestion = _questions!.First(x => x.QuestionNumber == _currentQuestionNumber);
 	}
 
-	private void AnswerSubmitted(int optionOrder)
+	private async Task AnswerSubmitted(int optionOrder)
 	{
 		_selectedQuestion!.SelectedOptionOrder = optionOrder;
 		foreach (var option in _selectedQuestion.Options!)
 		{
 			option.State = option.Order == optionOrder ? Enums.QuizOptionSelectionStateEnum.Selected : Enums.QuizOptionSelectionStateEnum.UnSelected;
 		}
+
+		await AppJSInterop.ScrollToBottomOnNavigation();
 	}
 
 	private async Task OnTimeout()
@@ -273,6 +288,8 @@
 
 			NavigationManager.NavigateTo("quiz/result");
 		}
+
+		await AppJSInterop.ScrollToTopOnNavigation();
 	}
 
 	#region DTO

@@ -2,7 +2,7 @@
 <div class="d-flex flex-row align-content-center">
 	<MudIcon Class="align-self-center" Icon="@Icons.Material.Outlined.AccessTime">
 	</MudIcon>
-	<span class="app-timer ml-2">@(_timeLeft!)</span>
+	<span class="app-timer ml-2">@(_timeLeftString!)</span>
 </div>
 
 @code {
@@ -10,28 +10,18 @@
 	#region TimerInSeconds
 	[Parameter]
 	[EditorRequired]
-	public int TimerInSeconds
-	{
-		get => _timerInSeconds; set
-		{
-			if (value != _timerInSeconds)
-			{
-				_timerInSeconds = value;
-				InvokeAsync(() => TimerInSecondsChanged.InvokeAsync(value));
-			}
-		}
-	}
-	private int _timerInSeconds;
+	public int TimerInSeconds { get; set; }
 
-	[Parameter]
-	public EventCallback<int> TimerInSecondsChanged { get; set; }
 	#endregion
 
 	[Parameter]
 	public EventCallback TimeoutReached { get; set; }
-	public string? _timeLeft { get; set; }
+	private int _timeLeftInSeconds { get; set; }
+	public string? _timeLeftString { get; set; }
 
 	private System.Timers.Timer? timer;
+
+	private DateTimeOffset _startTime;
 
 	protected override void OnInitialized()
 	{
@@ -39,27 +29,36 @@
 		timer = new System.Timers.Timer(1000);
 		timer.Elapsed += TimerElapsed;
 		timer.Start();
+		_startTime = DateTimeOffset.UtcNow;
 	}
 
 
 	private void TimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
 	{
-		if (TimerInSeconds > 0)
+		if (TimerInSeconds >= _timeLeftInSeconds)
 		{
-			TimerInSeconds--;
-			if (TimerInSeconds <= 0 && TimeoutReached.HasDelegate)
+			_timeLeftInSeconds = (int)(DateTimeOffset.UtcNow - _startTime).TotalSeconds;
+			if (_timeLeftInSeconds >= TimerInSeconds && TimeoutReached.HasDelegate)
 			{
+				UpdateTimeleftString();
 				InvokeAsync(TimeoutReached.InvokeAsync);
 				return;
 			}
-			var timeLeft = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(TimerInSeconds));
-			_timeLeft = TimerInSeconds > 120 ? timeLeft.ToString("HH:mm") : $"{TimerInSeconds} seconds left";
+			UpdateTimeleftString();
 			InvokeAsync(StateHasChanged);
 		}
 		else
 		{
 			timer?.Stop();
 		}
+	}
+
+	private void UpdateTimeleftString()
+	{
+
+		int timeLeftInSeconds = TimerInSeconds - _timeLeftInSeconds;
+		var timeLeft = TimeOnly.FromTimeSpan(TimeSpan.FromSeconds(Math.Max(0, timeLeftInSeconds)));
+		_timeLeftString = timeLeftInSeconds > 120 ? timeLeft.ToString("HH:mm") : $"{timeLeftInSeconds} seconds left";
 	}
 
 	public void Pause()

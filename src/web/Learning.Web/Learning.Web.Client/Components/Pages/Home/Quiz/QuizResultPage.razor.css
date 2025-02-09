@@ -1,0 +1,93 @@
+﻿h3 {
+    font-family: var(--ff-700);
+    font-size: 1.75rem;
+    color: #000000;
+}
+
+.app-field {
+    font-family: var(--ff-600);
+    font-size: 1.25rem;
+    color: #757575;
+}
+
+.app-field-value {
+    font-family: var(--ff-700);
+    font-size: 1.25rem;
+    color: #444444;
+}
+
+
+.app-coupon-container {
+    background: linear-gradient(90deg, #6025F5 0%, #FF5555 100%);
+    border-radius: 12px;
+    overflow: clip;
+}
+
+.app-coupon-card {
+    padding: 41px 33px 38px 33px;
+}
+
+.app-coupon-card-title {
+    color: #FFFFFF;
+    font-family: var(--ff-700);
+    font-size: 1.5rem;
+}
+
+.app-coupon-card-subtitle {
+    color: #FFFFFF;
+    font-family: var(--ff-400);
+    font-size: 1.125rem;
+    line-height: 0.875rem;
+}
+
+.app-contact-us-card {
+    background: #FFFFFF45;
+    padding: 15px 33px 15px 33px;
+}
+
+.app-contact-us-card-text {
+    color: #FFFFFF;
+    font-family: var(--ff-400);
+    font-size: 1.125rem;
+}
+
+@media (min-width: 961px){
+    .gap-md-18 {
+        gap: 52px !important;
+    }
+}
+@media (max-width:960px) {
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    .app-field {
+        font-size: 0.875rem;
+    }
+
+    .app-field-value {
+        font-size: 0.875rem;
+    }
+
+    .app-coupon-card {
+        padding: 20px;
+    }
+
+    .app-coupon-card-title {
+        font-size: 1.125rem;
+    }
+
+    .app-coupon-card-subtitle {
+        font-size: 0.75rem;
+    }
+
+    .app-contact-us-card {
+        padding: 20px;
+    }
+
+    .app-contact-us-card-text {
+        font-size: 0.875rem;
+        line-height: 1.2rem;
+    }
+
+}

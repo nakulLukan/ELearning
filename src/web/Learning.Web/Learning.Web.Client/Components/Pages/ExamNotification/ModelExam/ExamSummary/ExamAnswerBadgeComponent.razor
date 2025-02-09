@@ -1,7 +1,7 @@
-﻿<div class="d-flex gap-10 align-center"> 
+﻿<div class="d-flex gap-10 align-center">
 	<h5>@Title</h5>
-	<div class="app-badge d-flex flex-column justify-center align-center">
-		<span>@Value</span>
+	<div class="app-badge d-flex flex-column justify-center align-center @bgClass">
+		<span class="@fgClass">@Value</span>
 	</div>
 </div>
 @code {
@@ -10,4 +10,47 @@
 
 	[Parameter, EditorRequired]
 	public int Value { get; set; }
+
+	[Parameter]
+	public State BadgeType { get; set; }
+	private State _lastBadgeType;
+
+	public const string bgSuccessColor = "bg-success";
+	public const string bgErrorColor = "bg-error";
+
+	public const string fgWhiteColor = "fg-white";
+
+	public string fgClass = string.Empty;
+	public string bgClass = string.Empty;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (_lastBadgeType != BadgeType)
+		{
+			fgClass = BadgeType switch
+			{
+				State.Error => fgWhiteColor,
+				State.Success => fgWhiteColor,
+				_ => string.Empty,
+			};
+
+			bgClass = BadgeType switch
+			{
+				State.Error => bgErrorColor,
+				State.Success => bgSuccessColor,
+				_ => string.Empty,
+			};
+			_lastBadgeType = BadgeType;
+		}
+	}
+	#region DTO
+
+	public enum State
+	{
+		Default,
+		Success,
+		Error
+	}
+	#endregion
 }

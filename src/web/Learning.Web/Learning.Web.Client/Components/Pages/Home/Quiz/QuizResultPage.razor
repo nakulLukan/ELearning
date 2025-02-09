@@ -3,56 +3,176 @@
 @using Learning.Shared.Common.Utilities
 @using Learning.Shared.Dto.Quiz.QuickTest.Public
 @using Learning.Shared.Enums
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Pages.ExamNotification.ModelExam
+@using Learning.Web.Client.Components.Pages.ExamNotification.ModelExam.ExamSummary
 @using Learning.Web.Client.Contracts.Persistance
 @using Learning.Web.Client.Contracts.Services.Quiz
 @using Learning.Web.Client.Contracts.Services.Subscription
 @using Learning.Web.Client.Dto.Quiz
 @using Learning.Web.Client.Impl.Persistance
 @using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizResultComponent
-@rendermode InteractiveWebAssembly
-@inject IQuizManager QuizManager; 
-<AppPage BackgroundColor="var(--green-gray-50)">
-    <MudContainer MaxWidth="MaxWidth.Medium" Style="height: auto">
-        @if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
-        {
-            <QuizResultComponent Result="Result" />
-        }
-        else
-        {
-            <QuizPageLoaderComponent />
-        }
-    </MudContainer>
+@rendermode InteractiveAuto
+@inject IQuizManager QuizManager;
+@inject IQuizDataService QuizDataService;
+@attribute [Authorize]
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
+
+		@if (_result == null)
+		{
+			<BeginModelExamSessionLoaderComponent />
+		}
+		else
+		{
+			<div class="my-10 my-md-17"></div>
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1 pa-0 pb-0 pb-md-14">
+				<div class="flex-grow-1 ma-6 mx-md-20 mt-md-18">
+					@* Web *@
+					<div class="d-none d-md-flex flex-column">
+						<h3>Quiz Summary</h3>
+						<MudGrid Class="mt-9">
+							<MudItem sm="6">
+								<div class="d-flex flex-column gap-4">
+									<div class="d-flex justify-space-between">
+										<h5 class="app-field">Quiz Version</h5>
+										<h5 class="app-field-value">v@_quizMetaData!.QuizVersionNumber</h5>
+									</div>
+									<div class="d-flex justify-space-between">
+										<h5 class="app-field">Score</h5>
+										<h5 class="app-field-value">@(_result.MarkScored) out of @(_result.MaxScore)</h5>
+									</div>
+									<div class="d-flex justify-space-between">
+										<h5 class="app-field">Discount</h5>
+										<h5 class="app-field-value">@(_result.Discount)%</h5>
+									</div>
+								</div>
+							</MudItem>
+							<MudItem sm="6" Class="d-flex justify-center">
+								<Learning.Web.Client.Components.Controls.Feedback.AppRoundProgressBar Percentage="@(_result!.MarkScored!.Value * 100 / _result!.MaxScore!.Value!)" MiniumSuccessPercentage="@(_result.Discount > 0 ? 0 : 100)"></Learning.Web.Client.Components.Controls.Feedback.AppRoundProgressBar>
+							</MudItem>
+						</MudGrid>
+					</div>
+
+					@* Mobile *@
+					<div class="d-flex d-md-none flex-column gap-4">
+						<div class="d-flex justify-space-between">
+							<h3>Quiz Summary</h3>
+							<Learning.Web.Client.Components.Controls.Feedback.AppRoundProgressBar Percentage="@(_result!.MarkScored!.Value * 100 / _result!.MaxScore!.Value!)" MiniumSuccessPercentage="@(_result.Discount > 0 ? 0 : 100)"></Learning.Web.Client.Components.Controls.Feedback.AppRoundProgressBar>
+						</div>
+						<div class="d-flex flex-column gap-3">
+							<div class="d-flex justify-space-between">
+								<h5 class="app-field">Quiz Version</h5>
+								<h5 class="app-field-value">v@_quizMetaData!.QuizVersionNumber</h5>
+							</div>
+							<div class="d-flex justify-space-between">
+								<h5 class="app-field">Score</h5>
+								<h5 class="app-field-value">@(_result.MarkScored) out of @(_result.MaxScore)</h5>
+							</div>
+							<div class="d-flex justify-space-between">
+								<h5 class="app-field">Discount</h5>
+								<h5 class="app-field-value">@(_result.Discount)%</h5>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex flex-column gap-3 gap-md-7 mt-6 mt-md-9">
+						<h6>Answers</h6>
+						<div class="d-flex justify-space-between justify-md-start gap-0 gap-md-18">
+							<ExamAnswerBadgeComponent Title="Correct"
+													  Value="@_result.TotalCorrectQuestions"
+													  BadgeType="ExamAnswerBadgeComponent.State.Success" />
+							<ExamAnswerBadgeComponent Title="Wrong"
+													  Value="@(_result.TotalQuestions - _result.TotalCorrectQuestions)"
+													  BadgeType="ExamAnswerBadgeComponent.State.Error" />
+						</div>
+					</div>
+					<div class="app-coupon-container d-flex flex-column gap-0 mt-9 mt-md-11">
+						@if (!string.IsNullOrEmpty(_result.CouponCode))
+						{
+							@* Coupon *@
+							<div class="app-coupon-card d-flex flex-column flex-md-row gap-4 justify-md-space-between">
+								<div class="d-flex flex-column gap-3 gap-md-2">
+									<h6 class="app-coupon-card-title">
+										Congratulations! You earned a coupon
+									</h6>
+									<h6 class="app-coupon-card-subtitle">
+										You have scored @(_result.MarkScored) out of @(_result.MaxScore). Use the code to avail discount.
+									</h6>
+								</div>
+								<Learning.Web.Client.Components.Controls.DataDisplay.AppCouponCode Code="@_result.CouponCode" />
+							</div>
+						}
+						<div class="app-contact-us-card">
+							<div class="d-flex flex-column flex-md-row justify-start justify-md-space-between align-start align-md-center gap-4">
+								<h6 class="app-contact-us-card-text">Contact us for more details about courses</h6>
+								<AppButton ButtonType="AppButton.AppButtonType.Rounded"
+										   Text="Call Now"
+										   Href="tel:+919023423922"
+										   TextTransform="AppButton.ButtonTextTransform.None"
+										   Class="d-md-inline-flex"></AppButton>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+		}
+	</MudContainer>
 </AppPage>
 
 @code {
-    QuizAttempStatusEnum quizAttempStatusEnum;
-    ResultModel Result = new();
+	QuizAttempStatusEnum quizAttempStatusEnum;
+	ResultModel? _result;
+	QuizMetaDataDto? _quizMetaData;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        var config = await QuizManager.GetQuizModel();
-        quizAttempStatusEnum = config.Status;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var response = await QuizDataService.GetQuizMetaData();
+		if (response.IsFailed)
+		{
+			return;
+		}
+		_quizMetaData = response.Value;
+		var config = await QuizManager.GetQuizModel();
 
-        if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
-        {
-            NavigationManager.NavigateTo("quiz");
-        }
-        else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
-        {
-            Result.MarkScored = config.MarkScored;
-            Result.MaxScore = config.TotalMark;
-            Result.Discount = config.TotalDiscount;
-            Result.CouponCode = config.DiscountCode;
-        }
-        else
-        {
-            quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
-            Result.MarkScored = 0;
-            Result.MaxScore = config?.TotalMark;
-            Result.Discount = 0;
-            Result.CouponCode = string.Empty;
-        }
-        StateHasChanged();
-    }
+		// Navigate to landing page if quiz version is different
+		if (_quizMetaData.QuizVersionNumber != config.QuizVersionNumber)
+		{
+			NavigationManager.NavigateTo("quiz");
+			return;
+		}
+		quizAttempStatusEnum = config.Status;
+
+		if (quizAttempStatusEnum == Shared.Enums.QuizAttempStatusEnum.NotAttended)
+		{
+			NavigationManager.NavigateTo("quiz");
+		}
+		else if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
+		{
+			_result = new()
+				{
+					TotalCorrectQuestions = config.TotalCorrectQuestions,
+					TotalQuestions = config.TotalQuestions,
+				};
+			_result.MarkScored = config.MarkScored;
+			_result.MaxScore = config.TotalMark;
+			_result.Discount = config.TotalDiscount;
+			_result.CouponCode = config.DiscountCode;
+		}
+		else
+		{
+			_result = new()
+				{
+					TotalCorrectQuestions = 0,
+					TotalQuestions = 0
+				};
+			quizAttempStatusEnum = QuizAttempStatusEnum.Completed;
+			_result.MarkScored = 0;
+			_result.MaxScore = config?.TotalMark;
+			_result.Discount = 0;
+			_result.CouponCode = string.Empty;
+		}
+		StateHasChanged();
+	}
 }

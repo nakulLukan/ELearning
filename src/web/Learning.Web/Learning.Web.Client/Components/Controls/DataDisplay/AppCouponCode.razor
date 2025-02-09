@@ -1,0 +1,17 @@
+﻿@using Learning.Web.Client.Contracts.Interop
+@inject IAppJSInterop JSInterop
+
+<div class="coupon-container d-flex gap-3 cursor-pointer align-center" @onclick="CopyToClipboard">
+    <span>@Code</span>
+    <MudIcon Icon="@(!hasCopied ? Icons.Material.Rounded.CopyAll : Icons.Material.Rounded.Done)" />
+</div>
+@code {
+    [Parameter, EditorRequired]
+    public string Code { get; set; } = "NOT SET";
+    private bool hasCopied = false;
+    private async Task CopyToClipboard()
+    {
+        await JSInterop.CopyTextToClipboard(Code);
+        hasCopied = true;
+    }
+}

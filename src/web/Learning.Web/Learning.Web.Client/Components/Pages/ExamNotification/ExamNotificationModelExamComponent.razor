@@ -89,7 +89,9 @@
 						IsFree = x.IsFree,
 						IsLocked = x.IsLocked,
 						ExamDescription = x.ExamDescription,
-						ValidUpto = x.ValidUpto
+						ValidUpto = x.ValidUpto,
+						TotalQuestions = x.TotalQuestions,
+						TotalTimeInSeconds = x.TotalTimeInSeconds
 					}).ToArray();
 				StateHasChanged();
 
@@ -115,7 +117,10 @@
 		{
 			if (hasValidSubscription.Value.Data)
 			{
-				var started = await AlertService.DisplayStartModelExamAlert(modelExam.ExamName, modelExam.ExamDescription);
+				var started = await AlertService.DisplayStartModelExamAlert(modelExam.ExamName,
+					modelExam.ExamDescription,
+					modelExam.TotalQuestions,
+					modelExam.TotalTimeInSeconds);
 				if (started)
 				{
 					NavigationManager.NavigateTo($"/model-exams/{modelExam.ModelExamId}/begin");

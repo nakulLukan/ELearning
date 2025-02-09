@@ -11,4 +11,6 @@ public class QuizLocalStorageModel
     public int CurrentQuestionNumber { get; set; }
     public int TotalDiscount { get; set; }
     public string? DiscountCode { get; set; }
+    public int TotalCorrectQuestions { get; set; }
+    public int TotalQuestions { get; set; }
 }

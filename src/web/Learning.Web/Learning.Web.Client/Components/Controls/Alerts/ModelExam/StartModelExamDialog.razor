@@ -1,23 +1,41 @@
 ﻿@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Shared.Common.Extensions;
 <style>
 	:root {
 		--mud-default-borderradius: var(--app-mud-default-borderradius);
 	}
 </style>
 <span>
-	<MudDialog Class="mx-8 ma-md-0 w-100" ContentClass="ma-0 pa-0 relative">
+	<MudDialog Class="ma-9" ContentClass="ma-0 pa-0">
 		<DialogContent>
-			<div class="d-flex flex-column mx-5 my-7 ma-md-20">
-				<div class="d-flex flex-column align-center gap-4 gap-md-5">
-					<h2>@ModelExamName</h2>
-					<p class="px-8">@ModelExamDescription</p>
-					<AppButton Text="Start Exam" OnClick="Submit" FullWidth />
-				</div>
-			</div>
+			<div class="relative">
 
-			<MudIconButton Icon="@Icons.Material.Filled.Close"
-						   Class="absolute end-0 top-0 ma-5 ma-md-8"
-						   OnClick="Cancel"></MudIconButton>
+				<MudGrid Spacing="0" Justify="Justify.Center" Class="align-center ">
+					<MudItem xs="12" md="6" Class="ma-0 pa-0 h-100">
+						<img src="/assets/images/model_exam/model_exam_bg.jpg" class="alert-img" />
+					</MudItem>
+					<MudItem xs="12" md="6" Class="d-flex align-content-center pa-9">
+						<div class="d-flex flex-column align-content-center justify-center align-stretch gap-5 w-100">
+							<h2>@ModelExamName</h2>
+							<p>@ModelExamDescription</p>
+							<div class="d-flex flex-column gap-2">
+								<div class="d-flex justify-space-between">
+									<h6>No.of questions</h6>
+									<h6>@TotalQuestions</h6>
+								</div>
+								<div class="d-flex justify-space-between">
+									<h6>Total time</h6>
+									<h6>@TotalTimeSeconds.ToDurationString()</h6>
+								</div>
+							</div>
+							<AppButton Text="Start Exam" OnClick="Submit" FullWidth></AppButton>
+						</div>
+					</MudItem>
+				</MudGrid>
+				<MudIconButton Icon="@Icons.Material.Filled.Close" 
+							   Class="absolute end-0 top-0 ma-5"
+							   OnClick="Cancel"></MudIconButton>
+			</div>
 		</DialogContent>
 	</MudDialog>
 </span>
@@ -31,6 +49,12 @@
 
 	[Parameter]
 	public string ModelExamDescription { get; set; } = string.Empty;
+
+	[Parameter]
+	public int TotalQuestions { get; set; }
+
+	[Parameter]
+	public int TotalTimeSeconds { get; set; }
 
 	private void Submit() => MudDialog!.Close(DialogResult.Ok(true));
 

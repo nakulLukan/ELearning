@@ -43,5 +43,9 @@ Environment=ExternalIdentity__Aws__Region=ap-south-1
 Environment=ExternalIdentity__Aws__UseBasicCredentialAuthentication=false
 Environment=ExternalIdentity__Aws__UserPoolId="ap-south-1_yxynOeOft"
 
+# PaymentGateway
+Environment=PaymentGateway__AccessKey=accesskey
+Environment=PaymentGateway__SecretKey=secretkey
+
 [Install]
 WantedBy=multi-user.target

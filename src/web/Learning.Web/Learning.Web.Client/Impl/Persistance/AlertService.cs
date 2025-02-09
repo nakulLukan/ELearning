@@ -65,20 +65,27 @@ public class AlertService : IAlertService
         return res!.Data is bool action && action;
     }
 
-    public async Task<bool> DisplayStartModelExamAlert(string modelExamName, string modelExamDescription)
+    public async Task<bool> DisplayStartModelExamAlert(
+        string modelExamName,
+        string modelExamDescription,
+        int totalQuestions,
+        int totalTimeInSeconds)
     {
         var options = new DialogOptions()
         {
             BackdropClick = true,
             NoHeader = true,
             Position = DialogPosition.Center,
-            CloseButton = true
+            CloseButton = true,
+            MaxWidth = MaxWidth.Large
         };
 
         DialogParameters parameters = new DialogParameters()
         {
             { nameof(StartModelExamDialog.ModelExamName), modelExamName },
             { nameof(StartModelExamDialog.ModelExamDescription), modelExamDescription },
+            { nameof(StartModelExamDialog.TotalQuestions), totalQuestions },
+            { nameof(StartModelExamDialog.TotalTimeSeconds), totalTimeInSeconds},
         };
         var dialog = await _dialogService.ShowAsync<StartModelExamDialog>(string.Empty, parameters, options);
         var res = (await dialog.Result);

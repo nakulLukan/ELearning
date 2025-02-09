@@ -1,11 +1,11 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Text.Json;
+using Blazored.LocalStorage;
 using Learning.Shared.Common.Utilities;
 using Learning.Shared.Enums;
 using Learning.Web.Client.Constants;
 using Learning.Web.Client.Contracts.Persistance;
 using Learning.Web.Client.Contracts.Services.Quiz;
 using Learning.Web.Client.Dto.Quiz;
-using System.Text.Json;
 
 namespace Learning.Web.Client.Services.Quiz;
 
@@ -120,6 +120,9 @@ public class QuizManager : IQuizManager
     {
         model.CurrentQuestionNumber = currentQuestionNumber;
         model.MarkScored += score;
+
+        // If option is correct, then update total correct questions
+        model.TotalCorrectQuestions = score > 0 ? model.TotalCorrectQuestions + 1 : model.TotalCorrectQuestions;
 
         return model;
     }

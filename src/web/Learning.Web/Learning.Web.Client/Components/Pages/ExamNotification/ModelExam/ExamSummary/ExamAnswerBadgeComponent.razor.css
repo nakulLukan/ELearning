@@ -15,7 +15,19 @@ h5 {
     color: #757575;
 }
 
-@media (max-width:960px){
+.bg-success {
+    background: #0A9E52;
+}
+
+.bg-error {
+    background: #E05B5B;
+}
+
+.fg-white {
+    color: #FFFFFF;
+}
+
+@media (max-width:960px) {
     h5 {
         font-size: 0.875rem;
     }

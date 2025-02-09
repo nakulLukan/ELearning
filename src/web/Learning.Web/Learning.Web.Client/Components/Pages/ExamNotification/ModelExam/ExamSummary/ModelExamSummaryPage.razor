@@ -31,7 +31,7 @@
 										</div>
 										<div class="d-flex justify-space-between">
 											<p class="app-summary-header">Time taken</p>
-											<p class="app-summary-value">@(_sessionDurationString!)</p>
+											<p class="app-summary-value">@(_summary.Value.Status == ModelExamSessionStatusEnum.Timeout ? "Timeout" : _sessionDurationString!)</p>
 										</div>
 										<div class="d-flex justify-space-between">
 											<p class="app-summary-header">Answered</p>
@@ -43,7 +43,7 @@
 
 										@if (_summary.Value.NextModelExamId.HasValue)
 										{
-											<AppButton FullWidth Text="@($"Next Exam - {_summary.Value.NextModelExamName}")" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
+											<AppButton FullWidth Text="Next Exam" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
 										}
 									</MudStack>
 
@@ -77,8 +77,8 @@
 						<MudStack>
 							<h5>Answers</h5>
 							<div class="d-flex gap-6 gap-md-18 mt-3 mt-md-6">
-								<ExamAnswerBadgeComponent Title="Correct" Value="@_answerdCount" />
-								<ExamAnswerBadgeComponent Title="Wrong" Value="@_wrongCount" />
+								<ExamAnswerBadgeComponent Title="Correct" Value="@_answerdCount" BadgeType="ExamAnswerBadgeComponent.State.Success"/>
+								<ExamAnswerBadgeComponent Title="Wrong" Value="@_wrongCount" BadgeType="ExamAnswerBadgeComponent.State.Error" />
 							</div>
 							<MudStack Class="mt-8 mt-md-11" Spacing="8">
 								@foreach (var question in _summary.Value.QuestionSummary)
@@ -107,7 +107,7 @@
 
 					@if (_summary.Value.NextModelExamId.HasValue)
 					{
-						<AppButton FullWidth Text="@($"Next Exam - {_summary.Value.NextModelExamName}")" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
+						<AppButton FullWidth Text="Next Exam" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
 					}
 				</MudStack>
 			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
@@ -145,7 +145,7 @@
 				SessionDurationInSeconds = summaryResponse.Value.SessionDurationInSeconds,
 				Status = summaryResponse.Value.Status,
 				TotalTimeLimit = summaryResponse.Value.TotalTimeLimit,
-				QuestionSummary = summaryResponse.Value.QuestionSummary.OrderBy(x=>x.Order).Select(x => new QuestionSummary
+				QuestionSummary = summaryResponse.Value.QuestionSummary.OrderBy(x => x.Order).Select(x => new QuestionSummary
 				{
 					HasSkipped = x.HasSkipped,
 					Order = x.Order,

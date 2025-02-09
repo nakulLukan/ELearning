@@ -1,188 +1,197 @@
 ﻿@if (Href == null)
 {
-    <button type="@_buttonFormType"
-    id="@Id"
-    class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
-    @onclick="OnClickHandler"
-    style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
-    disabled="@isInternallyDisabled">
-        <div class="d-flex align-center gap-1">
-            <span class="@(!isInternallyDisabled ? "" : "loader")">
-            </span>
-            @Text
-        </div>
-    </button>
+	<button type="@_buttonFormType"
+			id="@Id"
+			class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
+			@onclick="OnClickHandler"
+			style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+			disabled="@isInternallyDisabled">
+		<div class="d-flex align-center gap-1">
+			<span class="@(!isInternallyDisabled ? "" : "loader")">
+			</span>
+			@Text
+		</div>
+	</button>
 }
 else
 {
-    <a type="@_buttonFormType"
-    id="@Id"
-    href="@Href"
-       class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
-    @onclick="OnClickHandler"
-    style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
-    disabled="@isInternallyDisabled"
-    target="@Target">
-        <div class="d-flex justify-center gap-1">
-            <span class="@(!isInternallyDisabled ? "" : "loader")">
-            </span>
-            @Text
-            @if (Icon != null)
-            {
-                <img width="24" src="@GlyphIcons.ArrowRight" />
-            }
-        </div>
-    </a>
+	<a type="@_buttonFormType"
+	   id="@Id"
+	   href="@Href"
+	   class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
+	   @onclick="OnClickHandler"
+	   style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
+	   disabled="@isInternallyDisabled"
+	   target="@Target">
+		<div class="d-flex justify-center gap-1">
+			<span class="@(!isInternallyDisabled ? "" : "loader")">
+			</span>
+			@Text
+			@if (Icon != null)
+			{
+				<img width="24" src="@GlyphIcons.ArrowRight" />
+			}
+		</div>
+	</a>
 }
 @code {
-    [Parameter]
-    public string? Id { get; set; }
+	[Parameter]
+	public string? Id { get; set; }
 
-    [Parameter]
-    public string Class { get; set; } = string.Empty;
+	[Parameter]
+	public string Class { get; set; } = string.Empty;
 
-    [Parameter]
-    public string? Text { get; set; }
+	[Parameter]
+	public string? Text { get; set; }
 
-    [Parameter]
-    public string Padding { get; set; } = "10px";
+	[Parameter]
+	public string Padding { get; set; } = "10px";
 
-    [Parameter]
-    public bool Disabled { get; set; }
+	[Parameter]
+	public bool Disabled { get; set; }
 
-    [Parameter]
-    public string? Href { get; set; }
+	[Parameter]
+	public string? Href { get; set; }
 
-    [Parameter]
-    public string? Target { get; set; }
+	[Parameter]
+	public string? Target { get; set; }
 
-    [Parameter]
-    public string? Icon { get; set; }
+	[Parameter]
+	public string? Icon { get; set; }
 
-    [Parameter]
-    public ButtonSize Size { get; set; } = ButtonSize.Default;
+	[Parameter]
+	public ButtonSize Size { get; set; } = ButtonSize.Default;
 
-    #region TextTransform
-    [Parameter]
-    public ButtonTextTransform TextTransform { get; set; } = AppButton.ButtonTextTransform.Upper;
-    private string _textTransform = "uppercase";
-    private ButtonTextTransform? lastTextTransform = null;
-    #endregion
+	#region TextTransform
+	[Parameter]
+	public ButtonTextTransform TextTransform { get; set; } = AppButton.ButtonTextTransform.Upper;
+	private string _textTransform = "uppercase";
+	private ButtonTextTransform? lastTextTransform = null;
+	#endregion
 
-    [CascadingParameter(Name = "ParentDisabled")]
-    private bool ParentDisabled { get; set; }
-    private bool isInternallyDisabled = false;
-    #region FullWidth
-    [Parameter]
-    public bool FullWidth { get; set; }
-    private bool lastFullWidth;
-    private string _fullWidthClass = string.Empty;
-    private const string _fullWidthClassName = "full-width";
-    #endregion
+	[CascadingParameter(Name = "ParentDisabled")]
+	private bool ParentDisabled { get; set; }
+	private bool isInternallyDisabled = false;
 
-    #region ButtonFormType
-    [Parameter]
-    public AppButtonFormType FormType { get; set; } = AppButtonFormType.Button;
-    private AppButtonFormType lastFormType = AppButtonFormType.Button;
-    private string _buttonFormType = StyleConstants.Button;
-    #endregion
+	#region FullWidth
+	[Parameter]
+	public bool FullWidth { get; set; }
+	private bool lastFullWidth;
+	private string _fullWidthClass = string.Empty;
+	private const string _fullWidthClassName = "full-width";
+	#endregion
 
-    #region ButtonType
-    [Parameter]
-    public AppButtonType ButtonType { get; set; } = AppButtonType.Primary;
-    private AppButtonType lastButtonType = AppButtonType.Primary;
-    private string _buttonTypeClass = "app-button-primary";
-    #endregion
+	#region ButtonFormType
+	[Parameter]
+	public AppButtonFormType FormType { get; set; } = AppButtonFormType.Button;
+	private AppButtonFormType lastFormType = AppButtonFormType.Button;
+	private string _buttonFormType = StyleConstants.Button;
+	#endregion
 
-    [Parameter]
-    public EventCallback<MouseEventArgs> OnClick { get; set; }
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        if (lastButtonType != ButtonType)
-        {
-            _buttonTypeClass = ButtonType == AppButtonType.Primary ? StyleConstants.AppPrimaryButton : StyleConstants.AppSecondaryButton;
-            lastButtonType = ButtonType;
-        }
+	#region ButtonType
+	[Parameter]
+	public AppButtonType ButtonType { get; set; } = AppButtonType.Primary;
+	private AppButtonType lastButtonType = AppButtonType.Primary;
+	private string _buttonTypeClass = "app-button-primary";
+	#endregion
 
-        if (lastFullWidth != FullWidth)
-        {
-            _fullWidthClass = FullWidth ? _fullWidthClassName : string.Empty;
-            lastFullWidth = FullWidth;
-        }
+	[Parameter]
+	public EventCallback<MouseEventArgs> OnClick { get; set; }
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (lastButtonType != ButtonType)
+		{
+			_buttonTypeClass = ButtonType switch
+			{
+				AppButtonType.Primary => StyleConstants.AppPrimaryButton,
+				AppButtonType.Secondary => StyleConstants.AppSecondaryButton,
+				AppButtonType.Rounded => StyleConstants.AppRoundedButton,
+				_ => throw new NotImplementedException()
+			};
+			lastButtonType = ButtonType;
+		}
 
-        if (lastFormType != FormType)
-        {
-            _buttonFormType = FormType switch
-            {
-                AppButtonFormType.Button => StyleConstants.Button,
-                AppButtonFormType.Submit => StyleConstants.Submit,
-                AppButtonFormType.Reset => StyleConstants.Reset,
-                _ => throw new ArgumentException()
-            };
-            lastFormType = FormType;
-        }
-        if (lastTextTransform != TextTransform)
-        {
-            _textTransform = TextTransform switch
-            {
-                ButtonTextTransform.Upper => "uppercase",
-                ButtonTextTransform.None => "unset",
-                _ => throw new ArgumentException()
-            };
-            lastTextTransform = TextTransform;
-        }
-    }
+		if (lastFullWidth != FullWidth)
+		{
+			_fullWidthClass = FullWidth ? _fullWidthClassName : string.Empty;
+			lastFullWidth = FullWidth;
+		}
 
-    protected bool GetDisabledState() => Disabled || ParentDisabled;
-    protected virtual async Task OnClickHandler(MouseEventArgs ev)
-    {
-        if (GetDisabledState())
-            return;
-        isInternallyDisabled = true;
-        StateHasChanged();
-        await OnClick.InvokeAsync(ev);
-        isInternallyDisabled = false;
-        StateHasChanged();
-    }
+		if (lastFormType != FormType)
+		{
+			_buttonFormType = FormType switch
+			{
+				AppButtonFormType.Button => StyleConstants.Button,
+				AppButtonFormType.Submit => StyleConstants.Submit,
+				AppButtonFormType.Reset => StyleConstants.Reset,
+				_ => throw new ArgumentException()
+			};
+			lastFormType = FormType;
+		}
+		if (lastTextTransform != TextTransform)
+		{
+			_textTransform = TextTransform switch
+			{
+				ButtonTextTransform.Upper => "uppercase",
+				ButtonTextTransform.None => "unset",
+				_ => throw new ArgumentException()
+			};
+			lastTextTransform = TextTransform;
+		}
+	}
 
-    #region Classes
-    public enum AppButtonType
-    {
-        Primary,
-        Secondary
-    }
-    public enum AppButtonFormType
-    {
-        Button,
-        Reset,
-        Submit
-    }
-    public enum ButtonTextTransform
-    {
-        Upper,
-        None
-    }
+	protected bool GetDisabledState() => Disabled || ParentDisabled;
+	protected virtual async Task OnClickHandler(MouseEventArgs ev)
+	{
+		if (GetDisabledState())
+			return;
+		isInternallyDisabled = true;
+		StateHasChanged();
+		await OnClick.InvokeAsync(ev);
+		isInternallyDisabled = false;
+		StateHasChanged();
+	}
 
-    public enum ButtonSize 
-    {
-        Default,
-        Small
-    }
-    #endregion
+	#region Classes
+	public enum AppButtonType
+	{
+		Primary,
+		Secondary,
+		Rounded
+	}
+	public enum AppButtonFormType
+	{
+		Button,
+		Reset,
+		Submit
+	}
+	public enum ButtonTextTransform
+	{
+		Upper,
+		None
+	}
 
-    #region StyleClassNameConstants
-    private class StyleConstants
-    {
-        public const string AppPrimaryButton = "app-button-primary";
-        public const string AppSecondaryButton = "app-button-secondary";
+	public enum ButtonSize
+	{
+		Default,
+		Small
+	}
+	#endregion
 
-        public const string Reset = "reset";
-        public const string Button = "button";
-        public const string Submit = "submit";
+	#region StyleClassNameConstants
+	private class StyleConstants
+	{
+		public const string AppPrimaryButton = "app-button-primary";
+		public const string AppSecondaryButton = "app-button-secondary";
+		public const string AppRoundedButton = "app-button-rounded";
 
-        public const string AppButtonSmall = "app-button-small";
+		public const string Reset = "reset";
+		public const string Button = "button";
+		public const string Submit = "submit";
 
-    }
-    #endregion
+		public const string AppButtonSmall = "app-button-small";
+
+	}
+	#endregion
 }

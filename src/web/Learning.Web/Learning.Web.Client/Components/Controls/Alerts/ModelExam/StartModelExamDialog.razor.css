@@ -1,5 +1,9 @@
-﻿:root {
-    --mud-default-borderradius: 24px !important;
+﻿
+.alert-img {
+    width: 100% !important;
+    height: 415px !important;
+    object-fit: cover !important;
+    object-position: center !important;
 }
 
 .mud-grid-item {
@@ -13,6 +17,27 @@
 p {
     color: #222222 !important;
 }
-p, h2 {
-    text-align: center !important;
+
+h6{
+    font-family: var(--ff-600);
+    font-size: 1rem;
+}
+
+
+@media (max-width: 960px) {
+    .alert-img {
+        height: 161px !important;
+    }
+
+    p, h2 {
+        text-align: start !important;
+    }
+
+    h6 {
+        font-size: 0.75rem;
+    }
+
+    ::deep .mud-icon-button {
+        color: #ffffff !important;
+    }
 }

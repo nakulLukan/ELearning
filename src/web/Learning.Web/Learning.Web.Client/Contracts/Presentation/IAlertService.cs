@@ -8,7 +8,11 @@ public interface IAlertService
     Task<bool> DisplayAlert(string title, string description, string ok, AlertTypeEnum alertType = AlertTypeEnum.Info);
     Task<bool> DisplayPublicUserGeneralAlert(string title, string description, string ok);
     Task<bool> DisplayNewQuizAlert();
-    Task<bool> DisplayStartModelExamAlert(string modelExamName, string modelExamDescription);
+    Task<bool> DisplayStartModelExamAlert(
+        string modelExamName,
+        string modelExamDescription,
+        int totalQuestions,
+        int totalTimeInSeconds);
     Task<bool> DisplayPurchaseExamAlert(ModelExamPurchaseDialogParam parameter);
 }
 

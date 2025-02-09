@@ -1,116 +1,97 @@
 ﻿@page "/quiz"
 @using Learning.Shared.Common.Extensions
+@using Learning.Shared.Contracts.HttpContext
 @using Learning.Shared.Dto.Quiz.QuickTest.Public
+@using Learning.Web.Client.Components.Pages.ExamNotification.ModelExam
 @using Learning.Web.Client.Contracts.Services.DataCollection
 @using Learning.Web.Client.Contracts.Services.Quiz
 @using Learning.Web.Client.Dto.ContactUs
 @using Learning.Web.Client.Dto.Quiz
-@rendermode InteractiveAuto
+@rendermode InteractiveServer
 @inject IQuizDataService QuizDataService
 @inject IQuizManager QuizManager
 @inject IContactUsDataService ContactUsDataService
-<AppPage BackgroundColor="var(--green-gray-50)">
-    <MudContainer>
-        @if (_quizMetaData != null)
-        {
-            <MudGrid Justify="Justify.Center">
-                <MudItem xs="12" Class="text-center d-flex flex-column gap-3">
-                    <MudText Typo="Typo.h4"><b>Score and Get Exciting Discounts</b></MudText>
-                    <MudText><b>Attend the quiz and score the maximum marks to get the highest discount on your offline courses.</b></MudText>
-                    <MudDivider DividerType="DividerType.Middle"></MudDivider>
-                </MudItem>
-                <MudItem xs="12" Class="d-flex justify-center pb-10">
-                    <MudPaper Class="rounded-lg pa-4" Width="500px" Elevation="4" Style="background-color: var(--green-gray-200)">
-                        <MudStack Spacing="4">
-                            <MudStack AlignItems="AlignItems.Center" Spacing="2">
-                                <MudText><b>Why this quiz?</b></MudText>
-                                <MudDivider />
-                                <MudText Typo="Typo.body2">This quiz is based on general knowledge. You can attend this quiz and score maximum mark. Based on your final score you shall be given discount coupon code which can be used to purchase your courses.</MudText>
-                            </MudStack>
+@inject IRequestContext RequestContext
 
-                            <MudStack AlignItems="AlignItems.Center" Spacing="2">
-                                <MudText><b>Quiz Format</b></MudText>
-                                <MudDivider />
-                                <ul class="px-4" style="list-style-type: square;">
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1">
 
-                                    <li>
-                                        <MudText Typo="Typo.body2">Question type is <b>Multiple Choice Question</b></MudText>
-                                    </li>
-                                    <li>
-                                        <MudText Typo="Typo.body2">There will be <b>@(_quizMetaData!.TotalQuestions) questions</b>. There is no penalty for wrong or unanswered questions.</MudText>
-                                    </li>
-                                    <li>
-                                        <MudText Typo="Typo.body2">Quiz maximum time is <b>@(_quizMetaData!.TotalTimeInSeconds.ToDurationString())</b></MudText>
-                                    </li>
-                                    <li>
-                                        <MudText Typo="Typo.body2">There is a time limit for each question, and you cannot choose or change the option once the time limit is reached.</MudText>
-                                    </li>
-                                    <li>
-                                        <MudText Typo="Typo.body2">Your final score will be displayed at the end of the quiz.</MudText>
-                                    </li>
-                                </ul>
-                                <MudText Typo="Typo.body2" Align="Align.Left" Class="align-self-start"><b>CAUTION: Do not refresh the tab once you have begun the exam.</b></MudText>
-                            </MudStack>
-                            <EditForm Model="@ContactUsModel" OnValidSubmit="OnValidSubmit" FormName="ContactUs">
-                                <DataAnnotationsValidator />
-                                <MudStack Spacing="2">
-                                    <MudText Class="text-center"><b>Contact Details</b></MudText>
-                                    <MudDivider />
-                                    <MudText Typo="Typo.body2" Class="mb-3">We need your contact details so that our team can contact you for any assistance.</MudText>
-                                    <AppTextFieldV2 Label="Your Full Name"
-                                                    For="(()=> ContactUsModel.Name)"
-                                                    @bind-Value=@ContactUsModel.Name></AppTextFieldV2>
-                                    <AppTextFieldV2 Label="Contact Number"
-                                                    @bind-Value=@ContactUsModel.ContactNumber
-                                                    For="(()=> ContactUsModel.ContactNumber)"></AppTextFieldV2>
-                                    <AppTextFieldV2 Label="Email Address (Optional)"
-                                                    @bind-Value=@ContactUsModel.EmailAddress
-                                                    For="(()=> ContactUsModel.EmailAddress)"></AppTextFieldV2>
-                                    <MudStack Class="mt-3" AlignItems="AlignItems.Center" Spacing="4">
-                                        <MudButton Class="mud-button-no-hyperlink"
-                                                   EndIcon="@Icons.Material.Rounded.ArrowRightAlt"
-                                                   Variant="Variant.Outlined"
-                                                   ButtonType="ButtonType.Submit"> Submit & Start Quiz</MudButton>
-                                        @if (_model != null && _model.Status != Shared.Enums.QuizAttempStatusEnum.NotAttended)
-                                        {
-                                            <MudButton Class="mud-button-no-hyperlink"
-                                                       Variant="Variant.Text"
-                                                       Href="quiz/result"
-                                                       ButtonType="ButtonType.Button"><MudText Typo="Typo.caption"><u>Check your last quiz result here</u></MudText> </MudButton>
-                                        }
-                                    </MudStack>
-                                </MudStack>
-                            </EditForm>
-                        </MudStack>
-                    </MudPaper>
-                </MudItem>
-            </MudGrid>
-        }
-    </MudContainer>
+		@if (_quizMetaData == null)
+		{
+			<BeginModelExamSessionLoaderComponent />
+		}
+		else
+		{
+			<div class="my-10 my-md-17"></div>
+			<Learning.Web.Client.Components.Controls.Containers.PlainCard Class="flex-grow-1 mb-5 mb-md-10 d-flex flex-column flex-grow-1 pa-0 pb-md-14">
+				<div class="flex-grow-1 ma-6 mx-md-20 mt-md-18">
+					<div class="d-flex flex-column">
+						<h2 class="app-header">Score and get exciting <span>Discounts</span></h2>
+						<h6 class="app-subtext mt-3 mt-md-4">Attend the quiz and get maximum marks to get highest discount on offline courses</h6>
+						<div class="app-quiz-summary-card px-6 py-5 px-md-10 py-md-11 d-flex flex-column mt-5 mt-md-8">
+							<h6>Why this quiz?</h6>
+							<p class="app-quiz-summary-card-p mt-3 mt-md-4">This quiz is based on general knowledge. You can attend this quiz andscore maximum mark. Based on your final score you shall be given discount coupon code which can be used to purchase your courses.</p>
+
+							<h6 class="mt-4 mt-md-5">Quiz format</h6>
+							<p class="app-quiz-summary-card-p mt-3 mt-md-4">
+								<ul>
+									<li>Question type is <b>Multiple Choice Question</b></li>
+									<li>There will be <b>@(_quizMetaData!.TotalQuestions) questions</b>. There is no penalty for wrong or unanswered questions.</li>
+									<li>Quiz maximum time is <b>@(_quizMetaData!.TotalTimeInSeconds.ToDurationString())</b></li>
+									<li>There is a time limit for each question, and you cannot choose or change the option once the time limit is reached.</li>
+									<li>Your final score will be displayed at the end of the quiz.</li>
+								</ul>
+							</p>
+
+							<p class="app-quiz-caution mt-8 mt-md-16">
+								CAUTION: Do not refresh the tab once you
+								have begun the exam.
+							</p>
+							<p class="app-contact-us mt-2">
+								Contact us for more details : 96565 25351, 88487 6692
+							</p>
+						</div>
+						<MudGrid Justify="Justify.Center" Class="mt-4 mt-md-7">
+							<MudItem sm="12" md="5">
+								<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Start Quiz" OnClick="StartQuiz" Class="px-20 "></Learning.Web.Client.Components.Controls.Actions.AppButton>
+							</MudItem>
+						</MudGrid>
+					</div>
+				</div>
+
+			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
+		}
+	</MudContainer>
 </AppPage>
 @code {
-    QuizMetaDataDto? _quizMetaData;
-    QuizLocalStorageModel? _model;
-    ContactUsModel ContactUsModel { get; set; } = new();
+	QuizMetaDataDto? _quizMetaData;
+	QuizLocalStorageModel? _model;
+	ContactUsModel ContactUsModel { get; set; } = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        _model = await QuizManager.GetQuizModel();
-        var result = await QuizDataService.GetQuizMetaData();
-        _quizMetaData = result.Value;
-    }
-
-    private async Task OnValidSubmit(EditContext context)
-    {
-        if ((await ContactUsDataService.AddContactInformation(new()
-            {
-                ContactNumber = ContactUsModel.ContactNumber,
-                CountryCode = "+91",
-                Name = ContactUsModel.Name,
-                EmailAddress = ContactUsModel.EmailAddress
-            })).IsSuccess)
-        {
-            NavigationManager.NavigateTo("quiz/take");
-        }
-    }
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var result = await QuizDataService.GetQuizMetaData();
+		_model = await QuizManager.GetQuizModel();
+		_quizMetaData = result.Value;
+		StateHasChanged();
+	}
+	private async Task StartQuiz()
+	{
+		if (!await RequestContext.IsAuthenticated())
+		{
+			NavigationManager.NavigateToLogin();
+			return;
+		}
+		if (_model!.QuizVersionNumber == _quizMetaData!.QuizVersionNumber
+			&& (_model.Status == Shared.Enums.QuizAttempStatusEnum.Completed
+			|| _model.Status == Shared.Enums.QuizAttempStatusEnum.Error))
+		{
+			NavigationManager.NavigateTo("quiz/result");
+		}
+		else
+		{
+			NavigationManager.NavigateTo("quiz/take");
+		}
+	}
 }

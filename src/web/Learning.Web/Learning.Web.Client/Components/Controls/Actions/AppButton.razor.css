@@ -30,7 +30,16 @@
     border: 1px solid var(--Overlays-Default, #00000033)
 }
 
-.full-width{
+.app-button-rounded {
+    font-family: var(--ff-700);
+    background: #FFFFFF !important;
+    font-size: 1.125rem;
+    color: #222222;
+    border-radius: 24px;
+    padding: 8px 25px 8px 25px !important;
+}
+
+.full-width {
     width: 100% !important;
 }
 
@@ -64,5 +73,9 @@
     .app-button-small {
         height: 40px;
         font-size: 0.75rem;
+    }
+
+    .app-button-rounded {
+        font-size: 0.875rem;
     }
 }
