@@ -11,7 +11,6 @@
 @using Learning.Web.Client.Contracts.Services.Subscription
 @using Learning.Web.Client.Dto.Quiz
 @using Learning.Web.Client.Impl.Persistance
-@using static Learning.Web.Client.Components.Pages.Home.Quiz.QuizResultComponent
 @rendermode InteractiveAuto
 @inject IQuizManager QuizManager;
 @inject IQuizDataService QuizDataService;
@@ -175,4 +174,16 @@
 		}
 		StateHasChanged();
 	}
+
+	#region Model
+	public class ResultModel
+	{
+		public int? MaxScore { get; set; }
+		public int? MarkScored { get; set; }
+		public int? Discount { get; set; }
+		public string? CouponCode { get; set; }
+		public required int TotalQuestions { get; set; }
+		public required int TotalCorrectQuestions { get; set; }
+	}
+	#endregion
 }
