@@ -1,9 +1,45 @@
-﻿<div>
-    <span>
-        @Title
-    </span>
+﻿<div class="@bgClass">
+	<span class="@fgClass">
+		@Title
+	</span>
 </div>
 @code {
-    [Parameter, EditorRequired]
-    public required string Title { get; set; }
+	[Parameter, EditorRequired]
+	public required string Title { get; set; }
+
+	[Parameter]
+	public State ComponentState { get; set; } = State.Golden;
+	private State lastComponentState = State.Golden;
+
+	public const string bgSuccessState = "bg-success-state";
+	public const string fgWhite = "fg-white";
+	public string bgClass = string.Empty;
+	public string fgClass = string.Empty;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (lastComponentState != ComponentState)
+		{
+			bgClass = ComponentState switch
+			{
+				State.Success => bgSuccessState,
+				_ => string.Empty
+			};
+
+			fgClass = ComponentState switch
+			{
+				State.Success => fgWhite,
+				_ => string.Empty
+			};
+			lastComponentState = ComponentState;
+		}
+	}
+	#region DTO
+	public enum State
+	{
+		Golden,
+		Success
+	}
+	#endregion
 }

@@ -10,7 +10,7 @@ namespace Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 
 public class ModelExamOrderInitiateCommand : IRequest<ResponseDto<long>>
 {
-    public int ModelExamId { get; set; }
+    public required int ExamNotificationId { get; set; }
 }
 public class ModelExamOrderInitiateCommandHandler : IRequestHandler<ModelExamOrderInitiateCommand, ResponseDto<long>>
 {
@@ -27,11 +27,15 @@ public class ModelExamOrderInitiateCommandHandler : IRequestHandler<ModelExamOrd
 
     public async Task<ResponseDto<long>> Handle(ModelExamOrderInitiateCommand request, CancellationToken cancellationToken)
     {
-        var examPackage = await (from mec in _dbContext.ModelExamConfigurations
-                                 join mep in _dbContext.ModelExamPackages
-                                 on mec.ModelExamPackageId equals mep.Id
-                                 where mec.Id == request.ModelExamId
-                                 select mep).FirstAsync(cancellationToken).ConfigureAwait(false);
+        var examPackage = await _dbContext.ModelExamPackages
+            .Where(x => x.ExamNotificationId == request.ExamNotificationId)
+            .Select(x => new
+            {
+                x.DiscountedPrice,
+                x.Id
+            })
+            .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new AppApiException(System.Net.HttpStatusCode.NotFound, "MEOI001", "Unknown model exam package");
         var userId = await _requestContext.GetUserId().ConfigureAwait(false);
         ModelExamOrder initiateOrder = new ModelExamOrder
         {

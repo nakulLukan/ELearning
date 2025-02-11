@@ -2,6 +2,7 @@
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Contracts.HttpContext;
+using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
@@ -21,6 +22,20 @@ public class ModelExamRestDataService : IModelExamDataService
         _httpClient = httpClient;
         _requestContext = requestContext;
     }
+
+    public async Task<Result<ActiveModelExamPackageBasicDetailDto[]>> GetActiveModelExams()
+    {
+        try
+        {
+            var result = await _httpClient.GetActiveModelExams();
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
 
     public async Task<Result<GetAllModelExamMetaDataResponseDto[]>> GetAllModelExamMetaData(int examNotificationId)
     {
@@ -48,11 +63,11 @@ public class ModelExamRestDataService : IModelExamDataService
         }
     }
 
-    public async Task<Result<ResponseDto<long>>> InitiateModelExamOrder(int modelExamId)
+    public async Task<Result<ResponseDto<long>>> InitiateModelExamOrder(int examNotificationId)
     {
         try
         {
-            var result = await _httpClient.InitiateModelExamOrder(modelExamId);
+            var result = await _httpClient.InitiateExamNotificationModelExamPackageOrder(examNotificationId);
             return Result.Ok(result);
         }
         catch (Exception ex)
@@ -166,6 +181,19 @@ public class ModelExamRestDataService : IModelExamDataService
         try
         {
             var result = await _httpClient.DeleteModelExamSession(modelExamResultId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamPurchaseNowDto>> GetModelExamPurchaseDetails(int examNotificationId)
+    {
+        try
+        {
+            var result = await _httpClient.GetModelExamPurchaseDetails(examNotificationId);
             return Result.Ok(result);
         }
         catch (Exception ex)

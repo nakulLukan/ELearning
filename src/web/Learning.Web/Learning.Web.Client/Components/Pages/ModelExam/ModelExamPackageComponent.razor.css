@@ -1,0 +1,15 @@
+﻿.model-exam-card {
+    height: 256px !important;
+    width: 335px !important;
+    border-radius: 20px;
+    overflow: clip;
+}
+
+.card-title{
+    color: #ffffff;
+}
+
+.app-overlay {
+    background: linear-gradient(0deg, #000000 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.6) 100%) !important;
+    padding: 15px 17px 24px 18px;
+}

@@ -1,0 +1,92 @@
+﻿@page "/model-exams/exam-notifications/{ExamNotificationId:int}"
+@using Learning.Shared.Common.Constants
+@using Learning.Shared.Common.Extensions
+@using Learning.Shared.Contracts.HttpContext
+@using Learning.Shared.Dto.ModelExams
+@using Learning.Shared.Dto.Notifications.ExamNotification
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Pages
+@using Learning.Web.Client.Contracts.Interop
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@using Learning.Web.Client.Dto.ExamNotifications.ModelExam
+@using static Learning.Web.Client.Components.Pages.ModelExam.ModelExamPurchaseNowComponent
+@rendermode InteractiveAuto
+@inject IModelExamDataService ModelExamDataService
+
+<AppPage BackgroundColor="#F4F4F4">
+	<div class="pt-9">
+		<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="en-page-container">
+			@if (_modelExams != null)
+			{
+				if (_modelExams.Any())
+				{
+					<h4 class=" mb-5 mb-md-6 ">@ExamName</h4>
+					@if (_isLocked)
+					{
+						<ModelExamPurchaseNowComponent ExamNotificationId="ExamNotificationId" DiscountedPrice="_discountedPrice" />
+					}
+					<div class="d-flex flex-column flex-md-row gap-8 gap-md-11 mt-5 mt-md-6">
+						@foreach (var modelExam in _modelExams)
+						{
+							<ModelExamDetailComponent Model="modelExam" />
+						}
+					</div>
+				}
+			}
+			else
+			{
+				<div class="d-flex flex-column gap-0">
+					<MudSkeleton Width="100%" Height="50px"></MudSkeleton>
+					<div class="d-flex  flex-wrap gap-3">
+						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+
+					</div>
+				</div>
+			}
+		</MudContainer>
+	</div>
+</AppPage>
+@code {
+	[Parameter, EditorRequired]
+	public int ExamNotificationId { get; set; }
+
+	[SupplyParameterFromQuery]
+	public required string ExamName { get; set; }
+
+	ModelExamMetaDataDto[]? _modelExams;
+	private bool _isLocked = false;
+	private float _discountedPrice = 0;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		if (ExamNotificationId != 0)
+		{
+			var modelExams = await ModelExamDataService.GetAllModelExamMetaData(ExamNotificationId);
+			if (modelExams.IsSuccess)
+			{
+				_modelExams = modelExams.Value.Select(x => new ModelExamMetaDataDto
+					{
+						ModelExamId = x.ExamConfigId,
+						DiscountedPrice = x.DiscountedPrice,
+						Price = x.Price,
+						ExamName = x.ExamName,
+						ExamNotificationId = x.ExamNotificationId,
+						IsFree = x.IsFree,
+						IsLocked = x.IsLocked,
+						ExamDescription = x.ExamDescription,
+						TotalQuestions = x.TotalQuestions,
+						TotalTimeInSeconds = x.TotalTimeInSeconds
+					}).ToArray();
+				_isLocked = _modelExams.Any(x => x.IsLocked);
+				if (_isLocked)
+				{
+					_discountedPrice = _modelExams.First(x => x.IsLocked).DiscountedPrice;
+				}
+				StateHasChanged();
+			}
+		}
+	}
+}

@@ -58,13 +58,9 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
                                      on mec.ModelExamPackageId equals mep.Id into mepGroup
                                  from mep in mepGroup.DefaultIfEmpty()
 
-                                 join meo in _dbContext.ModelExamOrders.IgnoreQueryFilters()
-                                     .Where(x => x.UserId == userId && x.Status == Shared.Common.Enums.OrderStatusEnum.Success)
-                                     on mep.Id equals meo.ModelExamPackageId into meoGroup
-                                 from meo in meoGroup.DefaultIfEmpty()
-
                                  join meph in _dbContext.ModelExamPurchaseHistory.IgnoreQueryFilters()
-                                     on meo.Id equals meph.OrderId into mephGroup
+                                    .Where(x => x.ModelExamOrder!.UserId == userId && x.ValidTill >= DateTimeOffset.UtcNow)
+                                     on mep.Id equals meph.ModelExamOrder!.ModelExamPackageId into mephGroup
                                  from meph in mephGroup.DefaultIfEmpty()
 
                                  where mec.Id == request.ModelExamId
@@ -79,9 +75,9 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
                                  }).FirstAsync(cancellationToken);
 
         // The user should be able to attend the exam only if the exam is free or exam package has been purchased
-        if (!examDetails.IsFree && examDetails.OrderValidTill.HasValue &&  examDetails.OrderValidTill < DateTimeOffset.UtcNow)
+        if (!examDetails.IsFree && examDetails.OrderValidTill.HasValue && examDetails.OrderValidTill < DateTimeOffset.UtcNow)
         {
-            throw new AppApiException( System.Net.HttpStatusCode.BadRequest, "BME01", "This model exam is not available for you. Please purchase the model exam package to access this model exam.");
+            throw new AppApiException(System.Net.HttpStatusCode.BadRequest, "BME01", "This model exam is not available for you. Please purchase the model exam package to access this model exam.");
         }
 
         // Check if an session for given model exam is already present

@@ -1,0 +1,31 @@
+﻿<div class="model-exam-card flex-grow-1 flex-md-grow-0 relative">
+	<MudImage Src="@BgUrl" Class="absolute start-0 top-0 w-100 h-100" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" />
+	<div class="d-flex flex-column justify-space-between h-100 app-overlay absolute start-0 end-0 bottom-0 top-0">
+		<div class="d-flex">
+			@if (IsPurchased)
+			{
+				<Learning.Web.Client.Components.Controls.DataDisplay.AppChip Title="Exams Purchased" ComponentState="Controls.DataDisplay.AppChip.State.Success"></Learning.Web.Client.Components.Controls.DataDisplay.AppChip>
+			}
+		</div>
+		<div class="d-flex justify-space-between align-center">
+			<h4 class="card-title">@Title</h4>
+			<Learning.Web.Client.Components.Controls.Actions.AppButton ButtonType="Controls.Actions.AppButton.AppButtonType.Secondary"
+																	   Class="pa-4"
+																	   Href="@($"/model-exams/exam-notifications/{ExamNotificationId}?examName={Title}")"
+																	   Icon="@GlyphIcons.ArrowRight"></Learning.Web.Client.Components.Controls.Actions.AppButton>
+		</div>
+	</div>
+</div>
+@code {
+	[Parameter]
+	public required string BgUrl { get; set; }
+
+	[Parameter]
+	public required string Title { get; set; }
+
+	[Parameter]
+	public required bool IsPurchased { get; set; }
+
+	[Parameter]
+	public required int ExamNotificationId { get; set; }
+}

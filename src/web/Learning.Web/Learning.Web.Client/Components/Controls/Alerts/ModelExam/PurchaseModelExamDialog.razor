@@ -13,11 +13,11 @@
                 <div class="d-flex flex-column align-start gap-4">
                     <div class="d-flex flex-column gap-3">
                         <h4>Purchase Model Exams</h4>
-                        <Learning.Web.Client.Components.Controls.DataDisplay.AppChip Title="ONE TIME FEE TO PURCHASE ALL EXAMS!"/>
+                        <Learning.Web.Client.Components.Controls.DataDisplay.AppChip Title="ONE TIME FEE TO PURCHASE ALL EXAMS!" ComponentState="DataDisplay.AppChip.State.Golden"/>
                     </div>
                     <div class="d-flex flex-column gap-2 mt-4">
-                        <h6>@ModelExamName</h6>
-                        <p>@ModelExamDescription</p>
+                        <h6>@ExamNotificationName</h6>
+                        <p>@ExamNotificationDescription</p>
                     </div>
                     <div class="d-flex flex-column gap-2 section">
                         <h6>Price</h6>
@@ -42,10 +42,10 @@
     private MudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
-    public string ModelExamName { get; set; } = string.Empty;
+    public string ExamNotificationName { get; set; } = string.Empty;
 
     [Parameter]
-    public string ModelExamDescription { get; set; } = string.Empty;
+    public string ExamNotificationDescription { get; set; } = string.Empty;
 
     [Parameter]
     public float DiscountedPrice { get; set; }

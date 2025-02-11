@@ -18,4 +18,5 @@ public class ModelExamOrderStepDetailDto
     public required DateTimeOffset? Validity { get; set; }
     public required int TotalPaidExamsInPackage { get; set; }
     public required int ModelExamId { get; set; }
+    public required int ExamNotificationId { get; set; }
 }

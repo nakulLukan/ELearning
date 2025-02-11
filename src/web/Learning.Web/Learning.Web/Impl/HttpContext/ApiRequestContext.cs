@@ -30,9 +30,10 @@ public class ApiRequestContext : IApiRequestContext
         return Task.FromResult(_contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.PhoneNumber).Value);
     }
 
-    public Task<string> GetUserId()
+    public async Task<string> GetUserId()
     {
-        return Task.FromResult(_contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.AwsUserNameClaim).Value);
+        if (!await IsAuthenticated()) return string.Empty;
+        return _contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.AwsUserNameClaim).Value;
     }
 
     public Task<string> GetUserRole()

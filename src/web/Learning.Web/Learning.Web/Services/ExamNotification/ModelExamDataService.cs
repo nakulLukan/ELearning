@@ -1,8 +1,10 @@
 ﻿using FluentResults;
+using Learning.Business.Requests.ModelExams;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
+using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
@@ -18,6 +20,20 @@ public class ModelExamDataService : IModelExamDataService
     {
         _mediator = mediator;
     }
+
+    public async Task<Result<ActiveModelExamPackageBasicDetailDto[]>> GetActiveModelExams()
+    {
+        try
+        {
+            var modelExams = await _mediator.Send(new GetActiveModelExamPackagesQuery());
+            return modelExams;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
 
     public async Task<Result<GetAllModelExamMetaDataResponseDto[]>> GetAllModelExamMetaData(int examNotificationId)
     {
@@ -51,13 +67,13 @@ public class ModelExamDataService : IModelExamDataService
         }
     }
 
-    public async Task<Result<ResponseDto<long>>> InitiateModelExamOrder(int modelExamId)
+    public async Task<Result<ResponseDto<long>>> InitiateModelExamOrder(int examNotificationId)
     {
         try
         {
             var orderId = await _mediator.Send(new ModelExamOrderInitiateCommand()
             {
-                ModelExamId = modelExamId
+                ExamNotificationId = examNotificationId
             }).ConfigureAwait(false);
             return orderId;
         }
@@ -197,6 +213,22 @@ public class ModelExamDataService : IModelExamDataService
             var result = await _mediator.Send(new DeleteModelExamSessionCommand()
             {
                 ModelExamResultId = modelExamResultId,
+            }).ConfigureAwait(false);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamPurchaseNowDto>> GetModelExamPurchaseDetails(int examNotificationId)
+    {
+        try
+        {
+            var result = await _mediator.Send(new ModelExamPurchaseNowQuery()
+            {
+                ExamNotificationId = examNotificationId,
             }).ConfigureAwait(false);
             return result;
         }

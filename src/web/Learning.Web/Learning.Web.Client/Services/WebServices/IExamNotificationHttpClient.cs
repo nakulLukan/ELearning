@@ -1,5 +1,7 @@
-﻿using Learning.Shared.Common.Dto;
+﻿using FluentResults;
+using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
+using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
@@ -9,6 +11,9 @@ namespace Learning.Web.Client.Services.WebServices;
 
 public interface IExamNotificationHttpClient
 {
+    [Get("/api/public/exam-notificaitons/{examNotificationId}/model-exam-package/purchase-details")]
+    public Task<ModelExamPurchaseNowDto> GetModelExamPurchaseDetails(int examNotificationId);
+
     [Get("/api/public/exam-notificaitons/homepage/active")]
     public Task<ActiveHomepageExamNotificationsQueryResponseDto[]> GetActiveHomePageExamNotifications();
 
@@ -24,8 +29,8 @@ public interface IExamNotificationHttpClient
     [Get("/api/public/exam-notificaitons/model-exams/{modelExamId}/validate-subscription")]
     public Task<ResponseDto<bool>> CheckUserModelExamSubscriptionQuery(int modelExamId);
 
-    [Post("/api/public/exam-notificaitons/model-exams/{modelExamId}/initiate-order")]
-    public Task<ResponseDto<long>> InitiateModelExamOrder(int modelExamId);
+    [Post("/api/public/exam-notificaitons/{examNotificationId}/initiate-order")]
+    public Task<ResponseDto<long>> InitiateExamNotificationModelExamPackageOrder(int examNotificationId);
 
     [Post("/api/public/exam-notificaitons/model-exams-orders/{modelExamOrderId}/complete-order")]
     public Task<ModeExamOrderCompleteResponseDto> CompleteModelExamOrder(long modelExamOrderId, [Query] OrderStatusEnum status);
@@ -50,4 +55,7 @@ public interface IExamNotificationHttpClient
 
     [Delete("/api/public/model-exams-results/{modelExamResultId}")]
     public Task<ResponseDto<bool>> DeleteModelExamSession(long modelExamResultId);
+
+    [Get("/api/public/model-exams/active")]
+    public Task<ActiveModelExamPackageBasicDetailDto[]> GetActiveModelExams();
 }

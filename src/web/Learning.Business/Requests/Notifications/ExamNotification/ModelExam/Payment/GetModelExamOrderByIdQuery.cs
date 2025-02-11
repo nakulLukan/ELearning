@@ -32,6 +32,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
         public required DateTimeOffset? Validity { get; set; }
         public required int TotalExamsInPackage { get; set; }
         public required int ModelExamId { get; set; }
+        public required int ExamNotificationId { get; set; }
     }
 
     public GetModelExamOrderByIdQueryHandler(
@@ -58,6 +59,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
                 RzrpayOrderId = x.RzrpayOrderId,
                 OrderCompletedOn = x.OrderedCompletedOn,
                 ExamNotificationTitle = x.ModelExamPackage!.ExamNotification!.NotificationTitle,
+                ExamNotificationId = x.ModelExamPackage.ExamNotificationId,
                 Validity = x.ModelExamPurchaseHistory != null ? x.ModelExamPurchaseHistory!.ValidTill : null,
                 TotalExamsInPackage = x.ModelExamPackage.ModelExamConfigs!.Where(x => !x.IsFree).Count(),
                 ModelExamId = x.ModelExamPackage.ModelExamConfigs!.First(y=>!y.IsFree).Id
@@ -94,7 +96,8 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
             OrderCompletedOn = order.OrderCompletedOn,
             Validity = order.Validity,
             TotalPaidExamsInPackage = order.TotalExamsInPackage,
-            ModelExamId = order.ModelExamId
+            ModelExamId = order.ModelExamId,
+            ExamNotificationId = order.ExamNotificationId,
         };
     }
 

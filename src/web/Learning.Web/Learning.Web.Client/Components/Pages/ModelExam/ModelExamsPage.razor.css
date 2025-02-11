@@ -1,0 +1,63 @@
+﻿
+::deep .notification-container {
+    gap: 20px;
+}
+
+::deep .exam-notification-card {
+    width: 312px !important;
+    padding: 20px;
+}
+
+::deep .exam-notification-card-image {
+    height: 128px !important;
+    border-radius: 20px !important;
+    width: 100%;
+}
+
+::deep .notification-date {
+    left: 0px;
+    top: 0px;
+    margin: 13px;
+    padding: 4px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    font-family: var(--ff-500);
+    font-size: 0.875rem !important;
+    line-height: 1.4rem;
+}
+
+::deep .notification-description {
+    font-size: 0.875rem;
+    line-height: 1.4rem;
+    min-height: calc(1.4rem * 4); /* Ensure the div has the height of 3 lines of text */
+    max-height: calc(1.4rem * 4); /* Prevent the div from growing beyond 3 lines */
+    overflow: hidden; /* Hide any overflowing content if text goes beyond 3 lines */
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+::deep .app-button {
+    font-size: 0.875rem !important;
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+}
+
+.app-sub-title{
+    font-family: var(--ff-500);
+    font-size: 1.25rem;
+}
+
+@media (max-width:960px) {
+    :: deep .exam-notification-card-image {
+        height: 116px !important;
+    }
+
+    ::deep .notification-container {
+        gap: 16px !important;
+    }
+    .app-sub-title {
+        font-size: 0.875rem;
+    }
+}

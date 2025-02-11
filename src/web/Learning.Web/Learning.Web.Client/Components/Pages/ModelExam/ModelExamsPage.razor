@@ -1,0 +1,58 @@
+﻿@page "/model-exams"
+@using Learning.Shared.Common.Constants
+@using Learning.Shared.Dto.ModelExams
+@using Learning.Shared.Dto.Notifications.ExamNotification
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Pages
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
+@inject IModelExamDataService ModelExamDataService;
+<AppPage BackgroundColor="#F4F4F4">
+	<div class="pt-9">
+		<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="en-page-container">
+			@if (_modelExams != null)
+			{
+				<div class="d-flex flex-column gap-6">
+					<h4>Model Exams</h4>
+					<h6 class="app-sub-title">Explore model exams by category</h6>
+					<div class="d-flex flex-wrap flex-grow-1 flex-md-grow-0 justify-md-start gap-6">
+						@foreach (var modelExam in _modelExams)
+						{
+							<ModelExamPackageComponent Title="@modelExam.ExamNotificationName" IsPurchased="@modelExam.IsPurchased"
+													   BgUrl="@modelExam.ImageAbsUrl" 
+													   ExamNotificationId="@modelExam.ExamNotificationId"/>
+						}
+					</div>
+				</div>
+			}
+			else
+			{
+				<div class="d-flex flex-column gap-0">
+					<MudSkeleton Width="100%" Height="50px"></MudSkeleton>
+					<div class="d-flex  flex-wrap gap-3">
+						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+
+					</div>
+				</div>
+			}
+		</MudContainer>
+	</div>
+</AppPage>
+@code {
+	private ActiveModelExamPackageBasicDetailDto[]? _modelExams = null;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+
+		var result = await ModelExamDataService.GetActiveModelExams();
+		if (result.IsSuccess)
+		{
+			_modelExams = result.Value;
+			StateHasChanged();
+		}
+	}
+}

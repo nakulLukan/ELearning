@@ -1,4 +1,4 @@
-﻿
+﻿@implements IDisposable
 <div class="d-flex flex-row align-content-center">
 	<MudIcon Class="align-self-center" Icon="@Icons.Material.Outlined.AccessTime">
 	</MudIcon>
@@ -75,5 +75,12 @@
 
 	public void Start(){
 		timer!.Start();
+	}
+
+	void IDisposable.Dispose()
+	{
+		Console.WriteLine("Quiz Timer component disposed");
+		TurnOff();
+		timer?.Dispose();
 	}
 }

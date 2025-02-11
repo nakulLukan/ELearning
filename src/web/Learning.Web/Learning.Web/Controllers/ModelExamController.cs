@@ -1,4 +1,5 @@
-﻿using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+﻿using Learning.Business.Requests.ModelExams;
+using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using MediatR;
@@ -15,6 +16,13 @@ public class ModelExamController : ControllerBase
     public ModelExamController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet("model-exams/active")]
+    public async Task<IActionResult> GetActiveModelExams()
+    {
+        var data = await _mediator.Send(new GetActiveModelExamPackagesQuery()).ConfigureAwait(false);
+        return Ok(data);
     }
 
     [Authorize]

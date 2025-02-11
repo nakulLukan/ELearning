@@ -10,7 +10,6 @@ public class ModelExamMetaDataDto
     public required string ExamDescription { get; set; }
     public required bool IsFree { get; set; }
     public required bool IsLocked { get; set; }
-    public required DateOnly ValidUpto { get; set; }
     public required int TotalQuestions{ get; set; }
     public required int TotalTimeInSeconds { get; set; }
 

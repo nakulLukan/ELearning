@@ -1,0 +1,52 @@
+﻿@using Learning.Shared.Common.Extensions
+@using Learning.Shared.Contracts.HttpContext
+@using Learning.Shared.Dto.ModelExams
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@using Learning.Web.Client.Dto.ExamNotifications.ModelExam
+@inject IRequestContext RequestContext
+@inject IModelExamDataService ModelExamDataService
+@inject IAlertService AlertService
+<div class="app-purchase-now-card d-flex flex-column flex-md-row justify-space-between align-center gap-8 align-item-stretch">
+	<h4 class="app-purchase-card-title">Unlock all exams now at the offer price of @DiscountedPrice.ToCurrency()</h4>
+	<AppButton Text="Purchase Now" ButtonType="AppButton.AppButtonType.Secondary" OnClick="PurchaseModelExamClicked" />
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+	public int ExamNotificationId { get; set; }
+
+	[Parameter, EditorRequired]
+	public float DiscountedPrice { get; set; }
+
+	private async Task PurchaseModelExamClicked()
+	{
+		if (!await RequestContext.IsAuthenticated())
+		{
+			NavigationManager.NavigateToLogin();
+			return;
+		}
+		var purchaseNowDetails = await ModelExamDataService.GetModelExamPurchaseDetails(ExamNotificationId);
+		if (purchaseNowDetails.IsFailed)
+		{
+			return;
+		}
+		var confirmed = await AlertService.DisplayPurchaseExamAlert(new ModelExamPurchaseDialogParam
+			{
+				DiscountedPrice = purchaseNowDetails.Value.DiscountedPrice,
+				ExamNotificationDescription = purchaseNowDetails.Value.ExamNotificationDescription,
+				ExamNotificationName = purchaseNowDetails.Value.ExamNotificationName,
+				ValidUpto = purchaseNowDetails.Value.ValidUpto,
+			});
+		if (confirmed)
+		{
+			var order = await ModelExamDataService.InitiateModelExamOrder(ExamNotificationId);
+			if (order.IsSuccess)
+			{
+				// TODO: Invoke razor pay payment page
+				NavigationManager.NavigateTo($"/model-exams/{order.Value.Data}/initiate-order", true);
+			}
+		}
+	}
+}

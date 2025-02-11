@@ -1,13 +1,21 @@
 ﻿div {
-    background: linear-gradient(90deg, #E09730 0%, #FFDA56 100%);
+    background: linear-gradient(90deg, #E09730 0%, #FFDA56 100%) !important;
     padding: 4px 10px 4px 10px;
     border-radius: 6px;
 }
+div > span {
+    color: #2A2A2A;
+    font-family: var(--ff-600);
+    font-size: 0.75rem;
+    line-height: 1.2rem;
+    text-transform: uppercase;
+}
 
-    div > span {
-        color: #2A2A2A;
-        font-family: var(--ff-600);
-        font-size: 0.75rem;
-        line-height: 1.2rem;
-        text-transform: uppercase;
-    }
+.fg-white {
+    color: #FFFFFF;
+}
+
+.bg-success-state {
+    background: #0A9E52 !important;
+    color: #FFFFFF;
+}

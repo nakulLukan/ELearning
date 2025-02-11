@@ -104,8 +104,8 @@ public class AlertService : IAlertService
 
         DialogParameters parameters = new DialogParameters()
         {
-            { nameof(PurchaseModelExamDialog.ModelExamName), parameter.ExamName },
-            { nameof(PurchaseModelExamDialog.ModelExamDescription), parameter.ExamDescription },
+            { nameof(PurchaseModelExamDialog.ExamNotificationName), parameter.ExamNotificationName },
+            { nameof(PurchaseModelExamDialog.ExamNotificationDescription), parameter.ExamNotificationDescription },
             { nameof(PurchaseModelExamDialog.DiscountedPrice), parameter.DiscountedPrice },
             { nameof(PurchaseModelExamDialog.ValidUpto), parameter.ValidUpto },
         };

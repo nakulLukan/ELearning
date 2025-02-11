@@ -10,7 +10,6 @@ public class GetAllModelExamMetaDataResponseDto
     public required bool IsFree { get; set; }
     public required float Price { get; set; }
     public required float DiscountedPrice { get; set; }
-    public required DateOnly ValidUpto { get; set; }
     public required int TotalQuestions { get; set; }
     public required int TotalTimeInSeconds { get; set; }
 }

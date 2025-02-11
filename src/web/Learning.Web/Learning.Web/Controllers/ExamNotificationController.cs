@@ -1,4 +1,5 @@
-﻿using Learning.Business.Requests.Notifications.ExamNotification;
+﻿using Learning.Business.Requests.ModelExams;
+using Learning.Business.Requests.Notifications.ExamNotification;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Shared.Common.Enums;
@@ -55,10 +56,10 @@ public class ExamNotificationController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("model-exams/{modelExamId:int}/initiate-order")]
-    public async Task<IActionResult> InitiateModelExamOrder([FromRoute] int modelExamId)
+    [HttpPost("{examNotificationId:int}/initiate-order")]
+    public async Task<IActionResult> InitiateExamNotificationModelExamPackageOrder([FromRoute] int examNotificationId)
     {
-        var data = await _mediator.Send(new ModelExamOrderInitiateCommand() { ModelExamId = modelExamId }).ConfigureAwait(false);
+        var data = await _mediator.Send(new ModelExamOrderInitiateCommand() { ExamNotificationId = examNotificationId }).ConfigureAwait(false);
         return Ok(data);
     }
 
@@ -92,6 +93,16 @@ public class ExamNotificationController : ControllerBase
         var data = await _mediator.Send(new GetExamQuestionsListQuery()
         {
             ModelExamId = modelExamId
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [HttpGet("{examNotificationId:int}/model-exam-package/purchase-details")]
+    public async Task<IActionResult> GetModelExamPurchaseDetails([FromRoute] int examNotificationId)
+    {
+        var data = await _mediator.Send(new ModelExamPurchaseNowQuery()
+        {
+            ExamNotificationId = examNotificationId
         }).ConfigureAwait(false);
         return Ok(data);
     }
