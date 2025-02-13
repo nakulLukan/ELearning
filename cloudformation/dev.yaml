@@ -1,4 +1,8 @@
 Parameters:
+  SiteDomainName:
+    Description: Enter the domain name of your website
+    Type: String
+
   DeployedRegion:
     Description: Choose a region
     Type: String
@@ -197,6 +201,7 @@ Resources:
               StringLike:
                 'aws:Referer':
                   - 'https://localhost:5000/*'
+                  - !Join [ "", ['https://', !Ref SiteDomainName ,'/*']]
                   - !Join [ "", ['https://', !GetAtt EC2WebServer.PublicIp ,'/*']]
             
   RdsDB:

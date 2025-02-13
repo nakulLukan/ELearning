@@ -2,6 +2,7 @@
 @using Learning.Shared.Common.Enums
 @using Learning.Shared.Common.Extensions
 @using Learning.Shared.Common.Utilities
+@using Learning.Shared.Constants
 @using Learning.Web.Client.Components.Controls.Actions
 @using Learning.Web.Client.Components.Layout.ModelExam
 @using Learning.Web.Client.Contracts.Interop
@@ -9,10 +10,10 @@
 @inject IModelExamDataService ModelExamDataService
 @inject IAppJSInterop AppJSInterop
 @inject IAlertService AlertService
-@rendermode InteractiveAuto
+@rendermode InteractiveWebAssembly
 @layout ModelExamSessionLayout
 @attribute [Authorize]
-<NavigationLock ConfirmExternalNavigation="true" >
+<NavigationLock ConfirmExternalNavigation="true">
 </NavigationLock>
 
 <ModelExamSessionNavBar EndExamChanged="EndSession" />
@@ -111,6 +112,17 @@
 		var details = await ModelExamDataService.BeginModelExam(ModelExamId);
 		if (details.IsFailed)
 		{
+			// If model exam is not purchased then navigate the user to that model exam listing screen.
+			if (details.Errors.Any(x => x.Message == ApiErrorCodes.BME01))
+			{
+				var examNotificationResponse = await ModelExamDataService.GetExamNotificationDetailByModelExamId(ModelExamId);
+				if (examNotificationResponse.IsSuccess)
+				{
+					await AlertService.DisplayPublicUserGeneralAlert("Purchase", "Please purchase this model exam to continue the test.", "Go to listing");
+					NavigationManager.NavigateTo($"/model-exams/exam-notifications/{examNotificationResponse.Value.ExamNotificationId}");
+				}
+			}
+
 			return;
 		}
 

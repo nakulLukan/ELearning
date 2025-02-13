@@ -34,8 +34,8 @@
 											<p class="app-summary-value">@(_summary.Value.Status == ModelExamSessionStatusEnum.Timeout ? "Timeout" : _sessionDurationString!)</p>
 										</div>
 										<div class="d-flex justify-space-between">
-											<p class="app-summary-header">Answered</p>
-											<p class="app-summary-value">@_answerdCount/@_totalCount</p>
+											<p class="app-summary-header">Score</p>
+											<p class="app-summary-value">@_score/@_totalScore</p>
 										</div>
 									</MudStack>
 									<MudStack Row Class="w-100">
@@ -67,8 +67,8 @@
 										<p class="app-summary-value">@(_sessionDurationString!)</p>
 									</div>
 									<div class="d-flex justify-space-between">
-										<p class="app-summary-header">Answered</p>
-										<p class="app-summary-value">@_answerdCount/@_totalCount</p>
+										<p class="app-summary-header">Score</p>
+										<p class="app-summary-value">@_score/@_totalScore</p>
 									</div>
 								</MudStack>
 							</div>
@@ -127,6 +127,8 @@
 	private int _wrongCount;
 	private int _totalCount;
 	private int _scorePercentage;
+	private float _score;
+	private float _totalScore;
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (!firstRender) return;
@@ -166,15 +168,15 @@
 		_answerdCount = _summary.Value.QuestionSummary.Count(x => x.IsCorrect);
 		_wrongCount = _summary.Value.QuestionSummary.Count(x => !x.IsCorrect && !x.HasSkipped);
 		_sessionDurationString = _summary.Value.SessionDurationInSeconds!.Value.ToDurationString();
-		var totalScore = _summary.Value.QuestionSummary.Sum(x => x.Score);
-		var score = _summary.Value.QuestionSummary.Where(x => x.IsCorrect).Sum(x => x.Score);
+		_totalScore = _summary.Value.QuestionSummary.Sum(x => x.Score);
+		_score = _summary.Value.QuestionSummary.Where(x => x.IsCorrect).Sum(x => x.Score);
 
 		StateHasChanged();
 
 		await InvokeAsync(async () =>
 		{
 			await Task.Delay(100);
-			_scorePercentage = (int)((float)score * 100 / (float)totalScore);
+			_scorePercentage = (int)((float)_score * 100 / (float)_totalScore);
 			StateHasChanged();
 		});
 

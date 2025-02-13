@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
+using Learning.Shared.Common.Utilities;
 using Learning.Shared.Contracts.HttpContext;
 using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
@@ -96,9 +97,9 @@ public class ModelExamRestDataService : IModelExamDataService
             var result = await _httpClient.BeginModelExam(modelExamId);
             return Result.Ok(result);
         }
-        catch (Exception ex)
+        catch (AppApiException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(ex.ErrorCode);
         }
     }
 
@@ -194,6 +195,19 @@ public class ModelExamRestDataService : IModelExamDataService
         try
         {
             var result = await _httpClient.GetModelExamPurchaseDetails(examNotificationId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ExamNotificationDetailResponseDto>> GetExamNotificationDetailByModelExamId(int modelExamId)
+    {
+        try
+        {
+            var result = await _httpClient.GetExamNotificationDetailByModelExamId(modelExamId);
             return Result.Ok(result);
         }
         catch (Exception ex)

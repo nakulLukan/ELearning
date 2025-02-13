@@ -183,6 +183,7 @@ public static class ServiceRegistry
         builder.Services.AddBlazoredLocalStorage();
         builder.Services.AddSubtleCrypto();
         builder.Services.AddHttpClient();
+        builder.Services.AddProblemDetails();
         RegisterAppServices(builder);
     }
 

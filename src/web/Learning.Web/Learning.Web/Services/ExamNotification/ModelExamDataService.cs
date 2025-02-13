@@ -1,9 +1,11 @@
 ﻿using FluentResults;
+using Learning.Business.Dto.ModelExams;
 using Learning.Business.Requests.ModelExams;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
+using Learning.Shared.Common.Utilities;
 using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
@@ -110,9 +112,13 @@ public class ModelExamDataService : IModelExamDataService
             }).ConfigureAwait(false);
             return sessionDetails;
         }
-        catch (Exception ex)
+        catch (AppApiException ex)
         {
-            return Result.Fail(ex.Message);
+            return Result.Fail(ex.ErrorCode);
+        }
+        catch (Exception e)
+        {
+            return Result.Fail(e.Message);
         }
     }
 
@@ -229,6 +235,22 @@ public class ModelExamDataService : IModelExamDataService
             var result = await _mediator.Send(new ModelExamPurchaseNowQuery()
             {
                 ExamNotificationId = examNotificationId,
+            }).ConfigureAwait(false);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ExamNotificationDetailResponseDto>> GetExamNotificationDetailByModelExamId(int modelExamId)
+    {
+        try
+        {
+            var result = await _mediator.Send(new GetExamNotificationDetailByModelExamIdQuery()
+            {
+                ModelExamId = modelExamId,
             }).ConfigureAwait(false);
             return result;
         }

@@ -3,6 +3,7 @@ using Learning.Business.Impl.Data;
 using Learning.Domain.Notification;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Constants;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -75,9 +76,9 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
                                  }).FirstAsync(cancellationToken);
 
         // The user should be able to attend the exam only if the exam is free or exam package has been purchased
-        if (!examDetails.IsFree && examDetails.OrderValidTill.HasValue && examDetails.OrderValidTill < DateTimeOffset.UtcNow)
+        if (!examDetails.IsFree && (!examDetails.OrderValidTill.HasValue || examDetails.OrderValidTill < DateTimeOffset.UtcNow))
         {
-            throw new AppApiException(System.Net.HttpStatusCode.BadRequest, "BME01", "This model exam is not available for you. Please purchase the model exam package to access this model exam.");
+            throw new AppApiException(System.Net.HttpStatusCode.BadRequest, ApiErrorCodes.BME01, "This model exam is not available for you. Please purchase the model exam package to access this model exam.");
         }
 
         // Check if an session for given model exam is already present

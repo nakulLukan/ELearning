@@ -84,4 +84,15 @@ public class ModelExamController : ControllerBase
         }).ConfigureAwait(false);
         return Ok(data);
     }
+
+    [Authorize]
+    [HttpGet("model-exams/{modelExamId:int}/exam-notification-detail")]
+    public async Task<IActionResult> GetExamNotificationDetailByModelExamId([FromRoute] int modelExamId)
+    {
+        var data = await _mediator.Send(new GetExamNotificationDetailByModelExamIdQuery()
+        {
+            ModelExamId = modelExamId,
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
 }

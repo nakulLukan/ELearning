@@ -26,4 +26,6 @@ public interface IModelExamDataService
     public Task<Result<ResponseDto<ModelExamSessionStatusEnum>>> CompleteModelExamSession(long modelExamResultId, ModelExamSessionStatusEnum status);
     public Task<Result<GetModelExamSummaryResponseDto>> GetModelExamSummary(long modelExamResultId);
     public Task<Result<ResponseDto<bool>>> DeleteModelExamSession(long modelExamResultId);
+    public Task<Result<ExamNotificationDetailResponseDto>> GetExamNotificationDetailByModelExamId(int modelExamId);
+
 }

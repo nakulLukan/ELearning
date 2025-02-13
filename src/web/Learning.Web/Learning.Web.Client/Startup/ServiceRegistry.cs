@@ -19,6 +19,7 @@ using Learning.Web.Client.Services.ExamNotification;
 using Learning.Web.Client.Services.Quiz;
 using Learning.Web.Client.Services.Subscription;
 using Learning.Web.Client.Services.WebServices;
+using Learning.Web.Client.Utilities.RestClient;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -41,11 +42,14 @@ internal static class ServiceRegistry
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
         #region Refit
         builder.Services.AddRefitClient<IPublicQuizHttpClient>()
-                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                        .AddHttpMessageHandler<ProblemDetailsHandler>();
         builder.Services.AddRefitClient<IDataCollectionHttpClient>()
-                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                        .AddHttpMessageHandler<ProblemDetailsHandler>();
         builder.Services.AddRefitClient<IExamNotificationHttpClient>()
-                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+                        .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                        .AddHttpMessageHandler<ProblemDetailsHandler>();
         #endregion
 
         builder.Services.AddBlazorBootstrap();
@@ -62,6 +66,7 @@ internal static class ServiceRegistry
         builder.Services.AddScoped<IQuizManager, QuizManager>();
         builder.Services.AddScoped<IAlertService, AlertService>();
         builder.Services.AddScoped<INavigationService, NavigationService>();
+        builder.Services.AddScoped<ProblemDetailsHandler, ProblemDetailsHandler>();
 
         builder.Services.AddTransient<IQuizDataService, QuizRestDataService>();
         builder.Services.AddTransient<ICouponCodeDataService, CouponCodeRestDataService>();

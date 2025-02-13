@@ -45,6 +45,8 @@ public class AlertService : IAlertService
         {
             { nameof(PublicUserGeneralDialog.Title), title },
             { nameof(PublicUserGeneralDialog.Description), description },
+            { nameof(PublicUserGeneralDialog.ConfirmText), ok },
+            { nameof(PublicUserGeneralDialog.HideCancelButton), true },
         };
         var dialog = await _dialogService.ShowAsync<PublicUserGeneralDialog>(string.Empty, parameters, options);
         var res = (await dialog.Result);

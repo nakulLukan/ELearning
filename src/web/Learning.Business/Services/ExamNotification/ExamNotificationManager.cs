@@ -1,7 +1,7 @@
 ﻿using Learning.Business.Constants.Notifications;
 using Learning.Business.Contracts.Persistence;
 using Learning.Business.Contracts.Services.ExamNotification;
-using Learning.Business.Dto.Notifications.ExamNotification;
+using Learning.Business.Dto.ModelExams;
 using Learning.Business.Impl.Data;
 using Learning.Shared.Application.Contracts.Storage;
 using Learning.Shared.Common.Utilities;
@@ -47,5 +47,25 @@ public class ExamNotificationManager : IExamNotificationManager
         }
 
         return examNotifications;
+    }
+
+    public async Task<ExamNotificationDetailCacheDto> GetExamNotificationDetail(int modelExamId, CancellationToken cancellationToken)
+    {
+        (bool isDataAvailable, ExamNotificationDetailCacheDto? examNotification)
+             = _appCache.Get<ExamNotificationDetailCacheDto>(ExamNotificationCacheKey.ExamNotificationDetail(modelExamId));
+        if (!isDataAvailable)
+        {
+            var data = await _dbContext.ModelExamConfigurations
+                            .Where(x => x.Id == modelExamId)
+                            .Select(x => new ExamNotificationDetailCacheDto
+                            {
+                                ExamNotificationId = x.ExamNotificationId,
+                                ExamNotificationName = x.ExamNotification!.NotificationTitle,
+                            })
+                            .FirstAsync(cancellationToken);
+            examNotification = _appCache.SetWithSlidingExpiration(ExamNotificationCacheKey.ExamNotificationDetail(modelExamId), data, TimeSpan.FromDays(1));
+        }
+
+        return examNotification!;
     }
 }

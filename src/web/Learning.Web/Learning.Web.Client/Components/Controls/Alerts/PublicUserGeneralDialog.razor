@@ -12,7 +12,10 @@
 					<h2>@Title</h2>
 					<p class="px-8">@Description</p>
 					<div class="d-flex flex-column flex-md-row w-100 gap-2 gap-md-4">
-						<AppButton Text="Cancel" OnClick="Cancel" FullWidth ButtonType="AppButton.AppButtonType.Secondary" />
+						@if (!HideCancelButton)
+						{
+							<AppButton Text="Cancel" OnClick="Cancel" FullWidth ButtonType="AppButton.AppButtonType.Secondary" />
+						}
 						<AppButton Text="@ConfirmText" OnClick="Submit" FullWidth />
 
 					</div>
@@ -38,6 +41,9 @@
 
 	[Parameter]
 	public string ConfirmText { get; set; } = "Confirm";
+
+	[Parameter]
+	public bool HideCancelButton { get; set; }
 
 	private void Submit() => MudDialog!.Close(DialogResult.Ok(true));
 

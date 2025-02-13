@@ -58,4 +58,7 @@ public interface IExamNotificationHttpClient
 
     [Get("/api/public/model-exams/active")]
     public Task<ActiveModelExamPackageBasicDetailDto[]> GetActiveModelExams();
+
+    [Get("/api/public/model-exams/{modelExamId}/exam-notification-detail")]
+    public Task<ExamNotificationDetailResponseDto> GetExamNotificationDetailByModelExamId(int modelExamId);
 }

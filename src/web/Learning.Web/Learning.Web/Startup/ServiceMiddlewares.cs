@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Learning.Web.Utilities.ExceptionHandler;
 namespace Learning.Web;
 
 public static class ServiceMiddlewares
@@ -15,5 +16,6 @@ public static class ServiceMiddlewares
             SupportedCultures = supportedCultures,
             SupportedUICultures = supportedCultures
         });
+        app.UseMiddleware<ApiExceptionHandlerMiddleware>();
     }
 }
