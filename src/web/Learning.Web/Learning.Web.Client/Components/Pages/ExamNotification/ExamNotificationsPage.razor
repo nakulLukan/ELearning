@@ -7,6 +7,8 @@
 @rendermode InteractiveAuto
 @inject NavigationManager NavigationManager
 @inject IExamNotificationDataService ExamNotificationDataService;
+<PageTitle>Exam Notifications</PageTitle>
+
 <AppPage BackgroundColor="#F4F4F4">
     <div class="pt-9">
         <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="en-page-container">
@@ -28,7 +30,7 @@
                                     </div>
                                     <h6>@notification.Title</h6>
                                     <p class="notification-description">@notification.Description</p>
-                                    <div class="d-flex flex-grow-1 gap-2 align-end">
+                                    <div class="d-flex flex-grow-1 gap-2 align-center">
                                         <AppButton Class="flex-grow-1" Text="Free Model Exam"
                                                    Href="@($"/exam-notifications/{notification.Id}/apply#free-exam")"></AppButton>
                                         <AppButton ButtonType="AppButton.AppButtonType.Secondary"
@@ -47,11 +49,10 @@
             {
                 <div class="d-flex flex-column gap-0">
                     <MudSkeleton Width="100%" Height="50px"></MudSkeleton>
-                    <div class="d-flex  flex-wrap gap-3">
-                        <MudSkeleton Height="400px" Width="313px"></MudSkeleton>
-                        <MudSkeleton Height="400px" Width="313px"></MudSkeleton>
-                        <MudSkeleton Height="400px" Width="313px"></MudSkeleton>
-
+                    <div class="d-flex flex-column flex-md-row gap-3">
+                        <MudSkeleton Class="loader-card" Height="400px" ></MudSkeleton>
+                        <MudSkeleton Class="loader-card" Height="400px"></MudSkeleton>
+                        <MudSkeleton Class="loader-card" Height="400px"></MudSkeleton>
                     </div>
                 </div>
             }

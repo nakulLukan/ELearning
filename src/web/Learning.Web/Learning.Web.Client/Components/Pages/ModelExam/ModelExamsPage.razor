@@ -8,6 +8,7 @@
 @rendermode InteractiveAuto
 @inject NavigationManager NavigationManager
 @inject IModelExamDataService ModelExamDataService;
+<PageTitle>Model Exam</PageTitle>
 <AppPage BackgroundColor="#F4F4F4">
 	<div class="pt-9">
 		<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="en-page-container">
@@ -30,10 +31,10 @@
 			{
 				<div class="d-flex flex-column gap-0">
 					<MudSkeleton Width="100%" Height="50px"></MudSkeleton>
-					<div class="d-flex  flex-wrap gap-3">
-						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
-						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
-						<MudSkeleton Height="400px" Width="313px"></MudSkeleton>
+					<div class="d-flex  flex-column flex-md-row gap-3">
+						<MudSkeleton Class="loader-card" Height="400px"></MudSkeleton>
+						<MudSkeleton Class="loader-card" Height="400px"></MudSkeleton>
+						<MudSkeleton Class="loader-card" Height="400px"></MudSkeleton>
 
 					</div>
 				</div>

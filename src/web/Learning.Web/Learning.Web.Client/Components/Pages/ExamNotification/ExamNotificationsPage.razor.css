@@ -44,12 +44,21 @@
     padding-bottom: 16px !important;
 }
 
+::deep .loader-card {
+    width: 313px !important;
+}
+
 @media (max-width:960px) {
 
     ::deep .exam-notification-card-image {
         height: 116px !important;
     }
+
     ::deep .notification-container {
         gap: 16px !important;
+    }
+
+    ::deep .loader-card {
+        width: 100% !important;
     }
 }

@@ -48,6 +48,9 @@
     font-family: var(--ff-500);
     font-size: 1.25rem;
 }
+::deep .loader-card {
+    width: 313px !important;
+}
 
 @media (max-width:960px) {
     :: deep .exam-notification-card-image {
@@ -59,5 +62,9 @@
     }
     .app-sub-title {
         font-size: 0.875rem;
+    }
+
+    ::deep .loader-card {
+        width: 100% !important;
     }
 }
