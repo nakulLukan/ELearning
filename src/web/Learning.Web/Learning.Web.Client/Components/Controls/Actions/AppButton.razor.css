@@ -18,11 +18,13 @@
     box-shadow: 0px 4px 14px 0px #00000040;
 }
 .app-button-small {
-    background: #E05B5B;
     height: 50px;
     font-size: 0.875rem;
 }
 
+.app-button-danger {
+    background: #E05B5B;
+}
 .app-button-secondary {
     font-family: SemiBold;
     background: #FFFFFF !important;

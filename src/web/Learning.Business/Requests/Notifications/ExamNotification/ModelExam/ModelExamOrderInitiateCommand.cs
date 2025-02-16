@@ -37,18 +37,31 @@ public class ModelExamOrderInitiateCommandHandler : IRequestHandler<ModelExamOrd
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw new AppApiException(System.Net.HttpStatusCode.NotFound, "MEOI001", "Unknown model exam package");
         var userId = await _requestContext.GetUserId().ConfigureAwait(false);
-        ModelExamOrder initiateOrder = new ModelExamOrder
-        {
-            Id = 0,
-            Amount = examPackage.DiscountedPrice,
-            ModelExamPackageId = examPackage.Id,
-            OrderedInitiatedOn = AppDateTime.UtcNow,
-            Status = Shared.Common.Enums.OrderStatusEnum.Initiated,
-            UserId = userId
-        };
 
-        _dbContext.ModelExamOrders.Add(initiateOrder);
-        await _dbContext.SaveAsync(cancellationToken).ConfigureAwait(false);
-        return new(initiateOrder.Id);
+        // If there is any existing incomplete order for this exam notification then use that.
+        var existingPendingOrderId = await _dbContext.ModelExamOrders
+            .Where(x => x.UserId == userId
+                && (x.Status == Shared.Common.Enums.OrderStatusEnum.Initiated
+                   || x.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
+                && x.ModelExamPackage!.ExamNotificationId == request.ExamNotificationId)
+            .Select(x => x.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (existingPendingOrderId == default)
+        {
+            ModelExamOrder initiateOrder = new ModelExamOrder
+            {
+                Id = 0,
+                Amount = examPackage.DiscountedPrice,
+                ModelExamPackageId = examPackage.Id,
+                OrderedInitiatedOn = AppDateTime.UtcNow,
+                Status = Shared.Common.Enums.OrderStatusEnum.Initiated,
+                UserId = userId
+            };
+
+            _dbContext.ModelExamOrders.Add(initiateOrder);
+            await _dbContext.SaveAsync(cancellationToken).ConfigureAwait(false);
+            existingPendingOrderId = initiateOrder.Id;
+        }
+        return new(existingPendingOrderId);
     }
 }

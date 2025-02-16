@@ -12,6 +12,7 @@
 @using static Learning.Web.Client.Components.Pages.ModelExam.ModelExamPurchaseNowComponent
 @rendermode InteractiveAuto
 @inject IModelExamDataService ModelExamDataService
+@inject IExamNotificationDataService ExamNotificationDataService
 <PageTitle>Model Exam</PageTitle>
 
 <AppPage BackgroundColor="#F4F4F4">
@@ -65,6 +66,16 @@
 		if (!firstRender) return;
 		if (ExamNotificationId != 0)
 		{
+			// Sometimes exam name may not to present. So get the actual value from database.
+			if (string.IsNullOrEmpty(ExamName))
+			{
+				var examNotificationDetailResponse = await ExamNotificationDataService.ActiveExamNotificationDetailById(ExamNotificationId);
+				if (examNotificationDetailResponse.IsSuccess)
+				{
+					ExamName = examNotificationDetailResponse.Value.Title;
+				}
+			}
+
 			var modelExams = await ModelExamDataService.GetAllModelExamMetaData(ExamNotificationId);
 			if (modelExams.IsSuccess)
 			{

@@ -2,7 +2,7 @@
 {
 	<button type="@_buttonFormType"
 			id="@Id"
-			class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
+			class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)  @(Color == ButtonColor.Default ? string.Empty : StyleConstants.AppButtonDanger)"
 			@onclick="OnClickHandler"
 			style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
 			disabled="@isInternallyDisabled">
@@ -18,7 +18,7 @@ else
 	<a type="@_buttonFormType"
 	   id="@Id"
 	   href="@Href"
-	   class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall)"
+	   class="app-button @_buttonTypeClass @_fullWidthClass @Class @(Disabled ? "cursor-not-allowed" : "cursor-pointer") @(Size == ButtonSize.Default ? string.Empty : StyleConstants.AppButtonSmall) @(Color == ButtonColor.Default ? string.Empty : StyleConstants.AppButtonDanger)"
 	   @onclick="OnClickHandler"
 	   style="padding-left: @Padding; padding-right: @Padding; text-transform: @_textTransform"
 	   disabled="@isInternallyDisabled"
@@ -61,6 +61,9 @@ else
 
 	[Parameter]
 	public ButtonSize Size { get; set; } = ButtonSize.Default;
+
+	[Parameter]
+	public ButtonColor Color { get; set; } = ButtonColor.Default;
 
 	#region TextTransform
 	[Parameter]
@@ -177,6 +180,12 @@ else
 		Default,
 		Small
 	}
+
+	public enum ButtonColor
+	{
+		Default,
+		Danger
+	}
 	#endregion
 
 	#region StyleClassNameConstants
@@ -191,6 +200,8 @@ else
 		public const string Submit = "submit";
 
 		public const string AppButtonSmall = "app-button-small";
+
+		public const string AppButtonDanger = "app-button-danger";
 
 	}
 	#endregion

@@ -1,10 +1,10 @@
 ﻿.app-exam-notification-flex {
-    gap: 90px;
+    gap: 193px;
+    margin-top: 0px;
 }
 
     .app-exam-notification-flex > .landing-text {
         width: auto;
-        height: 603px;
     }
 
 .landing-text > .landing-text-header {
@@ -12,22 +12,24 @@
     line-height: 3.6rem;
     color: #FFFFFF;
     font-variation-settings: 'slnt' 0;
+    text-align: left;
 }
 
 .landing-text > .landing-text-subtext {
     color: white;
+    text-align: left;
 }
 
 .app-en-gap {
-    gap: 20px;
+    gap: 14px;
 }
 
 .app-exam-notification-container {
     background-color: #FFFFFF;
-    width: 430px;
-    max-width: min(430px, 100%);
-    height: min-content;
-    border-radius: 1.5rem;
+    width: 345px;
+    max-width: min(345px, 100%);
+    min-height: 496px;
+    border-radius: 24px;
     padding: 30px;
     margin-top: 113px;
     margin-bottom: 113px;
@@ -36,13 +38,16 @@
 ::deep .app-exam-notification-image {
     border-radius: 20px !important;
     width: 100% !important;
-    height: 190px !important;
+    height: 145px !important;
 }
 
 ::deep .carousel-indicators {
     position: unset;
+    margin-bottom: 0px !important;
 }
-
+::deep .skeleton-image{
+    height: 145px;
+}
     ::deep .carousel-indicators > button {
         border: 0.69px solid #8B8B8B;
         border-radius: 9px;
@@ -54,29 +59,64 @@
         background: #8B8B8B;
     }
 
-::deep .carousel-caption > p {
-    min-height: calc(1.5rem * 2); /* Ensure the div has the height of 3 lines of text */
-    max-height: calc(1.5rem * 2); /* Prevent the div from growing beyond 3 lines */
-    overflow: hidden; /* Hide any overflowing content if text goes beyond 3 lines */
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    ::deep .carousel-caption > p {
+        min-height: calc(1.5rem * 2); /* Ensure the div has the height of 3 lines of text */
+        max-height: calc(1.5rem * 2); /* Prevent the div from growing beyond 3 lines */
+        overflow: hidden; /* Hide any overflowing content if text goes beyond 3 lines */
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+.carousel-title {
+    font-size: 1rem;
 }
 
+
 @media(max-width: 960px) {
+    .app-exam-notification-flex {
+        gap: 107px;
+        margin-top: 183px;
+    }
+
     .app-exam-notification-container {
-        padding: 20px;
-        border-radius:12px;
+        padding: 16px;
+        border-radius: 12px;
+        min-height: 262px;
     }
 
     ::deep .app-exam-notification-image {
         border-radius: 12px !important;
-        height: 96px !important;
+        height: 72px !important;
+        width: 96px !important;
     }
 
     ::deep .carousel-caption > p {
         min-height: calc(1.2rem * 2); /* Ensure the div has the height of 3 lines of text */
         max-height: calc(1.2rem * 2); /* Prevent the div from growing beyond 3 lines */
+    }
+
+    .landing-text > .landing-text-header {
+        text-align: center;
+        font-size: 1.75rem;
+        line-height: 2.4rem;
+    }
+
+    .landing-text > .landing-text-subtext {
+        text-align: center;
+        font-size: 0.875rem;
+    }
+
+    .carousel-title {
+        font-size: 0.875rem;
+    }
+
+    .carosel-header {
+        font-size: 1rem;
+    }
+
+    ::deep .skeleton-image {
+        height: 72px;
     }
 }

@@ -5,8 +5,8 @@
 @inject IExamNotificationDataService ExamNotificationDataService
 <Learning.Web.Client.Components.Pages.General.AppContainer BackgroundImage="/assets/images/homepage/exam_notification_bg_placeholder.png">
 	<MudContainer MaxWidth="MaxWidth.ExtraLarge">
-		<div class="d-flex flex-grow align-center app-exam-notification-flex justify-space-between">
-			<div class="d-none d-md-flex flex-column justify-center align-content-center landing-text pl-12 gap-4">
+		<div class="d-flex flex-column flex-md-row flex-grow align-center app-exam-notification-flex justify-space-between">
+			<div class="d-flex flex-column justify-center align-content-center landing-text pl-0 pl-md-12 gap-4 ">
 				<h1 class="landing-text-header">
 					A Gateway to your
 					Military Dreams
@@ -14,7 +14,7 @@
 				<p class="landing-text-subtext">
 					When you've got something to prove, there's nothing greater than a challenge.
 				</p>
-				<div>
+				<div class="d-flex justify-center justify-md-start">
 					<Learning.Web.Client.Components.Controls.Actions.AppButton ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
 																			   Text="Join Us"
 																			   Padding="75.5px" />
@@ -24,43 +24,47 @@
 				@if (_examNotifications != null)
 				{
 					<div class="app-exam-notification-container d-flex flex-column app-en-gap">
-						<h3>Exam notifications</h3>
+						<h6 class="carosel-header">Exam notifications</h6>
 						<Carousel Autoplay="CarouselAutoPlay.StartOnPageLoad" ShowIndicators="true" ShowPreviousNextControls="false"
-								  Class="d-flex flex-column-reverse" Onslide="OnSlide">
+								  Class="d-flex flex-column-reverse gap-3" Onslide="OnSlide">
 							@foreach (var notification in _examNotifications)
 							{
 								var notificationIndex = _examNotifications.IndexOf(notification);
 								string activeClass = notificationIndex == 0 ? "active" : string.Empty;
 
 								<CarouselItem Active="@(notificationIndex == 0)" Interval="5000">
-									<MudImage ObjectFit="ObjectFit.Cover"
-											  Src="@notification.ImagePath"
-											  Class="app-exam-notification-image" />
-									<div class="carousel-caption" style="position:unset">
-										<h6>@notification.Title </h6>
-										<p data-full-text="@notification.Description" class="mt-2">@notification.Description</p>
+									<div class="d-flex flex-md-column gap-3">
+										<MudImage ObjectFit="ObjectFit.Cover"
+												  Src="@notification.ImagePath"
+												  Class="app-exam-notification-image" />
+										<div class="g-flex flex-column carousel-caption pa-0" style="position:unset">
+											<h6 class="carousel-title">@notification.Title </h6>
+											<p data-full-text="@notification.Description" class="mt-2">@notification.Description</p>
+										</div>
 									</div>
 								</CarouselItem>
 							}
 						</Carousel>
 						<AppButton Text="Attend free model exam"
-								   OnClick="FreeExamSelected"></AppButton>
+								   OnClick="FreeExamSelected"
+								   Size="AppButton.ButtonSize.Small"
+								   ButtonType="AppButton.AppButtonType.Primary"></AppButton>
 						<AppButton Id="viewDetailsButton"
 								   Text="View details"
 								   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+								   Size="AppButton.ButtonSize.Small"
 								   OnClick="ViewDetailsSelected"></AppButton>
 					</div>
 				}
 				else
 				{
-					<div class="app-exam-notification-container d-flex justify-start flex-column">
-						<MudSkeleton Height="50px" Width="300px">
-							<h3>Exam notifications</h3>
-						</MudSkeleton>
-						<MudSkeleton Height="300px" Class="app-exam-notification-image">
-						</MudSkeleton>
-						<MudSkeleton Height="500px" Class="app-exam-notification-image">
-						</MudSkeleton>
+					<div class="app-exam-notification-container d-flex flex-column app-en-gap ">
+						<h6 class="carosel-header">Exam notifications</h6>
+						<div class="d-flex flex-md-column flex-grow-1 gap-3">
+							<MudSkeleton Class="flex-grow-1 skeleton-image"></MudSkeleton>
+							<MudSkeleton Class="flex-grow-1" Height="73px"></MudSkeleton>
+						</div>
+						<MudSkeleton Width="100%" Height="100px"></MudSkeleton>
 					</div>
 				}
 			</div>
