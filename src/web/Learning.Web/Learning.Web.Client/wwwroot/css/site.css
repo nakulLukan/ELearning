@@ -53,6 +53,25 @@ body {
     margin-top: var(--mud-appbar-height) !important;
 }
 
+.gap-1 {
+    gap: 4px !important;
+}
+
+.gap-2 {
+    gap: 8px !important;
+}
+
+.gap-3 {
+    gap: 12px !important;
+}
+
+.gap-4 {
+    gap: 16px !important;
+}
+
+.gap-5 {
+    gap: 20px !important;
+}
 
 @media (max-width: 960px) {
     :root {
