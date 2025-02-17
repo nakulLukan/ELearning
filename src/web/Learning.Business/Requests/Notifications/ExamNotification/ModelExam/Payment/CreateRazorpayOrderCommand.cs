@@ -1,8 +1,8 @@
 ﻿using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.PaymentGateway;
-using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Business.Impl.Data;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Dto.ModelExam.Payment;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

@@ -9,10 +9,11 @@
     --app-mud-default-borderradius: 24px !important;
 }
 
-html, body{
+html, body {
     height: 100% !important;
     margin: 0px !important;
 }
+
 body {
     font-size: 62.5%;
 }
@@ -46,21 +47,12 @@ body {
     color: red !important;
     padding-top: 5px !important;
     font-size: 0.75rem !important;
-    width:
 }
 
 .en-page-container {
     margin-top: var(--mud-appbar-height) !important;
 }
 
-.gap-4 {
-    gap: 16px !important;
-}
-
-
-.gap-3 {
-    gap: 12px !important;
-}
 
 @media (max-width: 960px) {
     :root {
@@ -76,3 +68,9 @@ body {
     }
 }
 
+@media (min-width: 961px) {
+
+    .gap-md-12 {
+        gap: 48px !important;
+    }
+}

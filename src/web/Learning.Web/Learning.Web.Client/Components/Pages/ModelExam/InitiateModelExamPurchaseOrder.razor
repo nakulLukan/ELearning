@@ -1,22 +1,21 @@
 ﻿@page "/model-exams/{modelExamOrderId:long}/initiate-order"
-@using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment
-@using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment
+@using Learning.Shared.Dto.ModelExam.Payment
 @using Learning.Shared.Extensions
 @using Learning.Web.Client.Components.Controls.Feedback
 @using Learning.Web.Client.Components.Pages
 @using Learning.Web.Client.Components.Pages.ExamNotification.ModelExam
 @using Learning.Web.Client.Contracts.Interop
+@using Learning.Web.Client.Contracts.Services.ExamNotification
 @using Learning.Web.Client.Impl.Interop
-@using Razorpay.Api
-@inject IMediator Mediator
+@inject IModelExamDataService ModelExamDataService
 @inject IAppJSInterop JSRuntime
-@rendermode InteractiveServer
+@rendermode InteractiveAuto
 @attribute [Authorize]
 <AppPage Class="d-flex flex-column flex-grow-1">
 	<MudContainer Gutters="false" Class="flex-grow-1 d-flex flex-column flex-grow-1">
 
 		@if (_orderDetails == null
-				|| _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
+										|| _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
 		{
 			<BeginModelExamSessionLoaderComponent />
 		}
@@ -28,8 +27,8 @@
 					<div class="d-flex flex-column justify-center align-center">
 
 						<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Cancel"
-																				   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-																				   Href="javascript:history.back()"></Learning.Web.Client.Components.Controls.Actions.AppButton>
+						ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+						Href="javascript:history.back()"></Learning.Web.Client.Components.Controls.Actions.AppButton>
 					</div>
 				</MudStack>
 			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
@@ -98,21 +97,21 @@
 								<MudItem xs="12" md="6">
 
 									<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Go to Exam Listing"
-																							   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-																							   FullWidth="true"
-																							   Href="@($"model-exams/exam-notifications/{_orderDetails.ExamNotificationId}?examName={_orderDetails.NotificationTitle}")" />
+									ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+									FullWidth="true"
+									Href="@($"model-exams/exam-notifications/{_orderDetails.ExamNotificationId}?examName={_orderDetails.NotificationTitle}")" />
 								</MudItem>
 								<MudItem xs="12" md="6">
 									@if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success)
 									{
 										<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Start Exam"
-																								   Href="@($"/model-exams/{_orderDetails.ModelExamId}/begin")"
-																								   FullWidth="true" />
+										Href="@($"/model-exams/{_orderDetails.ModelExamId}/begin")"
+										FullWidth="true" />
 									}
 									else
 									{
 										<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Retry Purchase"
-																								   FullWidth="true" />
+										FullWidth="true" />
 									}
 								</MudItem>
 							</MudGrid>
@@ -136,19 +135,23 @@
 	private const string statusProgressBgColor = "app-status-progess-bg";
 	private string statusBgColor = statusProgressBgColor;
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		_orderDetails = await Mediator.Send(new GetModelExamOrderByIdQuery
-			{
-				ModelExamOrderId = ModelExamOrderId
-			});
-
+		if (!firstRender) return;
+		var orderDetailsResponse = await ModelExamDataService.GetModelExamOrderById(ModelExamOrderId);
+		if (orderDetailsResponse.IsFailed)
+		{
+			return;
+		}
+		_orderDetails = orderDetailsResponse.Value;
 		if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
 		{
-			_orderDetails = await Mediator.Send(new CreateRazorpayOrderCommand
-				{
-					ModelExamOrderId = ModelExamOrderId
-				});
+			orderDetailsResponse = await ModelExamDataService.CreateRazorpayOrder(ModelExamOrderId);
+			if (orderDetailsResponse.IsFailed)
+			{
+				return;
+			}
+			_orderDetails = orderDetailsResponse.Value;
 		}
 
 		if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success || _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Failed)
@@ -156,11 +159,7 @@
 			_bannerState = _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? AppSuccessFailureFeedbackComponent.Status.Success : AppSuccessFailureFeedbackComponent.Status.Failure;
 			statusBgColor = _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success ? statusSuccessBgColor : statusFailureBgColor;
 		}
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (!firstRender) return;
+		StateHasChanged();
 		if (_orderDetails != null && _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
 		{
 			await JSRuntime.InitRazorpayPopup(UIConstant.AppName, _orderDetails!.RazorpayOrderId!, _orderDetails.Name, _orderDetails.Email, _orderDetails.PhoneNumber!, $"#ME{_orderDetails.ModelExamOrderId}");

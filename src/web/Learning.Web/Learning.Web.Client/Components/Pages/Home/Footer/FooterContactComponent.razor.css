@@ -1,9 +1,9 @@
 ﻿::deep .mud-image {
-    color: #FFFFFF !important;
+    color: #FFFFFF;
 }
-a {
-    color: #FFFFFF !important;
-    font-family: var(--ff-400) !important;
-    font-size: 1rem !important;
-    line-height: 1.5rem !important;
+.app-contact-text {
+    color: #FFFFFF;
+    font-family: var(--ff-400);
+    font-size: 1rem ;
+    line-height: 1.5rem;
 }

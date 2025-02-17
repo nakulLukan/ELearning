@@ -1,11 +1,12 @@
 ﻿using FluentResults;
-using Learning.Business.Dto.ModelExams;
 using Learning.Business.Requests.ModelExams;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Dto.ModelExam.Payment;
 using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
@@ -253,6 +254,32 @@ public class ModelExamDataService : IModelExamDataService
                 ModelExamId = modelExamId,
             }).ConfigureAwait(false);
             return result;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamOrderStepDetailDto>> GetModelExamOrderById(long modelExamOrderId)
+    {
+        try
+        {
+            var response = await _mediator.Send(new GetModelExamOrderByIdQuery() { ModelExamOrderId = modelExamOrderId });
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamOrderStepDetailDto>> CreateRazorpayOrder(long modelExamOrderId)
+    {
+        try
+        {
+            var response = await _mediator.Send(new CreateRazorpayOrderCommand() { ModelExamOrderId = modelExamOrderId });
+            return response;
         }
         catch (Exception ex)
         {

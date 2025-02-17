@@ -1,7 +1,7 @@
-﻿<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+﻿<div class="d-flex justify-start gap-2">
     <MudImage Src="@Icon" Width="24" />
-    <a href="@Href">@Text</a>
-</MudStack>
+    <a class="app-contact-text" href="@Href">@Text</a>
+</div>
 
 @code {
     [Parameter, EditorRequired]

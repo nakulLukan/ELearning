@@ -5,5 +5,6 @@ public class AddContactInformationCommandRequestDto
     public required string Name { get; set; }
     public required string CountryCode { get; set; }
     public required string ContactNumber { get; set; }
+    public required string City { get; set; }
     public string? EmailAddress { get; set; }
 }

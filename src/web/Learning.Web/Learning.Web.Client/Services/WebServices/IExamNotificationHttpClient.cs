@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
+using Learning.Shared.Dto.ModelExam.Payment;
 using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
@@ -61,4 +62,10 @@ public interface IExamNotificationHttpClient
 
     [Get("/api/public/model-exams/{modelExamId}/exam-notification-detail")]
     public Task<ExamNotificationDetailResponseDto> GetExamNotificationDetailByModelExamId(int modelExamId);
+
+    [Get("/api/public/model-exam-orders/{modelExamOrderId}")]
+    public Task<ModelExamOrderStepDetailDto> GetModelExamOrderById(long modelExamOrderId);
+
+    [Post("/api/public/model-exam-orders/{modelExamOrderId}/create-razorpay-order")]
+    public Task<ModelExamOrderStepDetailDto> CreateRazorpayOrder(long modelExamOrderId);
 }

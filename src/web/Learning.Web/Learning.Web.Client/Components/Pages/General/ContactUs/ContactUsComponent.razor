@@ -10,80 +10,86 @@
 @inject IAppJSInterop JSInterop
 @rendermode InteractiveAuto
 <AppContainer BackgroundImage="/assets/images/homepage/contact_us_cover.jpg">
-    <div class="app-contact-us-container d-flex flex-column justify-start my-16">
-        <MudContainer MaxWidth="MaxWidth.Medium">
-            <EditForm Model="@Model"
-                      OnValidSubmit="OnValidSubmit"
-                      FormName="ContactUs">
-                <DataAnnotationsValidator />
-                <div class="app-contact-us-form d-flex flex-column gap-10">
-                    <h1 class="app-contact-us-header">Get in touch with us</h1>
-                    <MudGrid Justify="Justify.FlexStart" Spacing="6">
-                        <MudItem xs="12" md="6">
-                            <AppTextField Label="Name"
-                                          For="(()=> Model.Name)"
-                                          @bind-Value="@Model.Name"></AppTextField>
-                        </MudItem>
-                        <MudItem xs="12" md="6">
-                            <AppTextField Label="Contact Number"
-                                          @bind-Value="@Model.ContactNumber"
-                                          For="(()=> Model.ContactNumber)"></AppTextField>
-                        </MudItem>
-                        <MudItem xs="12" md="6">
-                            <AppTextField Label="Email Address (optional)"
-                                          @bind-Value="@Model.EmailAddress"
-                                          For="(()=> Model.EmailAddress)"></AppTextField>
-                        </MudItem>
-                    </MudGrid>
-                    <MudStack>
+	<div class="app-contact-us-container d-flex flex-column justify-start my-16">
+		<MudContainer MaxWidth="MaxWidth.Medium">
+			<EditForm Model="@Model"
+					  OnValidSubmit="OnValidSubmit"
+					  FormName="ContactUs">
+				<DataAnnotationsValidator />
+				<div class="app-contact-us-form d-flex flex-column gap-10">
+					<h1 class="app-contact-us-header">Get in touch with us</h1>
+					<MudGrid Justify="Justify.FlexStart" Spacing="6">
+						<MudItem xs="12" md="6">
+							<AppTextField Label="Name"
+										  For="(()=> Model.Name)"
+										  @bind-Value="@Model.Name"></AppTextField>
+						</MudItem>
+						<MudItem xs="12" md="6">
+							<AppTextField Label="Contact Number"
+										  @bind-Value="@Model.ContactNumber"
+										  For="(()=> Model.ContactNumber)"></AppTextField>
+						</MudItem>
+						<MudItem xs="12" md="6">
+							<AppTextField Label="City"
+										  @bind-Value="@Model.City"
+										  For="(()=> Model.City)"></AppTextField>
+						</MudItem>
+						<MudItem xs="12" md="6">
+							<AppTextField Label="Email Address (optional)"
+										  @bind-Value="@Model.EmailAddress"
+										  For="(()=> Model.EmailAddress)"></AppTextField>
+						</MudItem>
+					</MudGrid>
+					<MudStack>
 
-                        @if (_showSuccessAlert)
-                        {
-                            <MudAlert Severity="Severity.Success"
-                                      ContentAlignment="HorizontalAlignment.Center"
-                                      ShowCloseIcon="false"
-                                      Variant="Variant.Filled">We have recieved your request. Thank You!!!</MudAlert>
+						@if (_showSuccessAlert)
+						{
+							<MudAlert Severity="Severity.Success"
+									  ContentAlignment="HorizontalAlignment.Center"
+									  ShowCloseIcon="false"
+									  Variant="Variant.Filled">We have recieved your request. Thank You!!!</MudAlert>
 
-                        }
-                        <div class="d-flex flex-grow-1 justify-center">
-                            <AppButton FormType="AppButton.AppButtonFormType.Submit" Class="flex-grow-1 flex-md-grow-0"
-                                       Text="Contact Us"
-                                       Padding="51px"></AppButton>
-                        </div>
-                    </MudStack>
-                </div>
-            </EditForm>
+						}
+						<div class="d-flex flex-grow-1 justify-center">
+							<AppButton FormType="AppButton.AppButtonFormType.Submit" Class="flex-grow-1 flex-md-grow-0"
+									   Text="Contact Us"
+									   Padding="51px"></AppButton>
+						</div>
+					</MudStack>
+				</div>
+			</EditForm>
 
-        </MudContainer>
-    </div>
+		</MudContainer>
+	</div>
 </AppContainer>
 
 @code {
-    public ContactUsModel Model { get; set; } = new();
+	public ContactUsModel Model { get; set; } = new();
 
-    private bool _showSuccessAlert = false;
-    private bool _isSubmitBtnFullWidth = false;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        _isSubmitBtnFullWidth = await JSInterop.IsMobile();
-        StateHasChanged();
-    }
-    private async Task OnValidSubmit(EditContext context)
-    {
-        try
-        {
-            var requestId = await ContactUsDataService.AddContactInformation(new AddContactInformationCommandRequestDto()
-                {
-                    ContactNumber = Model.ContactNumber,
-                    CountryCode = "+91",
-                    Name = Model.Name,
-                    EmailAddress = Model.EmailAddress,
-                });
-            Model = new();
-            _showSuccessAlert = true;
-            StateHasChanged();
-        }
-        catch { }
-    }
+	private bool _showSuccessAlert = false;
+	private bool _isSubmitBtnFullWidth = false;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		_isSubmitBtnFullWidth = await JSInterop.IsMobile();
+		StateHasChanged();
+	}
+	private async Task OnValidSubmit(EditContext context)
+	{
+		try
+		{
+			var requestId = await ContactUsDataService.AddContactInformation(new AddContactInformationCommandRequestDto()
+				{
+					ContactNumber = Model.ContactNumber,
+					CountryCode = "+91",
+					Name = Model.Name,
+					EmailAddress = Model.EmailAddress,
+					City = Model.City
+				});
+			Model = new();
+			_showSuccessAlert = true;
+			StateHasChanged();
+		}
+		catch { }
+	}
 }

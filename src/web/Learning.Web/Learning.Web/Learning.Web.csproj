@@ -29,10 +29,11 @@
     </PackageReference>
 
     <PackageReference Include="MudBlazor" Version="7.0.0" />
-    <PackageReference Include="Refit" Version="7.1.2" />
+    <PackageReference Include="Refit" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Pages\Public\ModelExams\" />
     <Folder Include="Models\" />
   </ItemGroup>
 

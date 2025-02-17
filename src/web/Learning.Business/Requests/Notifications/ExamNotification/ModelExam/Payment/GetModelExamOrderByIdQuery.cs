@@ -1,10 +1,10 @@
 ﻿using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.PaymentGateway;
-using Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Business.Impl.Data;
 using Learning.Domain.Notification;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Dto.ModelExam.Payment;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,7 +62,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
                 ExamNotificationId = x.ModelExamPackage.ExamNotificationId,
                 Validity = x.ModelExamPurchaseHistory != null ? x.ModelExamPurchaseHistory!.ValidTill : null,
                 TotalExamsInPackage = x.ModelExamPackage.ModelExamConfigs!.Where(x => !x.IsFree).Count(),
-                ModelExamId = x.ModelExamPackage.ModelExamConfigs!.First(y=>!y.IsFree).Id
+                ModelExamId = x.ModelExamPackage.ModelExamConfigs!.First(y => !y.IsFree).Id
             })
             .FirstOrDefaultAsync(cancellationToken) ?? throw new AppApiException(System.Net.HttpStatusCode.NotFound, "MEO001", "Order not found");
 

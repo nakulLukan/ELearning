@@ -10,5 +10,6 @@ public class ContactUsRequest : DomainBase
     /// Without country code
     /// </summary>
     public required string PhoneNumber { get; set; }
+    public required string City { get; set; }
     public string? EmailAddress { get; set; }
 }

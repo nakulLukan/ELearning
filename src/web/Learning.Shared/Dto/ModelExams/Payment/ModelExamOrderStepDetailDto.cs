@@ -1,6 +1,6 @@
 ﻿using Learning.Shared.Common.Enums;
 
-namespace Learning.Business.Dto.Notifications.ExamNotification.ModelExam.Payment;
+namespace Learning.Shared.Dto.ModelExam.Payment;
 
 public class ModelExamOrderStepDetailDto
 {

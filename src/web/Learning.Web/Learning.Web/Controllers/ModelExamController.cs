@@ -1,5 +1,6 @@
 ﻿using Learning.Business.Requests.ModelExams;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using MediatR;
@@ -92,6 +93,28 @@ public class ModelExamController : ControllerBase
         var data = await _mediator.Send(new GetExamNotificationDetailByModelExamIdQuery()
         {
             ModelExamId = modelExamId,
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpGet("model-exam-orders/{modelExamOrderId:long}")]
+    public async Task<IActionResult> GetExamNotificationDetailByModelExamId([FromRoute] long modelExamOrderId)
+    {
+        var data = await _mediator.Send(new GetModelExamOrderByIdQuery()
+        {
+            ModelExamOrderId = modelExamOrderId,
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpPost("model-exam-orders/{modelExamOrderId:long}/create-razorpay-order")]
+    public async Task<IActionResult> CreateRazorpayOrder([FromRoute] long modelExamOrderId)
+    {
+        var data = await _mediator.Send(new CreateRazorpayOrderCommand()
+        {
+            ModelExamOrderId = modelExamOrderId,
         }).ConfigureAwait(false);
         return Ok(data);
     }

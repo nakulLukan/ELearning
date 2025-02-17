@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Learning.Business.Requests.Notifications.ExamNotification;
+using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Shared.Dto.Notifications.ExamNotification;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
 using MediatR;
@@ -52,5 +53,4 @@ public class ExamNotificationDataService : IExamNotificationDataService
             return Result.Fail(ex.Message);
         }
     }
-
 }

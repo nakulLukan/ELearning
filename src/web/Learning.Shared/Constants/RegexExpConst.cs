@@ -13,6 +13,9 @@ public static class RegexExpConst
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralEmailAddress = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
     public const string GeneralEmailAddressMessage = "Please enter a valid email address";
 
+    [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralPlace = "^[A-Za-z 0-9']+$";
+    public const string GeneralPlaceMessage = "Please only alpha numeric values";
+
     #endregion General
 
 

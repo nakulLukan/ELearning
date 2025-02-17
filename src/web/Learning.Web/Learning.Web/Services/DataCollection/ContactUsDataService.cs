@@ -23,6 +23,7 @@ public class ContactUsDataService : IContactUsDataService
             CountryCode = request.CountryCode,
             Name = request.Name,
             EmailAddress = request.EmailAddress,
+            City = request.City,
         });
         return data;
     }

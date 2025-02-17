@@ -3,6 +3,7 @@ using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
 using Learning.Shared.Contracts.HttpContext;
+using Learning.Shared.Dto.ModelExam.Payment;
 using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
@@ -208,6 +209,32 @@ public class ModelExamRestDataService : IModelExamDataService
         try
         {
             var result = await _httpClient.GetExamNotificationDetailByModelExamId(modelExamId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamOrderStepDetailDto>> GetModelExamOrderById(long modelExamOrderId)
+    {
+        try
+        {
+            var result = await _httpClient.GetModelExamOrderById(modelExamOrderId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamOrderStepDetailDto>> CreateRazorpayOrder(long modelExamOrderId)
+    {
+        try
+        {
+            var result = await _httpClient.CreateRazorpayOrder(modelExamOrderId);
             return Result.Ok(result);
         }
         catch (Exception ex)
