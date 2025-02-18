@@ -10,7 +10,7 @@
 @using System.ComponentModel.DataAnnotations
 @layout AdminLayout
 @inherits AppBaseComponent
-@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
+@attribute [Authorize(Policy = PolicyConstant.ExamNotificationPolicy)]
 
 <MudContainer>
     <EditForm Model="@_model"

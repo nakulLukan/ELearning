@@ -78,7 +78,7 @@
                 Take = _pageSize,
             }));
 
-        Elements = response.Data;
+        Elements = new(response.Data);
         _classCount = GetNumberOfPages(response.TotalRecords, _pageSize);
         _selectedPage = 1;
         ChangeToLoadedState();

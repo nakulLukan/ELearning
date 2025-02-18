@@ -2,12 +2,12 @@
 
 public class PaginatedResponse<T>
 {
-    public List<T> Data { get; set; }
+    public IEnumerable<T> Data { get; set; }
     public int TotalRecords { get; set; }
     public int? Skip { get; set; }
     public int? Take { get; set; }
 
-    public PaginatedResponse(List<T> data, int totalRecords)
+    public PaginatedResponse(IEnumerable<T> data, int totalRecords)
     {
         TotalRecords = totalRecords;
         Data = data;

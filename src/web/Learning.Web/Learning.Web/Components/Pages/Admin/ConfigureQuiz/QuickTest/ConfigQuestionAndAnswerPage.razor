@@ -6,7 +6,7 @@
 @using static Learning.Web.Components.Pages.Admin.ConfigureQuiz.QuickTest.ManageQuestionComponent
 @inherits AppBaseComponent
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Policy = PolicyConstant.QuizPolicy)]
 @layout AdminLayout
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-4">
     <MudGrid>

@@ -1,0 +1,117 @@
+﻿@page "/Admin/coupon-codes"
+@using Learning.Business.Requests.Subscription.Offer
+@using Learning.Shared.Common.Extensions
+@using Learning.Shared.Contracts.HttpContext
+@using Learning.Shared.Dto.Subscription.Offer
+@using Learning.Web.Components.Layouts
+@inject IRequestContext RequestContext
+@layout AdminLayout
+@inherits AppBaseComponent
+@attribute [Authorize(PolicyConstant.CouponCodePolicy)]
+
+<MudDataGrid @ref=_dataGrid T="GetAllCouponCodeResponseDto" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense
+			 Hover RowClass="cursor-pointer" Loading="@_isLoading" ServerData="LoadUsers" Style="height: 100%"
+			 Filterable=false SortMode="SortMode.None" FixedFooter Height="calc(100% - 130px)" Striped>
+	<ToolBarContent>
+		<MudText Typo="Typo.h6"><b>Coupon Codes</b></MudText>
+		<MudSpacer />
+		<MudTextField @bind-Value="@SearchString" Lines="1" MaxLines=1 InputType=InputType.Text
+					  Placeholder="@(@"Search by Coupon Code")" Adornment="Adornment.Start" Immediate
+					  AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
+					  IconSize="Size.Medium" Class="mt-0" Clearable AutoGrow
+					  OnClearButtonClick="OnClear"></MudTextField>
+		<MudButton Variant="Variant.Outlined" Class="ml-2" OnClick="OnSearch">Search</MudButton>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn Property="x => x.CouponCode" Title="Code" Sortable="true" />
+		<PropertyColumn Property="x => x.Discount" Title="Discount" />
+		<PropertyColumn Property="x => x.CreatedOn.ToLocalDateTimeString()" Title="Created On" Sortable="false" />
+		<PropertyColumn Property="@(x => x.ExpiresOn.HasValue ? x.ExpiresOn.Value.ToLocalDateTimeString() : "-")" Title="Expires On" Sortable="false" />
+		<PropertyColumn Property="@(x => x.IsUsed ? x.UsedOn!.Value.ToLocalDateTimeString() : "-")" Title="Used On" Sortable="false" />
+
+		<TemplateColumn Title="Action">
+			<CellTemplate>
+				@if (!context.Item.IsUsed)
+				{
+					<MudMenu Icon="@Icons.Material.Filled.MoreVert"
+							 AriaLabel="Open user menu">
+						<MudMenuItem OnClick="@(async ()=>await SetCouponCodeAsUsed(context.Item))">Mark as Used</MudMenuItem>
+					</MudMenu>
+				}
+			</CellTemplate>
+		</TemplateColumn>
+	</Columns>
+	<LoadingContent>
+		Loading...
+	</LoadingContent>
+	<NoRecordsContent>
+		<NoRecordsComponent />
+	</NoRecordsContent>
+	<PagerContent>
+		<MudDataGridPager T="GetAllCouponCodeResponseDto" />
+	</PagerContent>
+</MudDataGrid>
+@code {
+	[SupplyParameterFromQuery(Name = "Search")]
+	public string? SearchString { get; set; }
+
+	MudDataGrid<GetAllCouponCodeResponseDto> _dataGrid;
+	GridState<GetAllCouponCodeResponseDto> _gridState;
+	private int _usersCount;
+
+	private string? _lastSearchString;
+	private bool _isSync = false;
+	private string? userRole;
+
+	protected override async Task OnInitializedAsync()
+	{
+		userRole = await RequestContext.GetUserRole();
+	}
+
+	private async Task<GridData<GetAllCouponCodeResponseDto>> LoadUsers(GridState<GetAllCouponCodeResponseDto> gridState)
+	{
+		_gridState = gridState;
+		var sortBy = gridState.SortDefinitions.FirstOrDefault();
+		var response = (await Mediator.Send(new GetAllCouponCodeQuery()
+			{
+				Skip = gridState.PageSize * gridState.Page,
+				Take = gridState.PageSize,
+				CouponCodeFilter = SearchString,
+			}));
+		return new GridData<GetAllCouponCodeResponseDto>
+			{
+				TotalItems = response.TotalRecords,
+				Items = response.Data,
+			};
+	}
+
+	private async Task OnSearch()
+	{
+		await _dataGrid.ReloadServerData();
+		_lastSearchString = SearchString;
+	}
+
+	private async Task OnClear()
+	{
+		SearchString = _lastSearchString = string.Empty;
+		await OnSearch();
+	}
+
+	private async Task SetCouponCodeAsUsed(GetAllCouponCodeResponseDto item)
+	{
+		await AppMediator.Send(new SetCouponCodeAsUsedCommand
+			{
+				CouponCodeId = item.Id
+			})
+			.OnSuccess(data =>
+			{
+				ToastService.Success("Coupon code invalidated");
+				InvokeAsync(async () => await _dataGrid.ReloadServerData());
+			})
+			.OnError(err =>
+			{
+				ToastService.Error(err.Message);
+			});
+	}
+}
+

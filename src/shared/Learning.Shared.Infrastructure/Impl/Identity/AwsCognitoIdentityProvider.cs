@@ -74,4 +74,22 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
 
         return (externalUsers, nextPaginationToken);
     }
+
+    public async Task EnableUser(string userId)
+    {
+
+        var response = await _client.AdminEnableUserAsync(new AdminEnableUserRequest
+        {
+            Username = userId,
+            UserPoolId = _userPoolId
+        });
+    }
+    public async Task DisableUser(string userId)
+    {
+        var response = await _client.AdminDisableUserAsync(new AdminDisableUserRequest
+        {
+            Username = userId,
+            UserPoolId = _userPoolId
+        });
+    }
 }

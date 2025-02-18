@@ -4,7 +4,7 @@
 @using Learning.Business.Requests.Notifications.ExamNotification
 @using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Admin
 @using Learning.Web.Components.Layouts
-@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
+@attribute [Authorize(Policy = PolicyConstant.ExamNotificationPolicy)]
 @inherits AppBaseComponent
 @layout AdminLayout
 @inject NavigationManager NavigationManager

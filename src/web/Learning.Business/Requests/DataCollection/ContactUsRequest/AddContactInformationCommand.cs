@@ -30,7 +30,7 @@ public class AddContactInformationCommandHandler : IRequestHandler<AddContactInf
             CreatedOn = AppDateTime.UtcNow,
             EmailAddress = request.EmailAddress,
             LastUpdatedOn = AppDateTime.UtcNow,
-            City = request.City.Trim().Substring(0, Math.Min(50, request.City.Length)), // Take first 50 characters as column has length constraint
+            City = request.City.Trim().Substring(0, Math.Min(50, request.City.Length)).ToUpper(), // Take first 50 characters as column has length constraint
         };
 
         _appDbContext.ContactUsRequests.Add(contactUs);

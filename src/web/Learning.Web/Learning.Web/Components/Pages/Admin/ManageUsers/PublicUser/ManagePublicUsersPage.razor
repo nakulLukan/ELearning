@@ -1,117 +1,150 @@
 ﻿@page "/Admin/Manage/PublicUsers"
 @using Learning.Business.Dto.Users
 @using Learning.Business.Requests.Users.PublicUser
+@using Learning.Shared.Contracts.HttpContext
 @using Learning.Web.Components.Layouts
 @using Microsoft.AspNetCore.Authorization
 @using MudBlazor.Utilities
-
+@inject NavigationManager NavigationManager
+@inject IRequestContext RequestContext
 @layout AdminLayout
 @inherits AppBaseComponent
-@attribute [Authorize(PolicyConstant.SuperAdminPolicy)]
+@attribute [Authorize(PolicyConstant.UserAccountPolicy)]
 
 <MudDataGrid @ref=_dataGrid T="PublicUserListItemDto" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense
-             Hover RowClass="cursor-pointer" Loading="@_isLoading" ServerData="LoadUsers" Style="height: 100%"
-             Filterable=false SortMode="SortMode.None" FixedFooter Height="calc(100% - 130px)" Striped>
-    <ToolBarContent>
-        <MudText Typo="Typo.h6"><b>Public Users</b></MudText>
-        <MudSpacer />
-        <AppProgressButton Variant="Variant.Filled" IsProgressing="_isSync" OnClick="SyncUsers">Sync Users</AppProgressButton>
-        <MudTextField @bind-Value="@SearchString" Lines="1" MaxLines=1 InputType=InputType.Email
-                      Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
-                      AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
-                      IconSize="Size.Medium" Class="mt-0" Clearable AutoGrow
-                      OnClearButtonClick="OnClear"></MudTextField>
-        <MudButton Variant="Variant.Outlined" Class="ml-2" OnClick="OnSearch">Search</MudButton>
-    </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="x => x.Index" Title="Code" Sortable="true" />
-        <PropertyColumn Property="x => x.FullName" Title="Full Name" Sortable="true" />
-        <PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
-        <PropertyColumn Property="@(context=> context.IsContactNumberVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
-        <PropertyColumn Property="x => x.EmailAddress" Title="Email Address" Sortable=true />
-        <PropertyColumn Property="@(context=> context.IsEmailAddressVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
-        <PropertyColumn Property="x => x.AccountCreatedOn" Title="Joined On" Sortable="true" />
-        <PropertyColumn Property="@(context=> context.IsActive ? "Active" : "In-Active")" Title="Account Status" />
-        <TemplateColumn Title="Action">
-            <CellTemplate>
-                <MudButton Variant="Variant.Text" Size="Size.Small">Edit</MudButton>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-    <LoadingContent>
-        Loading...
-    </LoadingContent>
-    <NoRecordsContent>
-        <NoRecordsComponent />
-    </NoRecordsContent>
-    <PagerContent>
-        <MudDataGridPager T="PublicUserListItemDto" />
-    </PagerContent>
+			 Hover RowClass="cursor-pointer" Loading="@_isLoading" ServerData="LoadUsers" Style="height: 100%"
+			 Filterable=false SortMode="SortMode.None" FixedFooter Height="calc(100% - 130px)" Striped>
+	<ToolBarContent>
+		<MudText Typo="Typo.h6"><b>Public Users</b></MudText>
+		<MudSpacer />
+		<AppProgressButton Variant="Variant.Filled" IsProgressing="_isSync" OnClick="SyncUsers">Sync Users</AppProgressButton>
+		<MudTextField @bind-Value="@SearchString" Lines="1" MaxLines=1 InputType=InputType.Email
+					  Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
+					  AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
+					  IconSize="Size.Medium" Class="mt-0" Clearable AutoGrow
+					  OnClearButtonClick="OnClear"></MudTextField>
+		<MudButton Variant="Variant.Outlined" Class="ml-2" OnClick="OnSearch">Search</MudButton>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn Property="x => x.Index" Title="Code" Sortable="true" />
+		<PropertyColumn Property="x => x.FullName" Title="Full Name" Sortable="true" />
+		<PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
+		<PropertyColumn Property="@(context=> context.IsContactNumberVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
+		<PropertyColumn Property="x => x.EmailAddress" Title="Email Address" Sortable=true />
+		<PropertyColumn Property="@(context=> context.IsEmailAddressVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
+		<PropertyColumn Property="x => x.AccountCreatedOn" Title="Joined On" Sortable="true" />
+		<PropertyColumn Property="@(context=> context.IsActive ? "Active" : "In-Active")" Title="Account Status" />
+		@if (userRole == RoleConstant.SuperAdmin)
+		{
+			<TemplateColumn Title="Action">
+				<CellTemplate>
+					<MudMenu Icon="@Icons.Material.Filled.MoreVert"
+					AriaLabel="Open user menu">
+						<MudMenuItem OnClick="@(async ()=> await EnableDisableUser(context.Item.Id))">@(context.Item.IsActive ? "Disable" : "Enable")</MudMenuItem>
+					</MudMenu>
+				</CellTemplate>
+			</TemplateColumn>
+		}
+	</Columns>
+	<LoadingContent>
+		Loading...
+	</LoadingContent>
+	<NoRecordsContent>
+		<NoRecordsComponent />
+	</NoRecordsContent>
+	<PagerContent>
+		<MudDataGridPager T="PublicUserListItemDto" />
+	</PagerContent>
 </MudDataGrid>
- @code {
-    [SupplyParameterFromQuery(Name = "Search")]
-    public string SearchString { get; set; }
+@code {
+	[SupplyParameterFromQuery(Name = "Search")]
+	public string SearchString { get; set; }
 
-    List<PublicUserListItemDto> _elements = new();
-    MudDataGrid<PublicUserListItemDto> _dataGrid;
-    GridState<PublicUserListItemDto> _gridState;
-    private int _usersCount;
+	List<PublicUserListItemDto> _elements = new();
+	MudDataGrid<PublicUserListItemDto> _dataGrid;
+	GridState<PublicUserListItemDto> _gridState;
+	private int _usersCount;
 
-    private string _lastSearchString = "";
-    private bool _isSync = false;
-    private async Task<GridData<PublicUserListItemDto>> LoadUsers(GridState<PublicUserListItemDto> gridState)
-    {
-        _gridState = gridState;
-        var sortBy = gridState.SortDefinitions.FirstOrDefault();
-        var response = (await Mediator.Send(new PublicUserListQuery()
-            {
-                Skip = gridState.PageSize * gridState.Page,
-                Take = gridState.PageSize,
-                SortBy = sortBy?.SortBy ?? string.Empty,
-                IsDescending = sortBy?.Descending ?? false,
-                EmailOrNameFilter = SearchString,
-            }));
-        return new GridData<PublicUserListItemDto>
-            {
-                TotalItems = response.TotalRecords,
-                Items = response.Data
-            };
-    }
+	private string _lastSearchString = "";
+	private bool _isSync = false;
+	private string? userRole;
+	protected override async Task OnInitializedAsync()
+	{
+		userRole = await RequestContext.GetUserRole();
+	}
 
-    private async Task OnSearch()
-    {
-        await _dataGrid.ReloadServerData();
-        _lastSearchString = SearchString;
-    }
+	private async Task<GridData<PublicUserListItemDto>> LoadUsers(GridState<PublicUserListItemDto> gridState)
+	{
+		_gridState = gridState;
+		var sortBy = gridState.SortDefinitions.FirstOrDefault();
+		var response = (await Mediator.Send(new PublicUserListQuery()
+			{
+				Skip = gridState.PageSize * gridState.Page,
+				Take = gridState.PageSize,
+				SortBy = sortBy?.SortBy ?? string.Empty,
+				IsDescending = sortBy?.Descending ?? false,
+				EmailOrNameFilter = SearchString,
+			}));
+		return new GridData<PublicUserListItemDto>
+			{
+				TotalItems = response.TotalRecords,
+				Items = response.Data
+			};
+	}
 
-    private async Task OnClear()
-    {
-        SearchString = _lastSearchString = string.Empty;
-        await OnSearch();
-    }
+	private async Task OnSearch()
+	{
+		await _dataGrid.ReloadServerData();
+		_lastSearchString = SearchString;
+	}
 
-    private async Task SyncUsers()
-    {
-        ChangeToLoadingState(ref _isSync);
-        await AppMediator.Send(new SyncUsersCommand())
-        .OnSuccess(data =>
-        {
-            ToastService.Success("Users synchronised.");
-            if (data.CreatedCount > 0)
-            {
-                ToastService.Success($"Total users created: {data.CreatedCount}");
-            }
+	private async Task OnClear()
+	{
+		SearchString = _lastSearchString = string.Empty;
+		await OnSearch();
+	}
 
-            if (data.UpdatedCount > 0)
-            {
-                ToastService.Success($"Total users updated: {data.UpdatedCount}");
-            }
-            ChangeToLoadedState(ref _isSync);
-        })
-        .OnError(err =>
-        {
-            ToastService.Error(err.Message);
-            ChangeToLoadedState(ref _isSync);
-        });
-    }
+	private async Task SyncUsers()
+	{
+		ChangeToLoadingState(ref _isSync);
+		await AppMediator.Send(new SyncUsersCommand())
+		.OnSuccess(data =>
+		{
+			ToastService.Success("Users synchronised.");
+			if (data.CreatedCount > 0)
+			{
+				ToastService.Success($"Total users created: {data.CreatedCount}");
+			}
+
+			if (data.UpdatedCount > 0)
+			{
+				ToastService.Success($"Total users updated: {data.UpdatedCount}");
+			}
+			ChangeToLoadedState(ref _isSync);
+		})
+		.OnError(err =>
+		{
+			ToastService.Error(err.Message);
+			ChangeToLoadedState(ref _isSync);
+		});
+	}
+
+	private async Task EnableDisableUser(string userId)
+	{
+		ChangeToLoadingState(ref _isSync);
+		await AppMediator.Send(new EnableDisableUserCommand()
+			{
+				UserId = userId
+			})
+		.OnSuccess(data =>
+		{
+			ToastService.Success($"User {(data ? "Enabled" : "Disabled")}");
+			NavigationManager.Refresh(true);
+		})
+		.OnError(err =>
+		{
+			ToastService.Error(err.Message);
+			ChangeToLoadedState(ref _isSync);
+		});
+	}
 }

@@ -1,4 +1,5 @@
-﻿using Blazor.SubtleCrypto;
+﻿using System.Globalization;
+using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using Learning.Business;
 using Learning.Business.Contracts.HttpContext;
@@ -34,7 +35,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
-using System.Globalization;
 namespace Learning.Web;
 
 public static class ServiceRegistry
@@ -101,7 +101,7 @@ public static class ServiceRegistry
                     {
                         context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http://", "https://");
                         return Task.CompletedTask;
-                    }
+                    },
                 };
             });
 
@@ -110,19 +110,51 @@ public static class ServiceRegistry
         #region Authorization Policy
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy(PolicyConstant.SuperAdminPolicy, policy =>
-            {
-                policy.RequireClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin);
-            });
-
             options.AddPolicy(PolicyConstant.AdminPolicy, policy =>
             {
-                policy.RequireClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin);
+                policy.RequireClaim(ClaimConstant.AwsRoleClaim);
+                policy.RequireAssertion(context =>
+                    !context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.User));
             });
-
-            options.AddPolicy(PolicyConstant.SalesPersonPolicy, policy =>
+            options.AddPolicy(PolicyConstant.CouponCodePolicy, policy =>
             {
-                policy.RequireClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Sales);
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.CouponCodes));
+            });
+            options.AddPolicy(PolicyConstant.ContactUsRequestPolicy, policy =>
+            {
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Marketing));
+            });
+            options.AddPolicy(PolicyConstant.UserAccountPolicy, policy =>
+            {
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Marketing)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff));
+            });
+            options.AddPolicy(PolicyConstant.ExamNotificationPolicy, policy =>
+            {
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.ExamNotification));
+            });
+            options.AddPolicy(PolicyConstant.QuizPolicy, policy =>
+            {
+                policy.RequireAssertion(context =>
+                    context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.QuizTeam));
             });
         });
         #endregion

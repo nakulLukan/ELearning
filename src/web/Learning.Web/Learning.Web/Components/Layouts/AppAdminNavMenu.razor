@@ -4,109 +4,121 @@
 @using Microsoft.AspNetCore.Identity
 @inject IRequestContext RequestContext;
 <MudPaper Elevation="0" Class="admin-nav-bar-panel">
-    <MudStack Justify="Justify.FlexStart" Class="h-100 flex-grow-1">
-        <MudLink Href="/admin" Typo="Typo.subtitle2" Class="text-center" Style="min-height: 80px">
-            <MudImage Src="assets/images/bts_icon.ico" Alt="Logo" Width="40" Class="m-2" />BTS
-        </MudLink>
-        <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2 flex-grow-1">
-            @foreach (var menuGroup in _menuGroups)
-            {
-                <MudNavGroup Title="@menuGroup.GroupName">
-                    @foreach (var menu in menuGroup.MenuItems)
-                    {
-                        <MudNavLink Href="@menu.Route">@menu.MenuName</MudNavLink>
-                    }
-                </MudNavGroup>
-            }
-        </MudNavMenu>
-        <AuthorizeView>
-            <Authorized>
-                <form action="Account/SignOut" method="post">
-                    <AntiforgeryToken />
-                    <input type="hidden" name="ReturnUrl" value="" />
-                    <MudButton ButtonType="ButtonType.Submit"
-                               Class="mud-nav-link"
-                               StartIcon="@Icons.Material.Filled.Logout"
-                               Style="text-transform:none;">
-                        Logout
-                    </MudButton>
-                </form>
-            </Authorized>
-        </AuthorizeView>
-    </MudStack>
+	<MudStack Justify="Justify.FlexStart" Class="h-100 flex-grow-1">
+		<MudLink Href="/admin" Typo="Typo.subtitle2" Class="text-center" Style="min-height: 80px">
+			<MudImage Src="assets/images/bts_icon.ico" Alt="Logo" Width="40" Class="m-2" />BTS
+		</MudLink>
+		<MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2 flex-grow-1">
+			@foreach (var menuGroup in _menuGroups)
+			{
+				<MudNavGroup Title="@menuGroup.GroupName">
+					@foreach (var menu in menuGroup.MenuItems)
+					{
+						<MudNavLink Href="@menu.Route">@menu.MenuName</MudNavLink>
+					}
+				</MudNavGroup>
+			}
+		</MudNavMenu>
+		<AuthorizeView>
+			<Authorized>
+				<form action="Account/SignOut" method="post">
+					<AntiforgeryToken />
+					<input type="hidden" name="ReturnUrl" value="" />
+					<MudButton ButtonType="ButtonType.Submit"
+							   Class="mud-nav-link"
+							   StartIcon="@Icons.Material.Filled.Logout"
+							   Style="text-transform:none;">
+						Logout
+					</MudButton>
+				</form>
+			</Authorized>
+		</AuthorizeView>
+	</MudStack>
 </MudPaper>
 @code {
-    private List<NavMenuItemGroupDto> _menuGroups = new();
-    private readonly List<NavMenuItemGroupDto> _allMenus = [
-    new()
-    {
-        GroupName = "Administration",
-        MenuItems = [
-            new()
-            {
-                AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin],
-                MenuName = "Manage Courses",
-                Route = "/admin/courses",
-            },
-            new() {
-                AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin],
-                MenuName = "Manage Classes",
-                Route = "/admin/classes"
-            },
-            new() {
-                AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin],
-                MenuName = "Manage Subjects",
-                Route = "/admin/subjects",
-            }
-        ],
-    },
-    new()
-    {
-        GroupName = "Home Page",
-        MenuItems = [
-            new()
-            {
-                AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin],
-                MenuName = "Configure Exam Notification",
-                Route = "/admin/exam-notifications",
-            },
-            new()
-            {
-                AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin],
-                MenuName = "Configure Quiz",
-                Route = "/admin/quiz/configure",
-            },
-        ],
-    },
-    new()
-    {
-        GroupName = "Account",
-        MenuItems = [
-            new()
-            {
-                AllowedRoles = [RoleConstant.SuperAdmin],
-                MenuName = "User Accounts",
-                Route = "/admin/manage/publicusers",
-            }
-        ],
-    }
-    ];
+	private List<NavMenuItemGroupDto> _menuGroups = new();
+	private readonly List<NavMenuItemGroupDto> _allMenus = [
+	// new()
+	// {
+	//     GroupName = "Administration",
+	//     MenuItems = [
+	//         new()
+	//         {
+	//             AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin],
+	//             MenuName = "Manage Courses",
+	//             Route = "/admin/courses",
+	//         },
+	//         new() {
+	//             AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin],
+	//             MenuName = "Manage Classes",
+	//             Route = "/admin/classes"
+	//         },
+	//         new() {
+	//             AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin],
+	//             MenuName = "Manage Subjects",
+	//             Route = "/admin/subjects",
+	//         }
+	//     ],
+	// },
+	new()
+	{
+		GroupName = "Home Page",
+		MenuItems = [
+			new()
+			{
+				AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.ExamNotification],
+				MenuName = "Configure Exam Notification",
+				Route = "/admin/exam-notifications",
+			},
+			new()
+			{
+				AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.QuizTeam],
+				MenuName = "Configure Quiz",
+				Route = "/admin/quiz/configure",
+			},
+			new()
+			{
+				AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.CouponCodes],
+				MenuName = "Manage Coupon Codes",
+				Route = "/admin/coupon-codes",
+			},
+		],
+	},
+	new()
+	{
+		GroupName = "Account",
+		MenuItems = [
+			new()
+			{
+				AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin, RoleConstant.Marketing],
+				MenuName = "User Accounts",
+				Route = "/admin/manage/publicusers",
+			},
+			new()
+			{
+				AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin, RoleConstant.Marketing, RoleConstant.OfficeStaff],
+				MenuName = "Contact Us Requests",
+				Route = "/admin/contact-us-requests",
+			}
+		],
+	}
+	];
 
-    protected override async Task OnInitializedAsync()
-    {
-        var userRole = await RequestContext.GetUserRole();
-        foreach (var menuGroup in _allMenus)
-        {
-            var usersMenuItems = menuGroup.MenuItems.Where(x => x.AllowedRoles.Contains(userRole)).ToList();
-            if (usersMenuItems.Any())
-            {
-                _menuGroups.Add(new()
-                    {
-                        GroupName = menuGroup.GroupName,
-                        MenuItems = usersMenuItems,
-                        Icon = menuGroup.Icon
-                    });
-            }
-        }
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		var userRole = await RequestContext.GetUserRole();
+		foreach (var menuGroup in _allMenus)
+		{
+			var usersMenuItems = menuGroup.MenuItems.Where(x => x.AllowedRoles.Contains(userRole)).ToList();
+			if (usersMenuItems.Any())
+			{
+				_menuGroups.Add(new()
+					{
+						GroupName = menuGroup.GroupName,
+						MenuItems = usersMenuItems,
+						Icon = menuGroup.Icon
+					});
+			}
+		}
+	}
 }

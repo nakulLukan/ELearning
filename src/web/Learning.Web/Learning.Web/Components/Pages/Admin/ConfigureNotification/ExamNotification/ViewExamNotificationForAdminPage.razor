@@ -6,7 +6,7 @@
 @using Learning.Shared.Common.Extensions;
 @layout AdminLayout
 @inherits AppBaseComponent
-@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
+@attribute [Authorize(Policy = PolicyConstant.ExamNotificationPolicy)]
 <MudContainer Class="mt-5">
     <MudStack>
         <MudStack Row>

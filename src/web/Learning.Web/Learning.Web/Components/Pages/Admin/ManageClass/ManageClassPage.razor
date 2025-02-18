@@ -2,7 +2,7 @@
 @using Learning.Web.Components.Layouts
 @using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveAuto
-@attribute [Authorize(Policy = PolicyConstant.SuperAdminPolicy)]
+@attribute [Authorize(Policy = PolicyConstant.AdminPolicy)]
 @layout AdminLayout
 <MudGrid>
     <MudItem xs="12" lg="4">
