@@ -40,7 +40,7 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
             .Select(x => new PublicUserListItemDto
             {
                 Id = x.Id,
-                AccountCreatedOn = x.AccountCreatedOn.ToHumanizedDateTimeString(),
+                AccountCreatedOn = x.AccountCreatedOn.ToLocalDateTimeString(),
                 ContactNumber = x.OtherDetails.PhoneNumber ?? string.Empty,
                 EmailAddress = x.OtherDetails.Email ?? string.Empty,
                 IsEmailAddressVerified = x.OtherDetails.EmailConfirmed,

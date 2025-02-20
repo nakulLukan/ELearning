@@ -24,7 +24,6 @@
         </MudItem>
         <MudItem xs="4">
             <MudPaper Elevation="1" Class="ma-3">
-
                 <ManageModelExamMetaDataComponent Model="_metaDataModel"
                                                   IsInitialized="@IsInitialized"
                                                   ExamNotificationId="@ExamNotificationId"
@@ -66,7 +65,7 @@
             Price = null,
             ExamNotificationId = 0,
             Id = 0,
-            TotalTimeLimit = null,
+            TotalTimeLimitInMinutes = null,
             SolutionFileName = null
         };
     private ModelExamQuestionMetaData[]? _questions = null;
@@ -88,7 +87,7 @@
                 {
                     ExamDescription = _modelExamDetail.ExamDescription,
                     ExamName = _modelExamDetail.ExamName,
-                    TotalTimeLimit = TimeSpan.FromSeconds(_modelExamDetail.TotalTimeLimitInSeconds),
+                    TotalTimeLimitInMinutes = _modelExamDetail.TotalTimeLimitInSeconds / 60,
                     DiscountedPrice = _modelExamDetail.DiscountedPrice,
                     IsActive = _modelExamDetail.IsActive,
                     IsFree = _modelExamDetail.IsFree,

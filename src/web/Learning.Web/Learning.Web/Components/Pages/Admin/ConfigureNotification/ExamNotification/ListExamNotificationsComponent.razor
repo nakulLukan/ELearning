@@ -2,101 +2,112 @@
 @using Learning.Business.Requests.Notifications.ExamNotification
 @using Learning.Shared.Common.Constants
 @using Learning.Shared.Common.Extensions
+@using Learning.Shared.Contracts.HttpContext
 @inject NavigationManager NavigationManager
 @inject IAlertService AlertService
-
+@inject IRequestContext RequestContext
 @inherits AppBaseComponent
 
 <AppMudDataGrid T="ExamNotificationsListItemDto"
-                Items="@Elements"
-                Virtualize="true"
-                Groupable="false"
-                Bordered
-                ShowMenuIcon="false"
-                FixedHeader="true"
-                Dense
-                Hover
-                Striped
-                RowClass="cursor-pointer"
-                Loading="_isLoading"
-                Elevation="0"
-                RowClick="@OnExamNotificationClicked">
-    <ToolBarContent>
-        <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Exam Notification" />
-    </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="@(x => $"#{x.Id}")"
-                        Title="Reference"
-                        Filterable="false"
-                        Sortable="false" />
-        <PropertyColumn Property="x => x.Title"
-                        Title="Title" />
-        <PropertyColumn Property="@(x => x.DisplayInHomePage ? "Yes" : "No")"
-                        Title="Display Home Page"
-                        Sortable="false" />
-        <PropertyColumn Property="@(x => x.ValidTill.HasValue ? x.ValidTill.Value.ToLocalDateFormatedString(DateFormats.DisplayDateFormat) : "-")"
-                        Title="Valid Till" />
-        <PropertyColumn Property="@(x => x.CreatedOn.ToLocalDateTimeString())"
-                        Title="Created On" />
-        <TemplateColumn>
-            <CellTemplate>
-                <div>
-                    <MudIconButton Size="@Size.Small" Color="Color.Error" OnClick="(async ()=> await DeleteNotification(context.Item.Id))" Icon="@Icons.Material.Rounded.Delete"></MudIconButton>
-                </div>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-    <NoRecordsContent>
-        <NoRecordsComponent />
-    </NoRecordsContent>
+				Items="@Elements"
+				Virtualize="true"
+				Groupable="false"
+				Bordered
+				ShowMenuIcon="false"
+				FixedHeader="true"
+				Dense
+				Hover
+				Striped
+				RowClass="cursor-pointer"
+				Loading="_isLoading"
+				Elevation="0"
+				RowClick="@OnExamNotificationClicked">
+	<ToolBarContent>
+		<Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="Exam Notification" />
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn Property="@(x => $"#{x.Id}")"
+						Title="Reference"
+						Filterable="false"
+						Sortable="false" />
+		<PropertyColumn Property="x => x.Title"
+						Title="Title" />
+		<PropertyColumn Property="@(x => x.DisplayInHomePage ? "Yes" : "No")"
+						Title="Display Home Page"
+						Sortable="false" />
+		<PropertyColumn Property="@(x => x.ValidTill.HasValue ? x.ValidTill.Value.ToLocalDateFormatedString(DateFormats.DisplayDateFormat) : "-")"
+						Title="Valid Till" />
+		<PropertyColumn Property="@(x => x.CreatedOn.ToLocalDateTimeString())"
+						Title="Created On" />
+		@if (_showDeleteOption)
+		{
+			<TemplateColumn>
+				<CellTemplate>
+
+					<div>
+						<MudIconButton Size="@Size.Small" Color="Color.Error" OnClick="(async ()=> await DeleteNotification(context.Item.Id))" Icon="@Icons.Material.Rounded.Delete"></MudIconButton>
+					</div>
+				</CellTemplate>
+			</TemplateColumn>
+		}
+	</Columns>
+	<NoRecordsContent>
+		<NoRecordsComponent />
+	</NoRecordsContent>
 </AppMudDataGrid>
 @code {
-    private List<ExamNotificationsListItemDto> Elements = new();
-    private int _examNotificationsCount = 0;
+	private List<ExamNotificationsListItemDto> Elements = new();
+	private int _examNotificationsCount = 0;
+	bool _showDeleteOption;
+	protected override async Task OnInitializedAsync()
+	{
+		var userRole = await RequestContext.GetUserRole();
+		_showDeleteOption = userRole == RoleConstant.SuperAdmin;
+	}
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        await LoadExamNotifications();
-    }
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		await LoadExamNotifications();
+	}
 
-    public async Task RefreshList()
-    {
-        await LoadExamNotifications();
-    }
+	public async Task RefreshList()
+	{
+		await LoadExamNotifications();
+	}
 
-    private async Task LoadExamNotifications()
-    {
-        ChangeToLoadingState();
-        var response = (await Mediator.Send(new GetAllExamNotificationsQuery()));
+	private async Task LoadExamNotifications()
+	{
+		ChangeToLoadingState();
+		var response = (await Mediator.Send(new GetAllExamNotificationsQuery()));
 
-        Elements = response;
-        ChangeToLoadedState();
-    }
+		Elements = response;
+		ChangeToLoadedState();
+	}
 
-    private void OnExamNotificationClicked(DataGridRowClickEventArgs<ExamNotificationsListItemDto> selectedItem)
-    {
-        NavigationManager.NavigateTo($"/admin/exam-notifications/{selectedItem.Item.Id}");
-    }
+	private void OnExamNotificationClicked(DataGridRowClickEventArgs<ExamNotificationsListItemDto> selectedItem)
+	{
+		NavigationManager.NavigateTo($"/admin/exam-notifications/{selectedItem.Item.Id}");
+	}
 
-    private async Task DeleteNotification(int examNotificationId)
-    {
-        if (!await AlertService.DisplayAlert("Confirm Delete", "Are you sure you want to delete this notification?", "Confirm", Client.Enums.AlertTypeEnum.Error))
-        {
-            return;
-        }
-        await AppMediator.Send(new DeleteExamNotificationCommand()
-            {
-                ExamNotificationId = examNotificationId
-            })
-            .OnSuccess(data =>
-            {
-                InvokeAsync(LoadExamNotifications);
-                ToastService.Success("Exam notification deleted successfully");
-            })
-            .OnError(err =>
-            {
-                ToastService.Error(err.Message);
-            });
-    }
+	private async Task DeleteNotification(int examNotificationId)
+	{
+		if (!await AlertService.DisplayAlert("Confirm Delete", "Are you sure you want to delete this notification?", "Confirm", Client.Enums.AlertTypeEnum.Error))
+		{
+			return;
+		}
+		await AppMediator.Send(new DeleteExamNotificationCommand()
+			{
+				ExamNotificationId = examNotificationId
+			})
+			.OnSuccess(data =>
+			{
+				InvokeAsync(LoadExamNotifications);
+				ToastService.Success("Exam notification deleted successfully");
+			})
+			.OnError(err =>
+			{
+				ToastService.Error(err.Message);
+			});
+	}
 }
