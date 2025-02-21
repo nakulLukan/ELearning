@@ -12,6 +12,16 @@ public class ModelExamConfiguration : DomainBase
     public long? ExamSolutionVideoId { get; set; }
 
     /// <summary>
+    /// Score per question
+    /// </summary>
+    public int Score { get; set; }
+
+    /// <summary>
+    /// Negative score for wrong answer
+    /// </summary>
+    public int NegativeScore { get; set; }
+
+    /// <summary>
     /// Value is seconds
     /// </summary>
     public int TotalTimeLimit { get; set; }
