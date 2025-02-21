@@ -34,7 +34,6 @@ public class GetModelExamQuestionByIdQueryHandler : IRequestHandler<GetModelExam
                 Id = x.Id,
                 IsActive = x.IsActive,
                 Order = x.Order,
-                Score = x.Score,
                 QuestionText = x.QuestionText,
                 QuestionImageSignedUrl = x.QuestionImage != null ? _fileStorage.GetPresignedUrl(x.QuestionImage.RelativePath) : null,
                 Options = x.ModelExamAnswers!.Where(y => y.QuestionId == request.QuestionId).Select(y => new ModelExamOptionDetailResponseDto

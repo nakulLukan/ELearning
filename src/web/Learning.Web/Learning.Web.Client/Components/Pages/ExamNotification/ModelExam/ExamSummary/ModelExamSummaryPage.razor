@@ -114,7 +114,9 @@
 					@if (_summary.Value.NextModelExamId.HasValue)
 					{
 						<AppButton FullWidth Text="Next Exam" ButtonType="AppButton.AppButtonType.Primary" OnClick="NextExam"></AppButton>
-					}else{
+					}
+					else
+					{
 						<AppButton FullWidth Text="Go to listing" ButtonType="AppButton.AppButtonType.Primary" OnClick="GoToListing"></AppButton>
 					}
 				</MudStack>
@@ -169,7 +171,8 @@
 					SelectedOptionText = x.OptionSummary.FirstOrDefault(y => y.OptionId == x.SelectedOptionId)?.OptionText,
 					CorrectOptionImageUrl = x.OptionSummary.First(y => y.IsCorrectAnswer!.Value).OptionImageRelativeUrl,
 					SelectedOptionImageUrl = x.OptionSummary.FirstOrDefault(y => y.OptionId == x.SelectedOptionId)?.OptionImageRelativeUrl,
-					Score = x.Score
+					Score = x.Score,
+					NegativeScore = x.NegativeScore
 				}).ToArray()
 			};
 		_totalCount = _summary.Value.QuestionSummary.Count();
@@ -177,7 +180,7 @@
 		_wrongCount = _summary.Value.QuestionSummary.Count(x => !x.IsCorrect && !x.HasSkipped);
 		_sessionDurationString = _summary.Value.SessionDurationInSeconds!.Value.ToDurationString();
 		_totalScore = _summary.Value.QuestionSummary.Sum(x => x.Score);
-		_score = _summary.Value.QuestionSummary.Where(x => x.IsCorrect).Sum(x => x.Score);
+		_score = _summary.Value.QuestionSummary.Where(x => x.IsCorrect).Sum(x => x.Score) + _summary.Value.QuestionSummary.Where(x => !x.HasSkipped && !x.IsCorrect).Sum(x => x.NegativeScore);
 
 		StateHasChanged();
 
@@ -239,6 +242,7 @@
 		public required string? CorrectOptionImageUrl { get; set; }
 		public required string? SelectedOptionImageUrl { get; set; }
 		public required int Score { get; set; }
+		public required int NegativeScore { get; set; }
 
 	}
 	#endregion

@@ -8,6 +8,8 @@ public class AddModelExamRequestDto
     public required string ExamDescription { get; set; }
     public required bool IsActive { get; set; }
     public required bool IsFree { get; set; }
+    public required int Score { get; set; }
+    public required int NegativeScore { get; set; }
     public required float Price { get; set; }
     public required float DiscountedPrice { get; set; }
     public required int TotalTimeLimit { get; set; }

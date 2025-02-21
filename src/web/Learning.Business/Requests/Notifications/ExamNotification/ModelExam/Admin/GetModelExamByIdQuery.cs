@@ -33,6 +33,8 @@ public class GetModelExamByIdQueryHandler : IRequestHandler<GetModelExamByIdQuer
             .Where(x => x.Id == request.ModelExamId)
             .Select(x => new ModelExamDetailResponseDto
             {
+                Score = x.Score,
+                NegativeScore = x.NegativeScore,
                 Id = x.Id,
                 CreatedOn = x.CreatedOn!.Value,
                 DiscountedPrice = x.ModelExamPackage!.DiscountedPrice,
@@ -58,7 +60,6 @@ public class GetModelExamByIdQueryHandler : IRequestHandler<GetModelExamByIdQuer
                 Id = x.Id,
                 Order = x.Order,
                 IsActive = x.IsActive,
-                Score = x.Score,
                 QuestionText = x.QuestionText,
                 QuestionImageUrl = x.QuestionImage != null ? _fileStorage.GetPresignedUrl(x.QuestionImage.RelativePath) : null,
                 OptionNumber = x.ModelExamAnswers!.First(x => x.IsCorrectAnswer).Order.ToString()

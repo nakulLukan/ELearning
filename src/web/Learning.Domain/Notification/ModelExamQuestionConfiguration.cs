@@ -9,7 +9,6 @@ public class ModelExamQuestionConfiguration : DomainBase
     public long? QuestionImageId { get; set; }
     public int Order { get; set; }
     public int ExamConfigId { get; set; }
-    public int Score { get; set; }
     public bool IsActive { get; set; } = true;
 
     public Attachment? QuestionImage { get; set; }

@@ -10,7 +10,7 @@ public class ModelExamConfiguration : DomainBase
     public bool IsFree { get; set; }
     public bool IsActive { get; set; }
     public long? ExamSolutionVideoId { get; set; }
-
+    
     /// <summary>
     /// Score per question
     /// </summary>

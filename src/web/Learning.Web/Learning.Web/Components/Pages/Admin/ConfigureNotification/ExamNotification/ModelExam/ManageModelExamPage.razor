@@ -9,128 +9,134 @@
 @layout AdminLayout
 @attribute [Authorize(Policy = PolicyConstant.ExamNotificationPolicy)]
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-4">
-    <MudGrid Justify="Justify.Center">
-        <MudItem xs="12">
-            <MudStack Row Justify="Justify.SpaceBetween">
-                <Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="@_modelExamName" />
-            </MudStack>
-            <MudDivider Class="mt-1" />
-        </MudItem>
-        <MudItem xs="8" Class="@_manageModelExamQuestionComponentClass">
-            <ManageModelExamQuestionComponent ExamNotificationId="@ExamNotificationId"
-                                              ModelExamId="ModelExamId"
-                                              IsInitialized="IsInitialized"
-                                              Questions="@_questions" />
-        </MudItem>
-        <MudItem xs="4">
-            <MudPaper Elevation="1" Class="ma-3">
-                <ManageModelExamMetaDataComponent Model="_metaDataModel"
-                                                  IsInitialized="@IsInitialized"
-                                                  ExamNotificationId="@ExamNotificationId"
-                                                  ModelExamId="@ModelExamId"
-                                                  OnModelExamSaved="OnModelExamSaved"
-                                                  SolutionMpdFileName="@_solutionVideoMpdFileName"
-                                                  SolutionVideoUploadLink="@_modelExamDetail?.SolutionVideoUploadLink"
-                                                  SolutionVideoSignedUrl="@_modelExamDetail?.SolutionVideoSignedUrl" />
-            </MudPaper>
-            <MudPaper Elevation="1" Class="ma-3">
-                <MudStack Row
-                          Style="background-color: var(--mud-palette-background-gray)"
-                          AlignItems="AlignItems.Center"
-                          StretchItems="StretchItems.All">
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
+	<MudGrid Justify="Justify.Center">
+		<MudItem xs="12">
+			<MudStack Row Justify="Justify.SpaceBetween">
+				<Learning.Web.Client.Components.Controls.Labels.AppTitleView Title="@_modelExamName" />
+			</MudStack>
+			<MudDivider Class="mt-1" />
+		</MudItem>
+		<MudItem xs="8" Class="@_manageModelExamQuestionComponentClass">
+			<ManageModelExamQuestionComponent ExamNotificationId="@ExamNotificationId"
+											  ModelExamId="ModelExamId"
+											  IsInitialized="IsInitialized"
+											  Questions="@_questions" />
+		</MudItem>
+		<MudItem xs="4">
+			<MudPaper Elevation="1" Class="ma-3">
+				<ManageModelExamMetaDataComponent Model="_metaDataModel"
+												  IsInitialized="@IsInitialized"
+												  ExamNotificationId="@ExamNotificationId"
+												  ModelExamId="@ModelExamId"
+												  OnModelExamSaved="OnModelExamSaved"
+												  SolutionMpdFileName="@_solutionVideoMpdFileName"
+												  SolutionVideoUploadLink="@_modelExamDetail?.SolutionVideoUploadLink"
+												  SolutionVideoSignedUrl="@_modelExamDetail?.SolutionVideoSignedUrl" />
+			</MudPaper>
+			<MudPaper Elevation="1" Class="ma-3">
+				<MudStack Row
+						  Style="background-color: var(--mud-palette-background-gray)"
+						  AlignItems="AlignItems.Center"
+						  StretchItems="StretchItems.All">
+				</MudStack>
+			</MudPaper>
+		</MudItem>
+	</MudGrid>
 </MudContainer>
 @code {
-    [Parameter]
-    public int ExamNotificationId { get; set; }
+	[Parameter]
+	public int ExamNotificationId { get; set; }
 
-    [Parameter]
-    public int ModelExamId { get; set; }
+	[Parameter]
+	public int ModelExamId { get; set; }
 
-    private string _modelExamName = "New Model Exam";
-    private int _totalQuestions = 0;
-    private int _totalTimeLimitInSeconds = 0;
-    private string? _solutionVideoMpdFileName = null;
+	private string _modelExamName = "New Model Exam";
+	private int _totalQuestions = 0;
+	private int _totalTimeLimitInSeconds = 0;
+	private string? _solutionVideoMpdFileName = null;
 
-    private ModelExamMetaDataModel? _metaDataModel = new()
-        {
-            DiscountedPrice = null,
-            ExamDescription = string.Empty,
-            ExamName = string.Empty,
-            IsActive = true,
-            IsFree = false,
-            Price = null,
-            ExamNotificationId = 0,
-            Id = 0,
-            TotalTimeLimitInMinutes = null,
-            SolutionFileName = null
-        };
-    private ModelExamQuestionMetaData[]? _questions = null;
-    public ModelExamDetailResponseDto? _modelExamDetail = null;
+	private ModelExamMetaDataModel? _metaDataModel = new()
+		{
+			DiscountedPrice = null,
+			ExamDescription = string.Empty,
+			ExamName = string.Empty,
+			IsActive = true,
+			IsFree = false,
+			Price = null,
+			ExamNotificationId = 0,
+			Id = 0,
+			TotalTimeLimitInMinutes = null,
+			SolutionFileName = null,
+			NegativeScore = null,
+			Score = null
+		};
+	private ModelExamQuestionMetaData[]? _questions = null;
+	public ModelExamDetailResponseDto? _modelExamDetail = null;
 
-    private string _manageModelExamQuestionComponentClass = "d-none";
+	private string _manageModelExamQuestionComponentClass = "d-none";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        if (ModelExamId != 0)
-        {
-            _modelExamDetail = await Mediator.Send(new GetModelExamByIdQuery()
-                {
-                    ExamNotificationId = ExamNotificationId,
-                    ModelExamId = ModelExamId
-                });
-            _metaDataModel = new()
-                {
-                    ExamDescription = _modelExamDetail.ExamDescription,
-                    ExamName = _modelExamDetail.ExamName,
-                    TotalTimeLimitInMinutes = _modelExamDetail.TotalTimeLimitInSeconds / 60,
-                    DiscountedPrice = _modelExamDetail.DiscountedPrice,
-                    IsActive = _modelExamDetail.IsActive,
-                    IsFree = _modelExamDetail.IsFree,
-                    Price = _modelExamDetail.Price,
-                    ExamNotificationId = ExamNotificationId,
-                    Id = ModelExamId,
-                    SolutionFileName = null
-                };
-            _questions = _modelExamDetail.Questions;
-            _totalTimeLimitInSeconds = _modelExamDetail.TotalTimeLimitInSeconds;
-            _totalQuestions = _modelExamDetail.Questions.Count();
-            _modelExamName = _modelExamDetail.ExamName;
-            _manageModelExamQuestionComponentClass = string.Empty;
-            _solutionVideoMpdFileName = _modelExamDetail.SolutionVideoMpdFileName;
-        }
-        else
-        {
-            _modelExamDetail = new()
-                {
-                    CreatedOn = AppDateTime.UtcNow,
-                    DiscountedPrice = 0,
-                    ExamDescription = string.Empty,
-                    ExamName = string.Empty,
-                    ExamNotificationId = ExamNotificationId,
-                    Id = 0,
-                    IsActive = true,
-                    IsFree = false,
-                    Price = 0,
-                    Questions = [],
-                    SolutionVideoSignedUrl = null,
-                    TotalTimeLimitInSeconds = 0,
-                    SolutionVideoUploadLink = null,
-                    SolutionVideoMpdFileName = null
-                };
-            _questions = [];
-            _totalTimeLimitInSeconds = 0;
-            _totalQuestions = 0;
-        }
-        SetInitialized();
-    }
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		if (ModelExamId != 0)
+		{
+			_modelExamDetail = await Mediator.Send(new GetModelExamByIdQuery()
+				{
+					ExamNotificationId = ExamNotificationId,
+					ModelExamId = ModelExamId
+				});
+			_metaDataModel = new()
+				{
+					ExamDescription = _modelExamDetail.ExamDescription,
+					ExamName = _modelExamDetail.ExamName,
+					TotalTimeLimitInMinutes = _modelExamDetail.TotalTimeLimitInSeconds / 60,
+					DiscountedPrice = _modelExamDetail.DiscountedPrice,
+					IsActive = _modelExamDetail.IsActive,
+					IsFree = _modelExamDetail.IsFree,
+					Price = _modelExamDetail.Price,
+					ExamNotificationId = ExamNotificationId,
+					Id = ModelExamId,
+					SolutionFileName = null,
+					NegativeScore = _modelExamDetail.NegativeScore!,
+					Score = _modelExamDetail.Score!
+				};
+			_questions = _modelExamDetail.Questions;
+			_totalTimeLimitInSeconds = _modelExamDetail.TotalTimeLimitInSeconds;
+			_totalQuestions = _modelExamDetail.Questions.Count();
+			_modelExamName = _modelExamDetail.ExamName;
+			_manageModelExamQuestionComponentClass = string.Empty;
+			_solutionVideoMpdFileName = _modelExamDetail.SolutionVideoMpdFileName;
+		}
+		else
+		{
+			_modelExamDetail = new()
+				{
+					NegativeScore = null,
+					Score = null,
+					CreatedOn = AppDateTime.UtcNow,
+					DiscountedPrice = 0,
+					ExamDescription = string.Empty,
+					ExamName = string.Empty,
+					ExamNotificationId = ExamNotificationId,
+					Id = 0,
+					IsActive = true,
+					IsFree = false,
+					Price = 0,
+					Questions = [],
+					SolutionVideoSignedUrl = null,
+					TotalTimeLimitInSeconds = 0,
+					SolutionVideoUploadLink = null,
+					SolutionVideoMpdFileName = null
+				};
+			_questions = [];
+			_totalTimeLimitInSeconds = 0;
+			_totalQuestions = 0;
+		}
+		SetInitialized();
+	}
 
-    private void OnModelExamSaved(int modelExamId)
-    {
-        NavigationManager.NavigateTo($"/admin/exam-notifications/{ExamNotificationId}/model-exams/{modelExamId}");
-    }
+	private void OnModelExamSaved(int modelExamId)
+	{
+		NavigationManager.NavigateTo($"/admin/exam-notifications/{ExamNotificationId}/model-exams/{modelExamId}");
+	}
 }

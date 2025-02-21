@@ -23,6 +23,7 @@ public class QuestionSummary
     public required string QuestionText { get; set; }
     public required string? QuestionImageUrl { get; set; }
     public required int Score { get; set; }
+    public required int NegativeScore { get; set; }
     public required OptionSummary[] OptionSummary { get; set; }
 }
 

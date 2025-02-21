@@ -18,7 +18,6 @@ public class AddEditModelExamQuestionCommand : IRequest<ResponseDto<int>>
     public required int QuestionId { get; set; }
     public required string? QuestionText { get; set; }
     public required byte[]? QuestionImage { get; set; }
-    public required int Score { get; set; }
     public required int QuestionNumber { get; set; }
     public required bool IsActive { get; set; }
     public required List<AddEditModelExamOptionDto> Options { get; set; }
@@ -176,10 +175,6 @@ public class AddEditModelExamQuestionCommandHandler : IRequestHandler<AddEditMod
         ModelExamQuestionConfiguration existingQuestion,
         AttachmentInfoDto? questionImageInfo)
     {
-        if (existingQuestion.Score != request.Score)
-        {
-            existingQuestion.Score = request.Score;
-        }
         if (existingQuestion.IsActive != request.IsActive)
         {
             existingQuestion.IsActive = request.IsActive;
@@ -222,7 +217,6 @@ public class AddEditModelExamQuestionCommandHandler : IRequestHandler<AddEditMod
         ModelExamQuestionConfiguration existingQuestion = new()
         {
             Id = request.QuestionId,
-            Score = request.Score,
             Order = request.QuestionNumber,
             QuestionText = request.QuestionText,
             ExamConfigId = request.ModelExamId,

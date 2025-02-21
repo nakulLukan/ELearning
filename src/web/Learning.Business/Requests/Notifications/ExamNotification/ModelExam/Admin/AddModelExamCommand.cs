@@ -124,6 +124,14 @@ public class AddModelExamCommandHandler : IRequestHandler<AddModelExamCommand, R
         {
             modelExam.TotalTimeLimit = request.TotalTimeLimit;
         }
+        if (modelExam.Score != request.Score)
+        {
+            modelExam.Score = request.Score;
+        }
+        if (modelExam.NegativeScore != request.NegativeScore)
+        {
+            modelExam.NegativeScore = request.NegativeScore;
+        }
         modelExam.LastUpdatedBy = userId;
         modelExam.LastUpdatedOn = AppDateTime.UtcNow;
     }
@@ -163,7 +171,9 @@ public class AddModelExamCommandHandler : IRequestHandler<AddModelExamCommand, R
             LastUpdatedBy = userId,
             LastUpdatedOn = AppDateTime.UtcNow,
             TotalTimeLimit = request.TotalTimeLimit,
-            ModelExamPackageId = modelExamPackage.Id
+            ModelExamPackageId = modelExamPackage.Id,
+            Score = request.Score,
+            NegativeScore = request.NegativeScore,
         };
         _dbContext.ModelExamConfigurations.Add(modelExam);
         return modelExam;

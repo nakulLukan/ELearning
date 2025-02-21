@@ -37,6 +37,8 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
             {
                 ModelExamId = x.ExamConfigId,
                 ModelExamPackageId = x.ExamConfig!.ModelExamPackageId,
+                x.ExamConfig.Score,
+                x.ExamConfig.NegativeScore,
                 x.ExamConfig!.ExamName,
                 x.Status,
                 x.ExamConfig!.TotalTimeLimit,
@@ -46,7 +48,6 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
                 .Select(y => new
                 {
                     y.QuestionId,
-                    y.Question!.Score,
                     Order = y.Question!.Order,
                     SelectedOptionId = y.SelectedAnswerId,
                     HasSkipped = y.HasSkipped,
@@ -96,7 +97,8 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
             SessionDurationInSeconds = sessionDetail.CompletedOn.HasValue ? (int)(sessionDetail.CompletedOn.Value - sessionDetail.StartedOn).TotalSeconds : null,
             QuestionSummary = sessionDetail.Details!.Select(x => new QuestionSummary()
             {
-                Score = x.Score,
+                Score = sessionDetail.Score,
+                NegativeScore = sessionDetail.NegativeScore,
                 HasSkipped = x.HasSkipped,
                 SelectedOptionId = x.SelectedOptionId,
                 QuestionText = x.QuestionText!,
@@ -122,6 +124,7 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
         return await _dbContext.ModelExamQuestionConfigurations.Where(x => x.ExamConfigId == modelExamId
                     && !questionIds.Contains(x.Id)).Select(x => new QuestionSummary
                     {
+                        NegativeScore = x.ExamConfig!.NegativeScore,
                         HasSkipped = true,
                         OptionSummary = x.ModelExamAnswers != null ? x.ModelExamAnswers!.Select(y => new OptionSummary
                         {
@@ -134,7 +137,7 @@ public class GetModelExamSummaryQueryHandler : IRequestHandler<GetModelExamSumma
                         Order = x.Order,
                         QuestionImageUrl = x.QuestionImage != null ? _fileStorage.GetPresignedUrl(x.QuestionImage.RelativePath) : null,
                         QuestionText = x.QuestionText!,
-                        Score = x.Score,
+                        Score = x.ExamConfig.Score,
                         SelectedOptionId = null
                     })
                     .ToArrayAsync(cancellationToken);

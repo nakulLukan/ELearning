@@ -33,6 +33,16 @@
 				<MudCheckBox Label="Is Free"
 							 @bind-Value="Model.IsFree"
 							 For="(()=> Model.IsFree)"></MudCheckBox>
+				<MudNumericField Label="Score per question"
+								 @bind-Value=Model.Score
+								 Min="0"
+								 For="(()=> Model.Score)"
+								 ShrinkLabel></MudNumericField>
+				<MudNumericField Label="Negative Score per question"
+								 @bind-Value=Model.NegativeScore
+								 Max="0"
+								 For="(()=> Model.NegativeScore)"
+								 ShrinkLabel></MudNumericField>
 				<MudTextField Label="Price"
 							  @bind-Value=Model.Price
 							  InputType="InputType.Number"
@@ -81,6 +91,8 @@
 	[Parameter, EditorRequired]
 	public ModelExamMetaDataModel Model { get; set; } = new()
 		{
+			NegativeScore = null,
+			Score = null,
 			DiscountedPrice = null,
 			ExamDescription = string.Empty,
 			ExamName = string.Empty,
@@ -116,7 +128,9 @@
 				IsFree = Model.IsFree,
 				Price = Model.Price!.Value,
 				TotalTimeLimit = Model.TotalTimeLimitInMinutes!.Value * 60,
-				SolutionFileName = Model.SolutionFileName
+				SolutionFileName = Model.SolutionFileName,
+				NegativeScore = Model.NegativeScore!.Value,
+				Score = Model.Score!.Value
 			})
 			.OnSuccess(data =>
 			{
@@ -153,6 +167,12 @@
 		[Required]
 		[MaxLength(500)]
 		public required string ExamDescription { get; set; }
+
+		[Required]
+		public required int? Score { get; set; }
+		[Required]
+		public required int? NegativeScore { get; set; }
+
 		[Required]
 		[Range(0, double.MaxValue)]
 		public required float? Price { get; set; }

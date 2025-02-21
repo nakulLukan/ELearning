@@ -22,7 +22,7 @@ namespace Learning.Infrastructure.Persistence.Migrations
                 table: "ModelExamConfigurations",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
         }
 
         /// <inheritdoc />
