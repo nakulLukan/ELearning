@@ -132,6 +132,7 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
         {
             ModelExamResultId = existingSession!.ExamResultId,
             StartedOn = existingSession.StartedOn,
+            UtcNow = AppDateTime.UtcNow,
             TotalQuestions = examDetails.TotalQuestions,
             TotalTimeInSeconds = examDetails.TotalTimeInSeconds,
             Status = sessionStatus,

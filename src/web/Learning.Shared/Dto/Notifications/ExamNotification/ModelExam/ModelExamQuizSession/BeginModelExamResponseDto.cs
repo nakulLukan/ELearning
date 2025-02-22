@@ -15,6 +15,11 @@ public class BeginModelExamResponseDto
     public required DateTimeOffset StartedOn { get; set; }
 
     /// <summary>
+    /// UTC now as in the server
+    /// </summary>
+    public required DateTimeOffset UtcNow { get; set; }
+
+    /// <summary>
     /// Total questions in the exam
     /// </summary>
     public required int TotalQuestions { get; set; }

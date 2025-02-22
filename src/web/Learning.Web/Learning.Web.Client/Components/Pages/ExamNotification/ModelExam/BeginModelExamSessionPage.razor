@@ -10,7 +10,7 @@
 @inject IModelExamDataService ModelExamDataService
 @inject IAppJSInterop AppJSInterop
 @inject IAlertService AlertService
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 @layout ModelExamSessionLayout
 @attribute [Authorize]
 <PageTitle>Model Exams</PageTitle>
@@ -135,7 +135,7 @@
 		}
 		totalAttemptedQuestions = details.Value.TotalQuestionsAttempted;
 		_examName = details.Value.ExamName;
-		_totalTimeLeftInSeconds = (int)(details.Value.TotalTimeInSeconds - (DateTimeOffset.UtcNow - details.Value.StartedOn).TotalSeconds);
+		_totalTimeLeftInSeconds = (int)(details.Value.TotalTimeInSeconds - (details.Value.UtcNow - details.Value.StartedOn).TotalSeconds);
 		var questionsResult = await ModelExamDataService.GetExamQuestionsList(ModelExamId);
 		if (questionsResult.IsFailed)
 		{
