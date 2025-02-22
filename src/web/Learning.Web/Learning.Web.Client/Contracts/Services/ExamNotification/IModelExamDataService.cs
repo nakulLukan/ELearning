@@ -3,6 +3,7 @@ using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Dto.ModelExam.Payment;
 using Learning.Shared.Dto.ModelExams;
+using Learning.Shared.Dto.ModelExams.Payment;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 
@@ -30,5 +31,6 @@ public interface IModelExamDataService
     public Task<Result<ExamNotificationDetailResponseDto>> GetExamNotificationDetailByModelExamId(int modelExamId);
     public Task<Result<ModelExamOrderStepDetailDto>> GetModelExamOrderById(long modelExamOrderId);
     public Task<Result<ModelExamOrderStepDetailDto>> CreateRazorpayOrder(long modelExamOrderId);
+    public Task<Result<ModelExamPaymentReceipt>> GetPaymentReceipt(long modelExamOrderId);
 
 }

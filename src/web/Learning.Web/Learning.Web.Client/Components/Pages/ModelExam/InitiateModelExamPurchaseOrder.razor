@@ -11,11 +11,12 @@
 @inject IAppJSInterop JSRuntime
 @rendermode InteractiveAuto
 @attribute [Authorize]
+<PageTitle>Purchase</PageTitle>
 <AppPage Class="d-flex flex-column flex-grow-1">
 	<MudContainer Gutters="false" Class="flex-grow-1 d-flex flex-column flex-grow-1">
 
 		@if (_orderDetails == null
-										|| _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
+				|| _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Initiated)
 		{
 			<BeginModelExamSessionLoaderComponent />
 		}
@@ -27,8 +28,8 @@
 					<div class="d-flex flex-column justify-center align-center">
 
 						<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Cancel"
-						ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-						Href="javascript:history.back()"></Learning.Web.Client.Components.Controls.Actions.AppButton>
+																				   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+																				   Href="javascript:history.back()"></Learning.Web.Client.Components.Controls.Actions.AppButton>
 					</div>
 				</MudStack>
 			</Learning.Web.Client.Components.Controls.Containers.PlainCard>
@@ -79,7 +80,7 @@
 							@* Order number*@
 							<div class="d-flex justify-space-between">
 								<span class="app-title">Order number</span>
-								<h6 class="app-value">#ME@(_orderDetails.ModelExamOrderId)</h6>
+								<h6 class="app-value">@_orderDetails.ModelExamOrderReferenceId</h6>
 							</div>
 
 							@if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success)
@@ -88,7 +89,7 @@
 								@* Order Recipet *@
 								<div class="d-flex justify-space-between">
 									<span class="app-title">Order receipt</span>
-									<h6 class="app-value">Download</h6>
+									<p><a class="text-center" href="model-exam/receipt/@ModelExamOrderId" target="_blank"><MudIcon Icon="@Icons.Material.Outlined.Receipt"></MudIcon> View Receipt</a></p>
 								</div>
 							}
 						</div>
@@ -97,21 +98,21 @@
 								<MudItem xs="12" md="6">
 
 									<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Go to Exam Listing"
-									ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
-									FullWidth="true"
-									Href="@($"model-exams/exam-notifications/{_orderDetails.ExamNotificationId}?examName={_orderDetails.NotificationTitle}")" />
+																							   ButtonType="Client.Components.Controls.Actions.AppButton.AppButtonType.Secondary"
+																							   FullWidth="true"
+																							   Href="@($"model-exams/exam-notifications/{_orderDetails.ExamNotificationId}?examName={_orderDetails.NotificationTitle}")" />
 								</MudItem>
 								<MudItem xs="12" md="6">
 									@if (_orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.Success)
 									{
 										<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Start Exam"
-										Href="@($"/model-exams/{_orderDetails.ModelExamId}/begin")"
-										FullWidth="true" />
+																								   Href="@($"/model-exams/{_orderDetails.ModelExamId}/begin")"
+																								   FullWidth="true" />
 									}
 									else
 									{
 										<Learning.Web.Client.Components.Controls.Actions.AppButton Text="Retry Purchase"
-										FullWidth="true" />
+																								   FullWidth="true" />
 									}
 								</MudItem>
 							</MudGrid>
@@ -162,7 +163,7 @@
 		StateHasChanged();
 		if (_orderDetails != null && _orderDetails.Status == Shared.Common.Enums.OrderStatusEnum.RzrpayOrderCreated)
 		{
-			await JSRuntime.InitRazorpayPopup(UIConstant.AppName, _orderDetails!.RazorpayOrderId!, _orderDetails.Name, _orderDetails.Email, _orderDetails.PhoneNumber!, $"#ME{_orderDetails.ModelExamOrderId}");
+			await JSRuntime.InitRazorpayPopup(UIConstant.AppName, _orderDetails!.RazorpayOrderId!, _orderDetails.Name, _orderDetails.Email, _orderDetails.PhoneNumber!, _orderDetails.ModelExamOrderReferenceId);
 		}
 	}
 }

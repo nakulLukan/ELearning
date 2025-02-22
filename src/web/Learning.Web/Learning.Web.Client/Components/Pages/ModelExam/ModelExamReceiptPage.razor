@@ -1,0 +1,106 @@
+﻿@page "/model-exam/receipt/{modelExamOrderId:long}"
+@using Learning.Shared.Common.Extensions
+@using Learning.Web.Client.Components.Layout.Payment
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+@layout PaymentReceiptLayout
+@inject IModelExamDataService ModelExamDataService
+<PageTitle>Model Exam Receipt</PageTitle>
+<AppPage Class="d-flex flex-column flex-grow-1 pa-10">
+	<MudContainer Gutters="false" Class="flex-grow-1 d-flex flex-column flex-grow-1">
+		<div class="my-0 my-md-17"></div>
+		<div class="d-flex flex-column gap-12">
+			<div class="d-flex gap-5 align-center">
+				<h2>Receipt</h2>
+				<button class="d-print-none" onclick="window.print()">
+					<MudIcon Icon="@Icons.Material.Filled.Download"></MudIcon>
+				</button>
+			</div>
+
+			<div class="d-flex flex-column">
+				<h4 class="mb-3">@UIConstant.AppName</h4>
+				<div class="d-flex flex-column flex-md-row gap-5 justify-space-between">
+					<div class="d-flex flex-column gap-1">
+						<h6>
+							10th Floor, ResCowork 07, Tower B, Unitech Cyber Park, Sector 39
+							<br />
+							Gurgaon, Haryana, India, 122003
+						</h6>
+						<p><a href="https://btsdefenceacademy.com">btsdefenceacademy.com</a></p>
+					</div>
+					<div class="d-flex flex-column">
+						<h6>Date: @_orderedOn</h6>
+						<h6>Order: @_orderedReferenceId</h6>
+					</div>
+				</div>
+				<h5 class="my-6">Sold to: @_soldTo </h5>
+				<table border="1" cellspacing="0" cellpadding="5">
+					<thead>
+						<tr>
+							<th>Item</th>
+							<th>Ordered</th>
+							<th>Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>@_item</td>
+							<td>@_orderedOn</td>
+							<td>@_itemPrice</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						@if (_showGst)
+						{
+							<tr>
+								<td colspan="2" align="right"><strong>GST (@_gstPercentage)%</strong></td>
+								<td>@_gstPrice</td>
+							</tr>
+						}
+
+						<tr>
+							<td colspan="2" align="right"><strong>Total Paid</strong></td>
+							<td>@_totalPaid</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</MudContainer>
+</AppPage>
+<MudContainer MaxWidth="MaxWidth.Large">
+
+</MudContainer>
+
+@code {
+	[Parameter]
+	public long ModelExamOrderId { get; set; }
+
+	string? _orderedOn;
+	string? _orderedReferenceId;
+	string? _soldTo;
+	string? _item;
+	string? _itemPrice;
+	string? _gstPercentage;
+	bool _showGst;
+	string? _gstPrice;
+	string? _totalPaid;
+	protected override async Task OnInitializedAsync()
+	{
+		var paymenyDetailsResponse = await ModelExamDataService.GetPaymentReceipt(ModelExamOrderId);
+		if (paymenyDetailsResponse.IsFailed)
+		{
+			return;
+		}
+
+		var paymenyDetails = paymenyDetailsResponse.Value;
+		_orderedOn = paymenyDetails.OrderPurchasedOn.ToLocalDateString();
+		_orderedReferenceId = paymenyDetails.OrderReferenceId;
+		_soldTo = paymenyDetails.SoldTo;
+		_item = paymenyDetails.Item;
+		_itemPrice = paymenyDetails.ItemAmount.ToCurrency();
+		_gstPercentage = paymenyDetails.Gst.ToString();
+		_gstPrice = paymenyDetails.GstAmount.ToCurrency();
+		_totalPaid = paymenyDetails.TotalPaid.ToCurrency();
+		_showGst = paymenyDetails.Gst > 0;
+	}
+}

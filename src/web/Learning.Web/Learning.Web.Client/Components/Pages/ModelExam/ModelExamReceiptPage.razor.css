@@ -1,0 +1,17 @@
+﻿table{
+    font-family: var(--ff-500);
+    font-size: 1rem;
+}
+
+th, td {
+    padding: 10px; /* Adds space inside cells */
+    border: 1px solid #ddd; /* Adds border to cells */
+}
+
+th {
+    background-color: #f4f4f4; /* Light background for headers */
+}
+
+tfoot td {
+    font-weight: bold;
+}

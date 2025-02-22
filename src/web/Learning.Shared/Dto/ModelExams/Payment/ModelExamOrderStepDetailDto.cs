@@ -19,4 +19,5 @@ public class ModelExamOrderStepDetailDto
     public required int TotalPaidExamsInPackage { get; set; }
     public required int ModelExamId { get; set; }
     public required int ExamNotificationId { get; set; }
+    public required string ModelExamOrderReferenceId { get; set; }
 }

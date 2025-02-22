@@ -8,6 +8,7 @@ using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
 using Learning.Shared.Dto.ModelExam.Payment;
 using Learning.Shared.Dto.ModelExams;
+using Learning.Shared.Dto.ModelExams.Payment;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
@@ -279,6 +280,19 @@ public class ModelExamDataService : IModelExamDataService
         try
         {
             var response = await _mediator.Send(new CreateRazorpayOrderCommand() { ModelExamOrderId = modelExamOrderId });
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ModelExamPaymentReceipt>> GetPaymentReceipt(long modelExamOrderId)
+    {
+        try
+        {
+            var response = await _mediator.Send(new ModelExamReceiptQuery() { ModelExamOrderId = modelExamOrderId });
             return response;
         }
         catch (Exception ex)

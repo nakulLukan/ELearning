@@ -1,6 +1,7 @@
 ﻿using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.PaymentGateway;
 using Learning.Business.Impl.Data;
+using Learning.Business.Services.ExamNotification;
 using Learning.Domain.Notification;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
@@ -98,6 +99,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
             TotalPaidExamsInPackage = order.TotalExamsInPackage,
             ModelExamId = order.ModelExamId,
             ExamNotificationId = order.ExamNotificationId,
+            ModelExamOrderReferenceId = ExamNotificationHelper.GetModelExamOrderReferenceId(request.ModelExamOrderId)
         };
     }
 

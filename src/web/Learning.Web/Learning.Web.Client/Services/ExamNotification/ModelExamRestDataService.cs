@@ -5,6 +5,7 @@ using Learning.Shared.Common.Utilities;
 using Learning.Shared.Contracts.HttpContext;
 using Learning.Shared.Dto.ModelExam.Payment;
 using Learning.Shared.Dto.ModelExams;
+using Learning.Shared.Dto.ModelExams.Payment;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
@@ -241,5 +242,10 @@ public class ModelExamRestDataService : IModelExamDataService
         {
             return Result.Fail(ex.Message);
         }
+    }
+
+    public Task<Result<ModelExamPaymentReceipt>> GetPaymentReceipt(long modelExamOrderId)
+    {
+        throw new NotImplementedException();
     }
 }

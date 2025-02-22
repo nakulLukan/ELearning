@@ -59,7 +59,8 @@ public class CreateRazorpayOrderCommandHandler : IRequestHandler<CreateRazorpayO
             Validity = null,
             TotalPaidExamsInPackage = 0,
             ModelExamId = 0,
-            ExamNotificationId = 0
+            ExamNotificationId = 0,
+            ModelExamOrderReferenceId = string.Empty
         };
     }
 }
