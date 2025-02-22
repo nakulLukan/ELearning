@@ -1,0 +1,67 @@
+﻿@page "/purchase-history/model-exams"
+@using Learning.Shared.Common.Extensions
+@using Learning.Shared.Dto.PurchaseHistory
+@using Learning.Web.Client.Contracts.Services.ExamNotification
+
+@attribute [Authorize]
+@inject IModelExamDataService ModelExamDataService
+@rendermode InteractiveWebAssembly
+<PageTitle>Purchase History - Model Exams</PageTitle>
+<AppPage BackgroundColor="#F4F4F4">
+	<div class="pt-9">
+		<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="en-page-container">
+			@if (_elements!=null)
+			{
+				<div class="d-flex flex-column gap-6">
+					<h4>Purchase History</h4>
+					<MudTabs Rounded="true" ApplyEffectsToContainer="true" Color="Color.Transparent" TabHeaderClass="tab">
+						<MudTabPanel Text="Model Exams">
+							<MudDataGrid Items="@_elements" Filterable="false" Bordered Elevation="0" SortMode="SortMode.None"
+										 HeaderClass="grid-header" RowClass="grid-row">
+							<NoRecordsContent>
+								<p class="text-center grid-row">
+										No purchase history
+								</p>
+							</NoRecordsContent>
+								<Columns>
+									<PropertyColumn Property="x => x.ExamNotificationName" Title="Item" />
+									<PropertyColumn Property="x => x.PurchasedOn.ToLocalDateString()" Title="Purchased On" />
+									<PropertyColumn Property="x => x.TotalPrice.ToCurrency()" Title="Amount Paid" />
+									<TemplateColumn>
+										<CellTemplate>
+											<MudIcon Icon="@Icons.Material.Rounded.Receipt"/>
+											<a href="model-exam/receipt/@context.Item.ModelExamOrderId">Receipt</a>
+										</CellTemplate>
+									</TemplateColumn>
+								</Columns>
+							</MudDataGrid>
+						</MudTabPanel>
+					</MudTabs>
+				</div>
+			}
+			else
+			{
+				<div class="d-flex flex-column gap-3">
+					<MudSkeleton Width="200px" Height="100px" SkeletonType="SkeletonType.Rectangle"></MudSkeleton>
+					<MudSkeleton Width="100%" Height="400px" SkeletonType="SkeletonType.Rectangle"></MudSkeleton>
+
+				</div>
+			}
+		</MudContainer>
+	</div>
+</AppPage>
+@code {
+	ModelExamPurchaseHistoryItemDto[]? _elements;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		var response = await ModelExamDataService.GetModelExamPurchaseHistory();
+		if (response.IsFailed)
+		{
+			return;
+		}
+
+		_elements = response.Value;
+		StateHasChanged();
+	}
+}

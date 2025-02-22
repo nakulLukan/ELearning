@@ -1,0 +1,14 @@
+﻿::deep .tab {
+    font-family: var(--ff-800);
+    font-size: 0.75rem;
+}
+
+::deep .grid-header{
+    font-family: var(--ff-800);
+    font-size: 1rem;
+}
+
+::deep .grid-row {
+    font-family: var(--ff-500);
+    font-size: 1rem;
+}

@@ -1,6 +1,7 @@
 ﻿using Learning.Business.Requests.ModelExams;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
+using Learning.Business.Requests.PurchaseHistory;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using MediatR;
@@ -115,6 +116,16 @@ public class ModelExamController : ControllerBase
         var data = await _mediator.Send(new CreateRazorpayOrderCommand()
         {
             ModelExamOrderId = modelExamOrderId,
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
+
+    [Authorize]
+    [HttpGet("model-exam-orders/purchase-history")]
+    public async Task<IActionResult> GetModelExamPurchaseHistory()
+    {
+        var data = await _mediator.Send(new ModelExamPurchaseHistoryQuery()
+        {
         }).ConfigureAwait(false);
         return Ok(data);
     }

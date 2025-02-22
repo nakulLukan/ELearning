@@ -8,6 +8,7 @@ using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.ModelExams.Payment;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+using Learning.Shared.Dto.PurchaseHistory;
 using Learning.Web.Client.Contracts.Services.ExamNotification;
 using Learning.Web.Client.Services.WebServices;
 
@@ -247,5 +248,18 @@ public class ModelExamRestDataService : IModelExamDataService
     public Task<Result<ModelExamPaymentReceipt>> GetPaymentReceipt(long modelExamOrderId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<Result<ModelExamPurchaseHistoryItemDto[]>> GetModelExamPurchaseHistory()
+    {
+        try
+        {
+            var result = await _httpClient.GetModelExamPurchaseHistory();
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
     }
 }

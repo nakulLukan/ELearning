@@ -6,6 +6,7 @@ using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.ModelExams.Payment;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+using Learning.Shared.Dto.PurchaseHistory;
 
 namespace Learning.Web.Client.Contracts.Services.ExamNotification;
 
@@ -32,5 +33,6 @@ public interface IModelExamDataService
     public Task<Result<ModelExamOrderStepDetailDto>> GetModelExamOrderById(long modelExamOrderId);
     public Task<Result<ModelExamOrderStepDetailDto>> CreateRazorpayOrder(long modelExamOrderId);
     public Task<Result<ModelExamPaymentReceipt>> GetPaymentReceipt(long modelExamOrderId);
+    public Task<Result<ModelExamPurchaseHistoryItemDto[]>> GetModelExamPurchaseHistory();
 
 }

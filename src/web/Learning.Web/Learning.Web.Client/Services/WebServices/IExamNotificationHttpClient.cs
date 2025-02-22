@@ -6,6 +6,7 @@ using Learning.Shared.Dto.ModelExams;
 using Learning.Shared.Dto.Notifications.ExamNotification;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam;
 using Learning.Shared.Dto.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
+using Learning.Shared.Dto.PurchaseHistory;
 using Refit;
 
 namespace Learning.Web.Client.Services.WebServices;
@@ -68,4 +69,7 @@ public interface IExamNotificationHttpClient
 
     [Post("/api/public/model-exam-orders/{modelExamOrderId}/create-razorpay-order")]
     public Task<ModelExamOrderStepDetailDto> CreateRazorpayOrder(long modelExamOrderId);
+
+    [Get("/api/public/model-exam-orders/purchase-history")]
+    public Task<ModelExamPurchaseHistoryItemDto[]> GetModelExamPurchaseHistory();
 }

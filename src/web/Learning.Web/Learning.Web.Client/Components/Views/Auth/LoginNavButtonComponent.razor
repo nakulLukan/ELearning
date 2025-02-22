@@ -10,18 +10,22 @@
 				 FullWidth
 				 AnchorOrigin="Origin.BottomLeft"
 				 Ripple="false" Class="d-none d-md-inline-flex" PopoverClass="mt-2 rounded">
-			<MudMenuItem>
-				<MudButton ButtonType="ButtonType.Submit"
-						   Class="mud-nav-link"
-						   StartIcon="@Icons.Material.Filled.Logout"
-						   Style="text-transform:none;"
-						   Size="Size.Small"
-						   OnClick="OnLogout">
-					Logout
-				</MudButton>
+			<MudMenuItem Icon="@Icons.Material.Filled.AddShoppingCart" OnClick="OnPurchaseHistory">
+				Purchase History
+			</MudMenuItem>
+			<MudDivider />
+			<MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="OnLogout">
+				Logout
 			</MudMenuItem>
 		</MudMenu>
 		<MudNavGroup Title="@($"Hi, {_loggedInName}")" Expanded="false" Class="app-nav-menu d-md-none">
+			<MudNavLink Class="app-nav-menu"
+						Icon="@Icons.Material.Filled.AddShoppingCart"
+						Style="text-transform:none;"
+						OnClick="OnPurchaseHistory">
+				Purchase History
+			</MudNavLink>
+			<MudDivider />
 			<MudNavLink Class="app-nav-menu"
 						Icon="@Icons.Material.Filled.Logout"
 						Style="text-transform:none;"
@@ -56,7 +60,7 @@
 		}
 	}
 
-	private async Task OnLogout()
+	private void OnLogout()
 	{
 		try
 		{
@@ -66,6 +70,11 @@
 		{
 			Console.WriteLine($"{ex.Message} {ex.StackTrace}");
 		}
+	}
+
+	private void OnPurchaseHistory()
+	{
+		NavigationManager.NavigateTo("purchase-history/model-exams");
 	}
 
 	private void Login()
