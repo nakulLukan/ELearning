@@ -22,8 +22,8 @@ public class QuestionSummary
     public required bool HasSkipped { get; set; }
     public required string QuestionText { get; set; }
     public required string? QuestionImageUrl { get; set; }
-    public required int Score { get; set; }
-    public required int NegativeScore { get; set; }
+    public required float Score { get; set; }
+    public required float NegativeScore { get; set; }
     public required OptionSummary[] OptionSummary { get; set; }
 }
 

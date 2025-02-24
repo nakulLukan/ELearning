@@ -10,8 +10,8 @@ public class ModelExamDetailResponseDto
     public required bool IsFree { get; set; }
     public required float Price { get; set; }
     public required float DiscountedPrice { get; set; }
-    public required int? Score { get; set; }
-    public required int? NegativeScore { get; set; }
+    public required float? Score { get; set; }
+    public required float? NegativeScore { get; set; }
     public required string? SolutionVideoMpdFileName { get; set; }
     public required string? SolutionVideoSignedUrl { get; set; }
     public required string? SolutionVideoUploadLink { get; set; }
