@@ -5,6 +5,7 @@
 @using Learning.Web.Components.Layouts
 @using Microsoft.AspNetCore.Authorization
 @using MudBlazor.Utilities
+@rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 @inject IRequestContext RequestContext
 @layout AdminLayout
@@ -31,7 +32,7 @@
 		<PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
 		<PropertyColumn Property="@(context=> context.IsContactNumberVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
 		<PropertyColumn Property="x => x.EmailAddress" Title="Email Address" Sortable=true />
-		<PropertyColumn Property="@(context=> context.IsEmailAddressVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
+		<PropertyColumn Property="@(context=> context.IsEmailAddressVerified ? "Verified" : "Not Verified")" Title="Email Verified" />
 		<PropertyColumn Property="x => x.AccountCreatedOn" Title="Joined On" Sortable="true" />
 		<PropertyColumn Property="@(context=> context.IsActive ? "Active" : "In-Active")" Title="Account Status" />
 		@if (userRole == RoleConstant.SuperAdmin)

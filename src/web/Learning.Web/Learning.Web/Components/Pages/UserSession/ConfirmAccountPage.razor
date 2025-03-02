@@ -1,0 +1,36 @@
+﻿@page "/account/confirm"
+@layout UserSessionLayout
+@using Learning.Shared.Application.Contracts.Identity
+@using Learning.Web.Components.Layouts
+@using Learning.Web.Contracts.Authentication
+@inject IUserManager UserManager
+@inject INavigationService NavigationService
+<div class="mt-10"></div>
+<EditForm Model="@Model" FormName="confirm-account" OnValidSubmit="ConfirmAccount">
+	<AntiforgeryToken/>
+	<DataAnnotationsValidator />
+	<InputNumber @bind-Value="Model!.Otp" />
+	<button type="submit">Confirm account</button>
+
+</EditForm>
+@code {
+	[SupplyParameterFromQuery]
+	public string? Username { get; set; }
+
+	[SupplyParameterFromForm]
+	public ConfirmOtpModel Model { get; set; } = new();
+
+	private async Task ConfirmAccount()
+	{
+		var response = await UserManager.ConfirmAccount(Username!, Model.Otp);
+		if (response)
+		{
+			NavigationService.NavigateToLogin();
+		}
+	}
+
+	public class ConfirmOtpModel
+	{
+		public int Otp { get; set; }
+	}
+}

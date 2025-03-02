@@ -480,6 +480,30 @@ namespace Learning.Infrastructure.Persistence.Migrations
                     b.ToTable("ContactUsRequests");
                 });
 
+            modelBuilder.Entity("Learning.Domain.Identity.OtpHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Otp")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtpHistory");
+                });
+
             modelBuilder.Entity("Learning.Domain.Master.AppMasterSetting", b =>
                 {
                     b.Property<string>("Id")

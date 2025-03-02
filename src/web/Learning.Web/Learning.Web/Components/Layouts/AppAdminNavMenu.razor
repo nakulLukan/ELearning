@@ -1,41 +1,45 @@
 ﻿@using Learning.Shared.Contracts.HttpContext
 @using Learning.Web.Components.Models.Admin
-@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
+@rendermode InteractiveServer
 @inject IRequestContext RequestContext;
-<MudPaper Elevation="0" Class="admin-nav-bar-panel">
-	<MudStack Justify="Justify.FlexStart" Class="h-100 flex-grow-1">
-		<MudLink Href="/admin" Typo="Typo.subtitle2" Class="text-center" Style="min-height: 80px">
-			<MudImage Src="bts_icon.png" Alt="Logo" Width="40" Class="m-2" />BTS
-		</MudLink>
-		<MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2 flex-grow-1">
-			@foreach (var menuGroup in _menuGroups)
-			{
-				<MudNavGroup Title="@menuGroup.GroupName">
-					@foreach (var menu in menuGroup.MenuItems)
-					{
-						<MudNavLink Href="@menu.Route">@menu.MenuName</MudNavLink>
-					}
-				</MudNavGroup>
-			}
-		</MudNavMenu>
-		<AuthorizeView>
-			<Authorized>
-				<form action="Account/SignOut" method="post">
-					<AntiforgeryToken />
-					<input type="hidden" name="ReturnUrl" value="" />
-					<MudButton ButtonType="ButtonType.Submit"
-							   Class="mud-nav-link"
-							   StartIcon="@Icons.Material.Filled.Logout"
-							   Style="text-transform:none;">
-						Logout
-					</MudButton>
-				</form>
-			</Authorized>
-		</AuthorizeView>
-	</MudStack>
-</MudPaper>
+<MudDrawer @bind-Open="@_drawerOpen" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true"
+		   Class="admin-nav-bar ">
+	<MudPaper Elevation="0" Class="admin-nav-bar-panel">
+		<MudStack Justify="Justify.FlexStart" Class="h-100 flex-grow-1">
+			<MudLink Href="/admin" Typo="Typo.subtitle2" Class="text-center" Style="min-height: 80px">
+				<MudImage Src="bts_icon.png" Alt="Logo" Width="40" Class="m-2" />BTS
+			</MudLink>
+			<MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2 flex-grow-1">
+				@foreach (var menuGroup in _menuGroups)
+				{
+					<MudNavGroup Title="@menuGroup.GroupName">
+						@foreach (var menu in menuGroup.MenuItems)
+						{
+							<MudNavLink Href="@menu.Route">@menu.MenuName</MudNavLink>
+						}
+					</MudNavGroup>
+				}
+			</MudNavMenu>
+			<AuthorizeView>
+				<Authorized>
+					<form action="Account/SignOut" method="post">
+						<AntiforgeryToken />
+						<input type="hidden" name="ReturnUrl" value="" />
+						<MudButton ButtonType="ButtonType.Submit"
+								   Class="mud-nav-link"
+								   StartIcon="@Icons.Material.Filled.Logout"
+								   Style="text-transform:none;">
+							Logout
+						</MudButton>
+					</form>
+				</Authorized>
+			</AuthorizeView>
+		</MudStack>
+	</MudPaper>
+</MudDrawer>
 @code {
+	bool _drawerOpen = false;
 	private List<NavMenuItemGroupDto> _menuGroups = new();
 	private readonly List<NavMenuItemGroupDto> _allMenus = [
 	// new()

@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\Learning.Infrastructure\Learning.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Learning.Shared\Learning.Shared.csproj" />
     <ProjectReference Include="..\Learning.Web.Client\Learning.Web.Client.csproj" />
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.406.18" />
     <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
     <PackageReference Include="Blazor.SubtleCrypto" Version="6.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
@@ -30,6 +31,7 @@
 
     <PackageReference Include="MudBlazor" Version="7.0.0" />
     <PackageReference Include="Refit" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.6.0" />
   </ItemGroup>
 
   <ItemGroup>

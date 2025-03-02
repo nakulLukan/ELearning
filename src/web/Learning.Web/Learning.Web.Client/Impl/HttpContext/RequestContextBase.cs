@@ -51,7 +51,7 @@ public abstract class RequestContextBase
     public async Task<string> GetUserId()
     {
         if (!await IsAuthenticated()) return string.Empty;
-        var userIdClaim = _authState.User.Claims.First(x => x.Type == ClaimConstant.AwsUserNameClaim);
+        var userIdClaim = _authState.User.Claims.First(x => x.Type == ClaimConstant.Sub);
         return userIdClaim.Value;
     }
 

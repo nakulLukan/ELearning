@@ -13,4 +13,5 @@ public class ExternalUser
     public required bool IsPhoneNumberConfirmed { get; set; }
     public required string FullName { get; set; }
     public required bool IsEnabled { get; set; }
+    public required bool IsAccountConfirmed { get; set; }
 }

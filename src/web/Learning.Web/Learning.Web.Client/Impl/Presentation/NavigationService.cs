@@ -22,7 +22,7 @@ public class NavigationService : INavigationService
 
     public void NavigateToLogin()
     {
-        _navigationManager.NavigateTo($"/login?redirectUrl={_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}", true);
+        _navigationManager.NavigateTo($"/account/login?redirectUrl={_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}", true);
     }
 
     public string? GetTargetFragmentInRoute()
@@ -35,5 +35,10 @@ public class NavigationService : INavigationService
         }
 
         return null;
+    }
+
+    public void NavigateToAccountConfirmation(string mobileNumber)
+    {
+        _navigationManager.NavigateTo($"/account/confirm?username={Uri.EscapeDataString(mobileNumber)}");
     }
 }

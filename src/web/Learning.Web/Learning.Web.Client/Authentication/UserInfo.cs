@@ -14,7 +14,7 @@ public sealed class UserInfo
     public required string Role { get; init; }
     public required string Name { get; init; }
 
-    public const string UserIdClaimType = ClaimConstant.AwsUserNameClaim;
+    public const string UserIdClaimType = ClaimConstant.Sub;
     public const string NameClaimType = ClaimConstant.Name;
     public const string RoleClaimType = ClaimConstant.AwsRoleClaim;
     public const string EmailClaimType = ClaimConstant.EmailClaim;

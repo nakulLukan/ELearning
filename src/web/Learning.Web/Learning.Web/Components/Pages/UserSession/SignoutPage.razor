@@ -1,11 +1,10 @@
-﻿@page "/logout"
+﻿@page "/account/signout"
+@using Learning.Web.Contracts.Authentication
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
-@using Microsoft.AspNetCore.Authentication.OpenIdConnect
 @inject IHttpContextAccessor HttpContextAccessor;
-@inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
-
+@inject IUserManager UserManager
 <h3>Logging out...</h3>
 
 @code {
@@ -14,21 +13,9 @@
         var context = HttpContextAccessor.HttpContext;
         if (context != null)
         {
-            // Invalidate the local session
-            await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-
-            // Construct the Cognito sign-out URL
-
-            // Construct the Cognito sign-out URL
-            var cognitoDomain = Configuration["Oidc:Authority"];
-            var clientId = Configuration["Oidc:ClientId"];
-            var signOutRedirectUri = "https://localhost:7001/signout-callback-oidc";
-
-            var cognitoSignOutUrl = $"https://elite-learning.auth.ap-south-1.amazoncognito.com/logout?client_id={clientId}&logout_uri={signOutRedirectUri}";
-
+            await UserManager.Logout();
             // Redirect to the Cognito sign-out endpoint
-            NavigationManager.NavigateTo(cognitoSignOutUrl, forceLoad: true);
+            NavigationManager.NavigateTo("");
         }
     }
 }

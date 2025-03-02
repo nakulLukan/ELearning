@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -19,7 +20,7 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
         RequireNonce = false,
     };
 
-    public async Task ValidateOrRefreshCookieAsync(CookieValidatePrincipalContext validateContext, string oidcScheme)
+    public async Task ValidateOrRefreshCookieAsync(CookieValidatePrincipalContext validateContext, string oidcScheme, string oidcDomain)
     {
         var accessTokenExpirationText = validateContext.Properties.GetTokenValue("expires_at");
         if (!DateTimeOffset.TryParse(accessTokenExpirationText, out var accessTokenExpiration))
@@ -29,7 +30,7 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
 
         var oidcOptions = oidcOptionsMonitor.Get(oidcScheme);
         var now = oidcOptions.TimeProvider!.GetUtcNow();
-        if (now + TimeSpan.FromMinutes(5) < accessTokenExpiration)
+        if (now < accessTokenExpiration)
         {
             return;
         }
@@ -40,9 +41,8 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
             validateContext.RejectPrincipal();
             return;
         }
-
         var oidcConfiguration = await oidcOptions.ConfigurationManager!.GetConfigurationAsync(validateContext.HttpContext.RequestAborted);
-        var tokenEndpoint = oidcConfiguration.TokenEndpoint ?? throw new InvalidOperationException("Cannot refresh cookie. TokenEndpoint missing!");
+        var tokenEndpoint = oidcConfiguration.TokenEndpoint ?? $"{oidcDomain}/oauth2/token";
         using var refreshResponse = await oidcOptions.Backchannel.PostAsync(tokenEndpoint,
             new FormUrlEncodedContent(new Dictionary<string, string?>()
             {
@@ -59,9 +59,11 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
             return;
         }
 
-        var refreshJson = await refreshResponse.Content.ReadAsStringAsync();
+        var refreshJson = await refreshResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var refreshJsonObject = System.Text.Json.JsonSerializer.Deserialize<JsonObject>(refreshJson);
         var message = new OpenIdConnectMessage(refreshJson);
-
+        message.AccessToken = refreshJsonObject!["access_token"]!.GetValue<string>();
+        message.TokenType = refreshJsonObject["token_type"]!.GetValue<string>();
         var validationParameters = oidcOptions.TokenValidationParameters.Clone();
         if (oidcOptions.ConfigurationManager is BaseConfigurationManager baseConfigurationManager)
         {
@@ -92,13 +94,12 @@ internal sealed class CookieOidcRefresher(IOptionsMonitor<OpenIdConnectOptions> 
 
         validateContext.ShouldRenew = true;
         validateContext.ReplacePrincipal(new ClaimsPrincipal(validationResult.ClaimsIdentity));
-
         var expiresIn = int.Parse(message.ExpiresIn, NumberStyles.Integer, CultureInfo.InvariantCulture);
         var expiresAt = now + TimeSpan.FromSeconds(expiresIn);
         validateContext.Properties.StoreTokens([
             new() { Name = "access_token", Value = message.AccessToken },
             new() { Name = "id_token", Value = message.IdToken },
-            new() { Name = "refresh_token", Value = message.RefreshToken },
+            new() { Name = "refresh_token", Value = refreshToken },
             new() { Name = "token_type", Value = message.TokenType },
             new() { Name = "expires_at", Value = expiresAt.ToString("o", CultureInfo.InvariantCulture) },
         ]);

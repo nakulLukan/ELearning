@@ -3,6 +3,7 @@
 public static class ClaimConstant
 {
     public const string IsAdminClaim = "IsAdmin";
+    public const string Address = "address";
     public const string Sub = "sub";
     public const string EmailClaim = "email";
     public const string PhoneNumber = "phone_number";

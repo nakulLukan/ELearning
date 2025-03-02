@@ -12,7 +12,7 @@ public class ApiRequestContext : IApiRequestContext
     }
     public Task<string> GetAccessToken()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_contextAccessor!.HttpContext!.Items.ContainsKey("access_token") ? (string)_contextAccessor.HttpContext.Items["access_token"]! : string.Empty);
     }
 
     public Task<string?> GetEmail()
@@ -33,7 +33,7 @@ public class ApiRequestContext : IApiRequestContext
     public async Task<string> GetUserId()
     {
         if (!await IsAuthenticated()) return string.Empty;
-        return _contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.AwsUserNameClaim).Value;
+        return _contextAccessor!.HttpContext!.User!.Claims.First(x => x.Type == ClaimConstant.Sub).Value;
     }
 
     public Task<string> GetUserRole()

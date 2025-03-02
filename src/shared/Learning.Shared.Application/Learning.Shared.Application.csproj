@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\web\Learning.Shared\Learning.Shared.csproj" />
     <ProjectReference Include="..\Learning.Shared.Common\Learning.Shared.Common.csproj" />
   </ItemGroup>
 

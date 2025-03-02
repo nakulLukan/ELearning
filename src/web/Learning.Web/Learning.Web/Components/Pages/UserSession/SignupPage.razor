@@ -1,0 +1,91 @@
+﻿@page "/account/signup"
+@using Learning.Shared.Application.Exceptions.Identity
+@using Learning.Web.Components.Layouts
+@using Learning.Web.Contracts.Authentication
+@layout UserSessionLayout
+@inject IUserManager UserManager
+@inject INavigationService NavigationManager
+<h3>Sign Up</h3>
+
+<EditForm Model="@Model"
+		  OnValidSubmit="SignUp"
+		  FormName="signup">
+	<AntiforgeryToken />
+	<DataAnnotationsValidator />
+	<div class="app-contact-us-form d-flex flex-column gap-10">
+		<h1 class="app-contact-us-header">Get in touch with us</h1>
+		<div>
+			<label>
+				phone number:
+				<InputText @bind-Value="Model!.Username" />
+			</label>
+		</div>
+		<div>
+			<label>
+				password:
+				<InputText @bind-Value="Model!.Password" />
+			</label>
+		</div>
+		<div>
+			<label>
+				confirm password:
+				<InputText @bind-Value="Model!.ConfirmPassword" />
+			</label>
+		</div>
+		<div>
+			<label>
+				name:
+				<InputText @bind-Value="Model!.Name" />
+			</label>
+		</div>
+		<div>
+			<label>
+				city:
+				<InputText @bind-Value="Model!.Address" />
+			</label>
+		</div>
+		<div>
+			<button type="submit">Submit</button>
+		</div>
+	</div>
+</EditForm>
+@code {
+	[Parameter, SupplyParameterFromQuery]
+	public required string? RedirectUrl { get; set; }
+
+	[Parameter, SupplyParameterFromQuery]
+	public string? Username { get; set; }
+
+	[SupplyParameterFromForm]
+	public SignUpModel Model { get; set; } = new();
+
+	protected override void OnInitialized()
+	{
+		Model.Username ??= Username;
+	}
+
+	private async Task SignUp()
+	{
+		try
+		{
+			var otpId = await UserManager.SignUpUser(Model.Username!, Model.Password!, Model.Name!, Model.Address!);
+			NavigationManager.NavigateToAccountConfirmation(Model.Username!);
+		}
+		catch (ExternalIdentityProviderException ex)
+		{
+			if (ex.Type == ExternalIdentityProviderExceptionType.UserAlreadyExists)
+			{
+				ToastService.Error("Account already exists");
+			}
+		}
+	}
+
+	public class SignUpModel
+	{
+		public string? Username { get; set; }
+		public string? Password { get; set; }
+		public string? ConfirmPassword { get; set; }
+		public string? Name { get; set; }
+		public string? Address { get; set; }
+	}
+}

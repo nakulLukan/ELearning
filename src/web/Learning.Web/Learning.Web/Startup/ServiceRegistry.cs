@@ -19,7 +19,9 @@ using Learning.Web.Client.Impl.Interop;
 using Learning.Web.Client.Impl.Persistance;
 using Learning.Web.Client.Impl.Presentation;
 using Learning.Web.Client.Services.Quiz;
+using Learning.Web.Contracts.Authentication;
 using Learning.Web.Contracts.Events;
+using Learning.Web.Impl.Authentication;
 using Learning.Web.Impl.Events;
 using Learning.Web.Impl.HttpContext;
 using Learning.Web.Impl.Persistence;
@@ -74,7 +76,7 @@ public static class ServiceRegistry
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie()
             .AddOpenIdConnect(options =>
@@ -88,9 +90,10 @@ public static class ServiceRegistry
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
+                    ValidIssuer = configuration["Oidc:Authority"]
                 };
                 options.Scope.Clear();
-                foreach (var scope in configuration["Oidc:Scope"].Split(' '))
+                foreach (var scope in configuration["Oidc:Scope"]!.Split(' '))
                 {
                     options.Scope.Add(scope);
                 }
@@ -163,14 +166,12 @@ public static class ServiceRegistry
         builder.Services.AddSingleton<CookieOidcRefresher>();
         builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme).Configure<CookieOidcRefresher>((cookieOptions, refresher) =>
         {
+            cookieOptions.Cookie.HttpOnly = true;
+            cookieOptions.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
             cookieOptions.ExpireTimeSpan = TimeSpan.FromDays(10);
             cookieOptions.SlidingExpiration = true;
-            cookieOptions.Events.OnSigningIn = context =>
-            {
-                context.Properties.IsPersistent = true;
-                return Task.CompletedTask;
-            };
-            cookieOptions.Events.OnValidatePrincipal = context => refresher.ValidateOrRefreshCookieAsync(context, OpenIdConnectDefaults.AuthenticationScheme);
+            cookieOptions.Events.OnValidatePrincipal = context => refresher.ValidateOrRefreshCookieAsync(context, OpenIdConnectDefaults.AuthenticationScheme, builder.Configuration[AppSettingsKeyConstant.Oidc_Domain]!);
         });
 
         builder.Services.AddCascadingAuthenticationState();
@@ -229,6 +230,7 @@ public static class ServiceRegistry
         builder.Services.AddScoped<IQuizManager, QuizManager>();
         builder.Services.AddScoped<IAlertService, AlertService>();
         builder.Services.AddScoped<INavigationService, NavigationService>();
+        builder.Services.AddScoped<IUserManager, UserManager>();
 
         builder.Services.AddScoped<IQuizDataService, QuizDataService>();
         builder.Services.AddScoped<IContactUsDataService, ContactUsDataService>();

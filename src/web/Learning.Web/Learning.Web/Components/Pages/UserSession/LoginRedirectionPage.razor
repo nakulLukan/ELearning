@@ -1,0 +1,76 @@
+﻿@page "/account/login"
+@using Learning.Shared.Application.Exceptions.Identity
+@using Learning.Web.Components.Layouts
+@using Learning.Web.Contracts.Authentication
+@inject IUserManager UserManager
+@layout UserSessionLayout
+@inject INavigationService NavigationManager
+<h3>Login</h3>
+<EditForm Model="@Model"
+		  OnValidSubmit="Login"
+		  FormName="Login">
+	<DataAnnotationsValidator />
+	<div class="app-contact-us-form d-flex flex-column gap-10">
+		<h1 class="app-contact-us-header">Get in touch with us</h1>
+		<div>
+			<label>
+				phone number:
+				<InputText @bind-Value="Model!.Username" />
+			</label>
+		</div>
+		<div>
+			<label>
+				password:
+				<InputText @bind-Value="Model!.Password" />
+			</label>
+		</div>
+		<div>
+			<button type="submit">Submit</button>
+		</div>
+	</div>
+</EditForm>
+<a href="account/reset-password">Forgot Password</a>
+@code {
+	[SupplyParameterFromForm]
+	public LoginModel Model { get; set; } = new();
+	private async Task Login()
+	{
+		try
+		{
+			await UserManager.Login(Model.Username, Model.Password);
+			NavigationManager.NavigateTo(RedirectUrl ?? "/");
+		}
+		catch (ExternalIdentityProviderException ex)
+		{
+			if (ex.Type == ExternalIdentityProviderExceptionType.AccountNotFound)
+			{
+				NavigationManager.NavigateTo($"account/signup?RedirectUrl={Uri.EscapeDataString(RedirectUrl ?? string.Empty)}&username={Uri.EscapeDataString(Model.Username)}");
+			}
+			else if (ex.Type == ExternalIdentityProviderExceptionType.AccountNotConfirmed)
+			{
+				NavigationManager.NavigateToAccountConfirmation(Model.Username);
+			}
+		}
+	}
+
+	[Parameter, SupplyParameterFromQuery]
+	public required string? RedirectUrl { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		await UserManager.Logout();
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (!firstRender) return;
+	}
+
+	public class LoginModel
+	{
+		public string Username { get; set; }
+		public string Password { get; set; }
+	}
+}

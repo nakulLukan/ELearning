@@ -30,7 +30,7 @@ app.UseAntiforgery();
 app.RegisterMiddlewares();
 app.UseCors("Default");
 app.MapControllers();
-app.MapRazorComponents<App>()
+app.MapRazorComponents<Learning.Web.Components.App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Learning.Web.Client._Imports).Assembly);

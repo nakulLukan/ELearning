@@ -61,6 +61,7 @@ public class ApplicationDbContext : DbContext, IAppDbContext
     public DbSet<ApplicationUserOtherDetail> ApplicationUserOtherDetails { get; set; }
     public DbSet<AppRole> AppRoles { get; set; }
     public DbSet<ContactUsRequest> ContactUsRequests { get; set; }
+    public DbSet<OtpHistory> OtpHistory { get; set; }
     #endregion
 
     #region Master
