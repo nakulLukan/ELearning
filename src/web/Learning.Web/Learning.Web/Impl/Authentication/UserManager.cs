@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Learning.Business.Requests.Identity;
 using Learning.Shared.Application.Contracts.Identity;
 using Learning.Shared.Application.Exceptions.Identity;
+using Learning.Shared.Application.Helpers;
 using Learning.Web.Contracts.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -28,6 +29,7 @@ public class UserManager : IUserManager
     {
         try
         {
+            username = IdentityHelper.ToMobileNumber(username);
             var signinResponse = await _identityProvider.Login(username, password);
 
             var claims = GetClaimsFromToken(signinResponse.IdToken);
@@ -61,6 +63,7 @@ public class UserManager : IUserManager
         // If account exists then check if the phone number is verified. If not then send otp to confirm account.
         try
         {
+            username = IdentityHelper.ToMobileNumber(username);
             await _identityProvider.SignUpUser(username, password, name, address);
             return await SendOtpForAccountConfirmation(username);
         }
@@ -88,10 +91,10 @@ public class UserManager : IUserManager
     {
         try
         {
-            var response = await _mediator.Send(new VerifyOtpCommand { Otp = otp, MobileNumber = username });
+            var response = await _mediator.Send(new VerifyOtpCommand { Otp = otp, MobileNumber = IdentityHelper.ToMobileNumber(username) });
             if (response.Matched)
             {
-                await _identityProvider.ConfirmUser(username!);
+                await _identityProvider.ConfirmUser(IdentityHelper.ToMobileNumber(username!));
                 return true;
             }
 

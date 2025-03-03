@@ -47,5 +47,12 @@ Environment=ExternalIdentity__Aws__UserPoolId="ap-south-1_yxynOeOft"
 Environment=PaymentGateway__AccessKey=accesskey
 Environment=PaymentGateway__SecretKey=secretkey
 
+# SMS Service
+Environment=Sms__ApiKey=accesskey
+Environment=Sms__DltSenderId=dltsenderid
+Environment=Sms__DltMessageId=f2smsapikey
+Environment=Sms__SuppressSms=true
+Environment=Sms__TestMode=false
+
 [Install]
 WantedBy=multi-user.target

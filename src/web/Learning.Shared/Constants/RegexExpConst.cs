@@ -5,6 +5,10 @@ namespace Learning.Shared.Constants;
 public static class RegexExpConst
 {
     #region General
+
+    [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralName = "^[A-Za-z ,]+$";
+    public const string GeneralNameMessage = "Invalid input. Only alphabets allowed.";
+
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralDescription = "^[A-Za-z 0-9.,\n']+$";
     public const string GeneralDescriptionMessage = "Please enter a value containing only letters, numbers, comma, newline, apostrophe and dots.";
     
@@ -15,6 +19,16 @@ public static class RegexExpConst
 
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralPlace = "^[A-Za-z 0-9']+$";
     public const string GeneralPlaceMessage = "Please only alpha numeric values";
+
+    [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralPhoneNumber = "^(?:\\+91)?[6-9]\\d{9}$";
+    public const string GeneralPhoneNumberMessage = "Please enter valid mobile number";
+
+    [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralPassword = "(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()-+=])[A-Za-z\\d!@#$%^&*()-+=]{8,}$";
+    public const string GeneralPasswordMessage = "Please enter a valid password";
+
+
+    [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralOtp = "^[0-9]{6}$";
+    public const string GeneralOtpMessage = "OTP should be 6 digit number";
 
     #endregion General
 

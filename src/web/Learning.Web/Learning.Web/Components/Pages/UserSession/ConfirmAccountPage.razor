@@ -1,36 +1,74 @@
 ﻿@page "/account/confirm"
 @layout UserSessionLayout
 @using Learning.Shared.Application.Contracts.Identity
+@using Learning.Shared.Constants
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Controls.Feedback
+@using Learning.Web.Client.Components.Controls.Input
+@using Learning.Web.Client.Components.Pages
 @using Learning.Web.Components.Layouts
 @using Learning.Web.Contracts.Authentication
+@using System.ComponentModel.DataAnnotations
 @inject IUserManager UserManager
 @inject INavigationService NavigationService
 <div class="mt-10"></div>
-<EditForm Model="@Model" FormName="confirm-account" OnValidSubmit="ConfirmAccount">
-	<AntiforgeryToken/>
-	<DataAnnotationsValidator />
-	<InputNumber @bind-Value="Model!.Otp" />
-	<button type="submit">Confirm account</button>
+<PageTitle>BTS Verify Account</PageTitle>
 
-</EditForm>
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1" MaxWidth="MaxWidth.ExtraLarge">
+		<div class="my-10 my-md-17"></div>
+		<div class="d-flex flex-column flex-md-row flex-grow-1 gap-3">
+			<div class="d-flex flex-column align-center flex-grow-1">
+				<EditForm Model="@Model"
+						  FormName="confirmaccount"
+						  OnValidSubmit="ConfirmAccount" Enhance
+						  class="d-flex flex-column align-center justify-center align-stretch verify-account-form">
+					<DataAnnotationsValidator />
+					<div class="d-flex flex-column gap-3 gap-md-6 form-input-container">
+						<h3 class="mb-1 mb-md-12 mt-5 mt-md-0">Verify Account</h3>
+						<AppTextFieldV2 Label="Enter OTP"
+										@bind-Value="@Model.OTP"
+										For="(()=> Model.OTP)"></AppTextFieldV2>
+
+						@if (!string.IsNullOrEmpty(_globalErrorMessage))
+						{
+							<AppAlert Text="@_globalErrorMessage"></AppAlert>
+
+						}
+						<AppButton Text="Submit" Class="mt-2 mt-md-3"
+								   FormType="AppButton.AppButtonFormType.Submit"></AppButton>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</MudContainer>
+</AppPage>
 @code {
 	[SupplyParameterFromQuery]
 	public string? Username { get; set; }
 
 	[SupplyParameterFromForm]
 	public ConfirmOtpModel Model { get; set; } = new();
+	private string _globalErrorMessage = "";
 
 	private async Task ConfirmAccount()
 	{
-		var response = await UserManager.ConfirmAccount(Username!, Model.Otp);
+		_globalErrorMessage = string.Empty;
+		var response = await UserManager.ConfirmAccount(Username!, int.Parse(Model.OTP!));
 		if (response)
 		{
-			NavigationService.NavigateToLogin();
+			NavigationService.NavigateToLogin(suppressRedirect: true);
+		}
+		else
+		{
+			_globalErrorMessage = "OTP does not match";
 		}
 	}
 
 	public class ConfirmOtpModel
 	{
-		public int Otp { get; set; }
+		[Required]
+		[RegularExpression(RegexExpConst.GeneralOtp, ErrorMessage = RegexExpConst.GeneralOtpMessage)]
+		public string? OTP { get; set; }
 	}
 }

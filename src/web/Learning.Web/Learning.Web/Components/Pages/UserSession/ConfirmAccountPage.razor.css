@@ -1,0 +1,11 @@
+﻿::deep .verify-account-form {
+    min-width: 400px !important;
+}
+
+
+
+@media (max-width: 960px) {
+    ::deep .verify-account-form {
+        min-width: 100% !important;
+    }
+}

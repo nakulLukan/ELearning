@@ -1,0 +1,12 @@
+﻿::deep .signup-form
+{
+    min-width: 400px !important;
+}
+
+
+
+@media (max-width: 960px) {
+    ::deep .signup-form {
+        min-width: 100% !important;
+    }
+}

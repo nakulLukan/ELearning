@@ -1,22 +1,39 @@
 ﻿@using System.Linq.Expressions
-@typeparam TValue
+@using System.Text.RegularExpressions
 @inherits InputBase<string>
-<MudStack Spacing="0">
-    <label for="@Id" class="app-text-field-label"><b>@Label</b></label>
-    <input class="app-text-field-input @CssClass" id="@Id" @bind="@CurrentValue" />
-    <ValidationMessage For="For"></ValidationMessage>
-</MudStack>
+<div>
+	<InputText class="app-text-field-input"
+			   placeholder="@Label"
+			   id="@Id"
+			   name="@FieldName"
+			   type="@(!IsPassword ? "text" : "password")"
+			   @bind-Value="@CurrentValue"></InputText>
+	<ValidationMessage For="For"></ValidationMessage>
+</div>
 
 @code {
 
-    [Parameter, EditorRequired] public Expression<Func<TValue>> For { get; set; } = default!;
-    [Parameter] public string? Id { get; set; }
-    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+	[Parameter, EditorRequired] public Expression<Func<string>> For { get; set; } = default!;
+	[Parameter] public string? Id { get; set; }
+	[Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+	[Parameter] public bool IsPassword { get; set; }
 
-    protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
-    {
-        result = value;
-        validationErrorMessage = null;
-        return true;
-    }
+	private string FieldName => GetFieldName(For);
+	private string GetFieldName(Expression<Func<string>> expression)
+	{
+		if (expression.Body is MemberExpression member)
+		{
+			var fieldName = member.ToString();
+			// Remove "value(...)." pattern
+			return Regex.Replace(fieldName, @"value\([^)]+\)\.", "");
+		}
+		return string.Empty;
+	}
+
+	protected override bool TryParseValueFromString(string? value, out string result, out string validationErrorMessage)
+	{
+		result = value;
+		validationErrorMessage = null;
+		return true;
+	}
 }

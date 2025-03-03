@@ -20,9 +20,9 @@ public class NavigationService : INavigationService
         _navigationManager.NavigateTo(url, forceLoad);
     }
 
-    public void NavigateToLogin()
+    public void NavigateToLogin(bool suppressRedirect = false)
     {
-        _navigationManager.NavigateTo($"/account/login?redirectUrl={_navigationManager.ToBaseRelativePath(_navigationManager.Uri)}", true);
+        _navigationManager.NavigateTo($"/account/login?redirectUrl={(!suppressRedirect ? _navigationManager.ToBaseRelativePath(_navigationManager.Uri) : string.Empty)}", true);
     }
 
     public string? GetTargetFragmentInRoute()
@@ -39,6 +39,6 @@ public class NavigationService : INavigationService
 
     public void NavigateToAccountConfirmation(string mobileNumber)
     {
-        _navigationManager.NavigateTo($"/account/confirm?username={Uri.EscapeDataString(mobileNumber)}");
+        _navigationManager.NavigateTo($"/account/confirm?username={Uri.EscapeDataString(mobileNumber)}", true);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
-using Amazon.Runtime;
 using Learning.Shared.Application.Contracts.Identity;
 using Learning.Shared.Application.Exceptions.Identity;
+using Learning.Shared.Application.Helpers;
 using Learning.Shared.Application.Models.Identity;
 using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Models.Identity;
@@ -127,19 +127,15 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
         }
         catch (NotAuthorizedException ex)
         {
-            if(ex.Message == "Incorrect username or password.")
-            {
-                throw new ExternalIdentityProviderException(ExternalIdentityProviderExceptionType.IncorrectCredentials);
-
-            }
-            else
-            {
-                throw new ExternalIdentityProviderException(ExternalIdentityProviderExceptionType.AccountNotFound);
-            }
+            throw new ExternalIdentityProviderException(ExternalIdentityProviderExceptionType.NotAuthorized, ex.Message);
         }
-        catch(UserNotConfirmedException unex)
+        catch (UserNotConfirmedException)
         {
             throw new ExternalIdentityProviderException(ExternalIdentityProviderExceptionType.AccountNotConfirmed);
+        }
+        catch (UserNotFoundException)
+        {
+            throw new ExternalIdentityProviderException(ExternalIdentityProviderExceptionType.AccountNotFound);
         }
     }
 
@@ -216,10 +212,9 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
         var request = new AdminUpdateUserAttributesRequest
         {
             UserPoolId = _userPoolId,
-            Username = username,
+            Username = IdentityHelper.ToMobileNumber(username),
             UserAttributes = new List<AttributeType>
             {
-                new AttributeType { Name = "phone_number", Value = username },
                 new AttributeType { Name = "phone_number_verified", Value = "true" }
             }
         };
@@ -249,7 +244,7 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
             IsPhoneNumberConfirmed = bool.Parse(response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.IsPhoneNumberVerifiedClaim)?.Value ?? false.ToString()),
             Role = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.AwsRoleClaim)?.Value,
             IsEnabled = response.Enabled,
-            IsAccountConfirmed =response.UserStatus == UserStatusType.CONFIRMED
+            IsAccountConfirmed = response.UserStatus == UserStatusType.CONFIRMED
         };
     }
 

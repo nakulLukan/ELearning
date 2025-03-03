@@ -1,0 +1,8 @@
+﻿.app-alert {
+    background-color: #f443360f;
+    color: red;
+    border-radius: 6px !important;
+    text-align:center !important;
+    font-family: var(--ff-500);
+    font-size: 0.75rem;
+}

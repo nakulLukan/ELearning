@@ -1,0 +1,16 @@
+﻿<div class="app-alert d-flex gap-3 px-6 py-3 align-center">
+	<MudIcon Icon="@Icons.Material.Outlined.Info" Color="Color.Inherit"/>
+	<span>@Text</span>
+</div>
+
+@code {
+	[EditorRequired, Parameter]
+	public required string Text { get; set; }
+
+	[Parameter]
+	public AppAlertTypeEnum AppAlertType { get; set; }
+
+	public enum AppAlertTypeEnum{
+		Error
+	}
+}

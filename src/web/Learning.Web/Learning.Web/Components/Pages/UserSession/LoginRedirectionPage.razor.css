@@ -1,0 +1,12 @@
+﻿.signup-label {
+    font-family: var(--ff-600);
+    font-size: 1rem;
+    color: #757575;
+}
+
+
+@media (max-width: 960px) {
+    .signup-label {
+        font-size: 0.75rem;
+    }
+}

@@ -1,63 +1,68 @@
 ﻿@page "/account/signup"
 @using Learning.Shared.Application.Exceptions.Identity
+@using Learning.Shared.Constants
+@using Learning.Web.Client.Components.Controls.Actions
+@using Learning.Web.Client.Components.Controls.Feedback
+@using Learning.Web.Client.Components.Controls.Input
+@using Learning.Web.Client.Components.Pages
 @using Learning.Web.Components.Layouts
 @using Learning.Web.Contracts.Authentication
+@using System.ComponentModel.DataAnnotations
 @layout UserSessionLayout
 @inject IUserManager UserManager
 @inject INavigationService NavigationManager
-<h3>Sign Up</h3>
+<PageTitle>BTS Sign Up</PageTitle>
 
-<EditForm Model="@Model"
-		  OnValidSubmit="SignUp"
-		  FormName="signup">
-	<AntiforgeryToken />
-	<DataAnnotationsValidator />
-	<div class="app-contact-us-form d-flex flex-column gap-10">
-		<h1 class="app-contact-us-header">Get in touch with us</h1>
-		<div>
-			<label>
-				phone number:
-				<InputText @bind-Value="Model!.Username" />
-			</label>
+<AppPage Class="d-flex flex-column flex-grow-1">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1" MaxWidth="MaxWidth.ExtraLarge">
+		<div class="my-10 my-md-17"></div>
+		<div class="d-flex flex-column flex-md-row flex-grow-1 gap-3">
+			<div class="d-flex flex-column align-center flex-grow-1">
+				<EditForm Model="@Model"
+						  FormName="Signup"
+						  OnValidSubmit="SignUp" Enhance
+						  class="d-flex flex-column align-center justify-center align-stretch signup-form">
+					<DataAnnotationsValidator />
+					<div class="d-flex flex-column gap-3 gap-md-6 form-input-container">
+						<h3 class="mb-1 mb-md-12 mt-5 mt-md-0">Create an account</h3>
+						<AppTextFieldV2 Label="Phone Number"
+										@bind-Value="@Model.Username"
+										For="(()=> Model.Username)"></AppTextFieldV2>
+						<AppTextFieldV2 Label="Name"
+										@bind-Value="@Model.Name"
+										For="(()=> Model.Name)"></AppTextFieldV2>
+						<AppTextFieldV2 Label="Your location (City)"
+										@bind-Value="@Model.Address"
+										For="(()=> Model.Address)"></AppTextFieldV2>
+						<AppTextFieldV2 Label="Password"
+										IsPassword
+										@bind-Value="@Model.Password"
+										For="(()=> Model.Password)"></AppTextFieldV2>
+						<AppTextFieldV2 Label="Confirm Password"
+										IsPassword
+										@bind-Value="@Model.ConfirmPassword"
+										For="(()=> Model.ConfirmPassword)"></AppTextFieldV2>
+						@if (!string.IsNullOrEmpty(_globalErrorMessage))
+						{
+							<AppAlert Text="@_globalErrorMessage"></AppAlert>
+
+						}
+						<AppButton Text="Create Account" Class="mt-2 mt-md-3"
+								   FormType="AppButton.AppButtonFormType.Submit"></AppButton>
+					</div>
+				</EditForm>
+			</div>
 		</div>
-		<div>
-			<label>
-				password:
-				<InputText @bind-Value="Model!.Password" />
-			</label>
-		</div>
-		<div>
-			<label>
-				confirm password:
-				<InputText @bind-Value="Model!.ConfirmPassword" />
-			</label>
-		</div>
-		<div>
-			<label>
-				name:
-				<InputText @bind-Value="Model!.Name" />
-			</label>
-		</div>
-		<div>
-			<label>
-				city:
-				<InputText @bind-Value="Model!.Address" />
-			</label>
-		</div>
-		<div>
-			<button type="submit">Submit</button>
-		</div>
-	</div>
-</EditForm>
+	</MudContainer>
+</AppPage>
 @code {
-	[Parameter, SupplyParameterFromQuery]
-	public required string? RedirectUrl { get; set; }
 
 	[Parameter, SupplyParameterFromQuery]
 	public string? Username { get; set; }
 
 	[SupplyParameterFromForm]
 	public SignUpModel Model { get; set; } = new();
+	private string _globalErrorMessage = "";
 
 	protected override void OnInitialized()
 	{
@@ -68,6 +73,7 @@
 	{
 		try
 		{
+			_globalErrorMessage = string.Empty;
 			var otpId = await UserManager.SignUpUser(Model.Username!, Model.Password!, Model.Name!, Model.Address!);
 			NavigationManager.NavigateToAccountConfirmation(Model.Username!);
 		}
@@ -75,17 +81,33 @@
 		{
 			if (ex.Type == ExternalIdentityProviderExceptionType.UserAlreadyExists)
 			{
-				ToastService.Error("Account already exists");
+				_globalErrorMessage = "Account already exists";
 			}
 		}
 	}
 
 	public class SignUpModel
 	{
+		[Required]
 		public string? Username { get; set; }
+
+		[Required]
+		[MaxLength(50)]
+		[RegularExpression(RegexExpConst.GeneralPassword, ErrorMessage = RegexExpConst.GeneralPasswordMessage)]
 		public string? Password { get; set; }
+
+		[Required]
+		[Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
 		public string? ConfirmPassword { get; set; }
+
+		[Required]
+		[MaxLength(50)]
+		[RegularExpression(RegexExpConst.GeneralName, ErrorMessage = RegexExpConst.GeneralNameMessage)]
 		public string? Name { get; set; }
+
+		[Required]
+		[MaxLength(50)]
+		[RegularExpression(RegexExpConst.GeneralPlace, ErrorMessage = RegexExpConst.GeneralPlaceMessage)]
 		public string? Address { get; set; }
 	}
 }
