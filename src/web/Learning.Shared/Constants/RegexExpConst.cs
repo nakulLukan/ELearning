@@ -25,7 +25,7 @@ public static class RegexExpConst
 
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralPassword = "(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()-+=])[A-Za-z\\d!@#$%^&*()-+=]{8,}$";
     public const string GeneralPasswordMessage = "Please enter a valid password";
-
+    public const string GeneralPasswordPolicyMessage = "Password should contain at least 1 character, 1 number and 1 special character.";
 
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string GeneralOtp = "^[0-9]{6}$";
     public const string GeneralOtpMessage = "OTP should be 6 digit number";

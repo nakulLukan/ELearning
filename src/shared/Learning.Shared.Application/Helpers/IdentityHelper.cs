@@ -7,7 +7,7 @@ public class IdentityHelper
 {
     public static bool IsAdminUser(string? role) => !string.IsNullOrEmpty(role);
     public static string ToMobileNumber(string username) => username.StartsWith(LocalizationConstant.CountryCode) ? username : $"{LocalizationConstant.CountryCode}{username}";
-    
+
     /// <summary>
     /// Changes given number to 10 digit number without country code
     /// </summary>
@@ -21,6 +21,18 @@ public class IdentityHelper
         var bytes = new byte[4];
         rng.GetBytes(bytes);
         int otp = BitConverter.ToInt32(bytes, 0) % 1000000;
-        return int.Parse(Math.Abs(otp).ToString("D6")); // Ensures 6-digit format
+        var otpString = Math.Abs(otp).ToString("D6");
+        return int.Parse(otpString.Length == 6 ? otpString : MakeIt6Digit(otpString)); // Ensures 6-digit format
+    }
+
+    private static string MakeIt6Digit(string otp)
+    {
+        int len = (6 - otp.Length);
+        for (int i = 0; i < len; i++)
+        {
+            otp += i;
+        }
+
+        return otp;
     }
 }

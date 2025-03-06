@@ -8,9 +8,11 @@
 @using Learning.Web.Components.Layouts
 @using Learning.Web.Contracts.Authentication
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.RateLimiting
 @layout UserSessionLayout
 @inject IUserManager UserManager
 @inject INavigationService NavigationManager
+@attribute [EnableRateLimiting(RateLimitingPolicyConstant.SignupPage)]
 <PageTitle>BTS Sign Up</PageTitle>
 
 <AppPage Class="d-flex flex-column flex-grow-1">
@@ -20,7 +22,7 @@
 			<div class="d-flex flex-column align-center flex-grow-1">
 				<EditForm Model="@Model"
 						  FormName="Signup"
-						  OnValidSubmit="SignUp" Enhance
+						  OnValidSubmit="SignUp"
 						  class="d-flex flex-column align-center justify-center align-stretch signup-form">
 					<DataAnnotationsValidator />
 					<div class="d-flex flex-column gap-3 gap-md-6 form-input-container">
@@ -89,11 +91,12 @@
 	public class SignUpModel
 	{
 		[Required]
+		[RegularExpression(RegexExpConst.GeneralPhoneNumber, ErrorMessage = RegexExpConst.GeneralPhoneNumberMessage)]
 		public string? Username { get; set; }
 
 		[Required]
 		[MaxLength(50)]
-		[RegularExpression(RegexExpConst.GeneralPassword, ErrorMessage = RegexExpConst.GeneralPasswordMessage)]
+		[RegularExpression(RegexExpConst.GeneralPassword, ErrorMessage = RegexExpConst.GeneralPasswordPolicyMessage)]
 		public string? Password { get; set; }
 
 		[Required]

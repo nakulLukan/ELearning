@@ -26,6 +26,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRateLimiter();
 app.UseAntiforgery();
 app.RegisterMiddlewares();
 app.UseCors("Default");

@@ -9,3 +9,10 @@ public static class PolicyConstant
     public const string ExamNotificationPolicy = "exam-notification";
     public const string QuizPolicy = "quiz";
 }
+
+public static class RateLimitingPolicyConstant
+{
+    public const string SignupPage = "SignupPage";
+    public const string ConfirmAccountPage = "VerifyAccountPage";
+    public const string ForgotPasswordPage = "ForgotPasswordPage";
+}

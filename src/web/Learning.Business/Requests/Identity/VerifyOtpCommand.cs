@@ -38,8 +38,8 @@ public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, VerifyO
         var updateCount = await _dbContext.OtpHistory
             .Where(x => x.UserName == username
                 && x.Otp == request.Otp
-                && !x.IsUsed)
-            .ExecuteUpdateAsync(x => x.SetProperty(p => p.IsUsed, true), cancellationToken);
+                && x.ExpiresOn >= DateTimeOffset.UtcNow)
+            .ExecuteDeleteAsync(cancellationToken);
         if (updateCount == 1 || _isTestMode)
         {
             await _identityProvider.ConfirmPhoneNumber(request.MobileNumber);

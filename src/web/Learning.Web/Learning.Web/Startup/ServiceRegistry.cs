@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Threading.RateLimiting;
 using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using Learning.Business;
@@ -34,6 +35,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -210,6 +212,56 @@ public static class ServiceRegistry
             });
         });
         #endregion CORS
+
+        #region Rate Limiting
+
+        builder.Services.AddRateLimiter(rateLimiterOptions =>
+        {
+            rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            rateLimiterOptions.OnRejected = async (context, token) =>
+            {
+                // Redirect users to a custom page
+                context.HttpContext.Response.Redirect("/error/attempt-exceeded");
+            };
+            rateLimiterOptions.AddPolicy(RateLimitingPolicyConstant.SignupPage, httpContext =>
+            {
+                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+                return RateLimitPartition.GetFixedWindowLimiter(ipAddress!,
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(10),
+                        QueueLimit = 0,
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    });
+            });
+            rateLimiterOptions.AddPolicy(RateLimitingPolicyConstant.ConfirmAccountPage, httpContext =>
+            {
+                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+                return RateLimitPartition.GetFixedWindowLimiter(ipAddress!,
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 15,
+                        Window = TimeSpan.FromMinutes(15),
+                        QueueLimit = 0,
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    });
+            });
+            rateLimiterOptions.AddPolicy(RateLimitingPolicyConstant.ForgotPasswordPage, httpContext =>
+            {
+                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
+                return RateLimitPartition.GetFixedWindowLimiter(ipAddress!,
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(10),
+                        QueueLimit = 0,
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    });
+            });
+        });
+
+        #endregion
 
         builder.Services.AddBlazorBootstrap();
         builder.Services.AddHttpContextAccessor();
