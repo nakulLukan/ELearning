@@ -5,6 +5,7 @@ using Learning.Shared.Application.Contracts.Identity;
 using Learning.Shared.Application.Helpers;
 using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Extensions;
+using Learning.Shared.Common.Utilities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,7 +39,7 @@ public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, VerifyO
         var updateCount = await _dbContext.OtpHistory
             .Where(x => x.UserName == username
                 && x.Otp == request.Otp
-                && x.ExpiresOn >= DateTimeOffset.UtcNow)
+                && x.ExpiresOn >= AppDateTime.UtcNow)
             .ExecuteDeleteAsync(cancellationToken);
         if (updateCount == 1 || _isTestMode)
         {

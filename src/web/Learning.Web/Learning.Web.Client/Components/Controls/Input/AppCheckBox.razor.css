@@ -1,0 +1,13 @@
+﻿::deep .form-check-label{
+    font-family: var(--ff-500);
+    font-size: 0.875rem;
+}
+
+
+@media (max-width: 960px) {
+    ::deep .form-check-label {
+        font-family: var(--ff-500);
+        font-size: 0.75rem;
+    }
+
+}

@@ -3,6 +3,7 @@ using Learning.Domain.Identity;
 using Learning.Shared.Application.Contracts.Communication;
 using Learning.Shared.Application.Helpers;
 using Learning.Shared.Common.Dto;
+using Learning.Shared.Common.Utilities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,7 +65,7 @@ public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, Respons
                     x.SetProperty(p => p.NextOtpAfter, DateTimeOffset.UtcNow.AddMinutes(NEXT_OTP_AFTER_IN_MINUTES))
                     .SetProperty(p => p.TimesRequested, existingOtp.TimesRequested + 1)
                     .SetProperty(p => p.Otp, otpNumber)
-                    .SetProperty(p => p.ExpiresOn, DateTimeOffset.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)), cancellationToken);
+                    .SetProperty(p => p.ExpiresOn, AppDateTime.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)), cancellationToken);
         }
         else if (existingOtp.TimesRequested >= MAX_OTP_REQUEST_PER_DAY && existingOtp.NextOtpAfter.Value.Date < DateTimeOffset.UtcNow.Date)
         {
@@ -74,7 +75,7 @@ public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, Respons
                     x.SetProperty(p => p.NextOtpAfter, default(DateTimeOffset?))
                     .SetProperty(p => p.TimesRequested, 0)
                     .SetProperty(p => p.Otp, otpNumber)
-                    .SetProperty(p => p.ExpiresOn, DateTimeOffset.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)), cancellationToken);
+                    .SetProperty(p => p.ExpiresOn, AppDateTime.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)), cancellationToken);
         }
         else if (DateTimeOffset.UtcNow <= existingOtp.NextOtpAfter || existingOtp.TimesRequested >= MAX_OTP_REQUEST_PER_DAY)
         {
@@ -98,7 +99,7 @@ public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, Respons
             UserName = phoneNumber,
             TimesRequested = 0,
             NextOtpAfter = null,
-            ExpiresOn = DateTime.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)
+            ExpiresOn = AppDateTime.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)
         };
 
         var smsresult = await _smsService.SendOtpAsync(phoneNumber, otpNumber);

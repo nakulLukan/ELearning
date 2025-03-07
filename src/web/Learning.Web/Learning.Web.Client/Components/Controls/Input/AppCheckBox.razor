@@ -1,0 +1,44 @@
+﻿@using System.Linq.Expressions
+@using System.Text.RegularExpressions
+@inherits InputBase<bool>
+
+<div>
+	<div class="d-flex align-center gap-2">
+		<InputCheckbox id="@Id" @bind-Value="@CurrentValue" name="@FieldName">
+		</InputCheckbox>
+
+		<label for="@Id" class="form-check-label">
+			@ChildContent
+		</label>
+	</div>
+	<ValidationMessage For="For"></ValidationMessage>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public Expression<Func<bool>> For { get; set; } = default!;
+
+	[Parameter]
+	public required RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public string Id { get; set; } = Guid.NewGuid().ToString();
+
+	private string FieldName => GetFieldName(For);
+	private string GetFieldName(Expression<Func<bool>> expression)
+	{
+		if (expression.Body is MemberExpression member)
+		{
+			var fieldName = member.ToString();
+			// Remove "value(...)." pattern
+			return Regex.Replace(fieldName, @"value\([^)]+\)\.", "");
+		}
+		return string.Empty;
+	}
+
+	protected override bool TryParseValueFromString(string? value, out bool result, out string? validationErrorMessage)
+	{
+		result = bool.Parse(value);
+		validationErrorMessage = null;
+		return true;
+	}
+}

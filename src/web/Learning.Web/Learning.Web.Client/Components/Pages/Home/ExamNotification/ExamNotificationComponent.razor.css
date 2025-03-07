@@ -76,8 +76,8 @@
 
 @media(max-width: 960px) {
     .app-exam-notification-flex {
-        gap: 107px;
-        margin-top: 183px;
+        gap: 0px;
+        margin-top: 110px;
     }
 
     .app-exam-notification-container {

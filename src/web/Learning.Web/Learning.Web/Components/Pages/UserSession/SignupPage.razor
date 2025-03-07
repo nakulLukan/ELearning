@@ -5,6 +5,7 @@
 @using Learning.Web.Client.Components.Controls.Feedback
 @using Learning.Web.Client.Components.Controls.Input
 @using Learning.Web.Client.Components.Pages
+@using Learning.Web.Client.DataAnotationValidators
 @using Learning.Web.Components.Layouts
 @using Learning.Web.Contracts.Authentication
 @using System.ComponentModel.DataAnnotations
@@ -44,13 +45,21 @@
 										IsPassword
 										@bind-Value="@Model.ConfirmPassword"
 										For="(()=> Model.ConfirmPassword)"></AppTextFieldV2>
+						<AppCheckBox @bind-Value=@Model.GiveConsentForReceivingOtp
+									 For="@(()=> Model.GiveConsentForReceivingOtp)">
+							I agree to receive an OTP via SMS for verification.
+								 </AppCheckBox>
+						<AppCheckBox @bind-Value=@Model.AgreeToTermsAndCondition
+									 For="@(()=> Model.AgreeToTermsAndCondition)">
+							I agree to the <a href="/terms-and-agreement">Terms and Conditions</a> and <a href="/privacy-policy">Privacy Policy</a>.
+						</AppCheckBox>
 						@if (!string.IsNullOrEmpty(_globalErrorMessage))
 						{
 							<AppAlert Text="@_globalErrorMessage"></AppAlert>
 
 						}
 						<AppButton Text="Create Account" Class="mt-2 mt-md-3"
-								   FormType="AppButton.AppButtonFormType.Submit"></AppButton>
+						FormType="AppButton.AppButtonFormType.Submit"></AppButton>
 					</div>
 				</EditForm>
 			</div>
@@ -112,5 +121,11 @@
 		[MaxLength(50)]
 		[RegularExpression(RegexExpConst.GeneralPlace, ErrorMessage = RegexExpConst.GeneralPlaceMessage)]
 		public string? Address { get; set; }
+
+		[MustBeTrue("Confirmation is required for creating account.")]
+		public bool AgreeToTermsAndCondition { get; set; }
+
+		[MustBeTrue("Confirmation is required for creating account.")]
+		public bool GiveConsentForReceivingOtp { get; set; }
 	}
 }

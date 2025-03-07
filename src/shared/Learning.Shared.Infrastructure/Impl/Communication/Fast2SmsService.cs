@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Learning.Shared.Application.Contracts.Communication;
 using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Models.Communication;
@@ -54,7 +55,7 @@ public class Fast2SmsService : ISmsService
             };
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await client.PostAsync(Fast2SmsApiUrl, content);
-            var responseText = await response.Content.ReadFromJsonAsync<SmsApiResponse>();
+            var responseJson = await response.Content.ReadFromJsonAsync<SmsApiResponse>();
             if (response.IsSuccessStatusCode)
             {
                 return new SmsResponse()
@@ -66,8 +67,8 @@ public class Fast2SmsService : ISmsService
             {
                 return new SmsResponse()
                 {
-                    ErrorMessage = responseText!.Message,
-                    Success = responseText.Return
+                    ErrorMessage = responseJson!.Message!.First(),
+                    Success = responseJson.Return
                 };
             }
         }
@@ -90,6 +91,9 @@ public class Fast2SmsService : ISmsService
 
 public class SmsApiResponse
 {
+    [JsonPropertyName("return")]
     public bool Return { get; set; }
-    public string? Message { get; set; }
+
+    [JsonPropertyName("message")]
+    public string[]? Message { get; set; }
 }

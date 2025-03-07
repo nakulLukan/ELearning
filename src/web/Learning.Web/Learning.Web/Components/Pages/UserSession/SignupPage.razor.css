@@ -1,9 +1,11 @@
-﻿::deep .signup-form
-{
+﻿::deep .signup-form {
     min-width: 400px !important;
 }
 
-
+a {
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    text-decoration: underline;
+}
 
 @media (max-width: 960px) {
     ::deep .signup-form {
