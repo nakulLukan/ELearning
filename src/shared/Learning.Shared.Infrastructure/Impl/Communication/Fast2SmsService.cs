@@ -29,7 +29,7 @@ public class Fast2SmsService : ISmsService
         _logger = logger;
     }
 
-    public async Task<SmsResponse> SendOtpAsync(string contactNumberWithoutCountryCode, int otp)
+    public async Task<SmsResponse> SendOtpAsync(string contactNumberWithoutCountryCode, int otp, string messageTemplateId)
     {
         try
         {
@@ -41,7 +41,7 @@ public class Fast2SmsService : ISmsService
                 };
             }
             var dltSenderId = _configuration[AppSettingsKeyConstant.Sms_DltSenderId];
-            var dltMessageId = _configuration[AppSettingsKeyConstant.Sms_DltMessageId];
+            var dltMessageId = messageTemplateId;
             var client = _httpClientFactory.CreateClient(); // Creating HttpClient instance
             client.DefaultRequestHeaders.Add("authorization", _apiKey);
             var requestBody = new
@@ -81,11 +81,16 @@ public class Fast2SmsService : ISmsService
                 Success = false
             };
         }
+    }
 
-        return new SmsResponse()
-        {
-            Success = false,
-        };
+    public Task<SmsResponse> SendOtpForAccountVerification(string contactNumberWithoutCountryCode, int otp)
+    {
+        return SendOtpAsync(contactNumberWithoutCountryCode, otp, _configuration[AppSettingsKeyConstant.Sms_DltAccountVerificationMessageId]!);
+    }
+
+    public Task<SmsResponse> SendOtpForPasswordRecovery(string contactNumberWithoutCountryCode, int otp)
+    {
+        return SendOtpAsync(contactNumberWithoutCountryCode, otp, _configuration[AppSettingsKeyConstant.Sms_DltPasswordRecoveryMessageId]!);
     }
 }
 

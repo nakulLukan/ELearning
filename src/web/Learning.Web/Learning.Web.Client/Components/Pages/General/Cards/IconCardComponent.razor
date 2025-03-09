@@ -1,0 +1,19 @@
+﻿<div class="d-flex gap-3 gap-md-8">
+	<div >
+		<div class="icon-card pa-3 pa-md-6">
+			<MudImage Src="@Icon"></MudImage>
+		</div>
+	</div>
+	<div class="d-flex flex-column gap-1 gap-md-3">
+		<h2 class="title">@Title</h2>
+		@ChildContent
+	</div>
+</div>
+@code {
+	[Parameter]
+	public required string Icon { get; set; }
+	[Parameter]
+	public required string Title { get; set; }
+	[Parameter]
+	public required RenderFragment ChildContent { get; set; }
+}

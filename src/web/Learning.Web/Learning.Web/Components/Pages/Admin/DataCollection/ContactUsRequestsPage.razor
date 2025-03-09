@@ -31,6 +31,11 @@
 		<PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
 		<PropertyColumn Property="x => x.EmailAddress" Title="Email Address" />
 		<PropertyColumn Property="x => x.RequestedOn.ToLocalDateTimeString()" Title="Requested On" />
+		<TemplateColumn>
+			<CellTemplate>
+				<MudIconButton Icon="@Icons.Material.Rounded.Delete" OnClick="(async ()=> await DeleteContactUsRequest(context.Item.Id))"></MudIconButton>
+			</CellTemplate>
+		</TemplateColumn>
 	</Columns>
 	<LoadingContent>
 		Loading...
@@ -72,6 +77,27 @@
 				TotalItems = response.TotalRecords,
 				Items = response.Data,
 			};
+	}
+
+	private async Task DeleteContactUsRequest(long id)
+	{
+		await AppMediator.Send(new DeleteContactUsRequestCommand
+			{
+				Id = id
+			})
+			.OnSuccess(async data =>
+			{
+				if (data)
+				{
+					ToastService.Success("Deleted");
+				}
+
+				await InvokeAsync(async () => await _dataGrid.ReloadServerData());
+			})
+			.OnError(err =>
+			{
+				ToastService.Error(err.Message);
+			});
 	}
 
 	private async Task OnSearch()

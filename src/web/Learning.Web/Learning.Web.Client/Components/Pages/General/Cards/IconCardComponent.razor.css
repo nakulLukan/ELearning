@@ -1,0 +1,28 @@
+﻿.icon-card {
+    border-radius: 12px;
+    background-color: #FFFFFF36;
+}
+
+.title {
+    color: #FFFFFF;
+}
+
+::deep p {
+    color: #FFFFFF6B !important;
+}
+
+::deep .mud-image{
+    width: 42px !important;
+    height: 42px !important;
+}
+
+
+@media (max-width:960px) {
+    ::deep .mud-image {
+        width: 30px !important;
+        height: 30px !important;
+    }
+    .icon-card {
+        border-radius: 8.83px;
+    }
+}

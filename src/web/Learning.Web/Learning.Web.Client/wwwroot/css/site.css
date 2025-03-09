@@ -84,6 +84,23 @@ body {
     font-size: 0.875rem;
     color: red;
 }
+
+.app-mis-image{
+    border-radius: 16px;
+    width:100%;
+    height: auto;
+}
+
+.app-mis-header{
+    font-size: 2.25rem !important;
+}
+
+.app-mis-content {
+    font-size: 1.125rem !important;
+    color: #757575;
+    font-family: var(--ff-500) !important;
+}
+
 @media (max-width: 960px) {
     :root {
         --mud-appbar-height: 60px !important;
@@ -100,6 +117,14 @@ body {
         font-size: 0.75rem;
     }
     .validation-message {
+        font-size: 0.75rem !important;
+    }
+
+    .app-mis-header {
+        font-size: 1.5rem !important;
+    }
+
+    .app-mis-content {
         font-size: 0.75rem !important;
     }
 }

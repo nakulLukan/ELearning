@@ -1,5 +1,6 @@
 ﻿@page "/quiz"
 @using Learning.Shared.Common.Extensions
+@using Learning.Shared.Constants
 @using Learning.Shared.Contracts.HttpContext
 @using Learning.Shared.Dto.Quiz.QuickTest.Public
 @using Learning.Web.Client.Components.Pages.ExamNotification.ModelExam
@@ -49,7 +50,7 @@
 								have begun the exam.
 							</p>
 							<p class="app-contact-us mt-2">
-								Contact us for more details : 96565 25351, 88487 6692
+								Contact us for more details : @ContactInfoConstant.Mobile1, @ContactInfoConstant.Mobile2
 							</p>
 						</div>
 						<MudGrid Justify="Justify.Center" Class="mt-4 mt-md-7">

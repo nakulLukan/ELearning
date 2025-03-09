@@ -1,0 +1,48 @@
+﻿.app-brand-name {
+    font-family: var(--ff-900);
+    font-size: 2.25rem;
+    background-color: #223941;
+    background-image: linear-gradient(90deg, #223941 0%, #5792A7 100%);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-text-fill-color: transparent;
+}
+
+.app-brand-sub-name {
+    font-family: var(--ff-700);
+    font-size: 2.25rem;
+    color: #6C6C6C;
+}
+
+::deep .bg1 {
+    height: 458px;
+}
+
+::deep .bg2 {
+    height: 282px;
+}
+
+.set-apart-container {
+    background: linear-gradient(92.28deg, #6025F5 -18.57%, #FF5555 149.54%);
+}
+
+@media (max-width:960px) {
+
+    ::deep .bg1 {
+        height: 312px;
+    }
+
+    ::deep .bg2 {
+        height: 195px;
+    }
+
+    .app-brand-name {
+        font-size: 1.5rem;
+    }
+
+    .app-brand-sub-name {
+        font-size: 1.5rem;
+    }
+}

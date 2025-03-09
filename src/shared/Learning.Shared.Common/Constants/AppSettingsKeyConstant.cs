@@ -23,7 +23,8 @@ public class AppSettingsKeyConstant
 
     public const string Sms_ApiKey = "Sms:ApiKey";
     public const string Sms_DltSenderId = "Sms:DltSenderId";
-    public const string Sms_DltMessageId = "Sms:DltMessageId";
+    public const string Sms_DltAccountVerificationMessageId = "Sms:DltAccountVerificationMessageId";
+    public const string Sms_DltPasswordRecoveryMessageId = "Sms:DltPasswordRecoveryMessageId";
     public const string Sms_SuppressSms = "Sms:SuppressSms";
     public const string Sms_TestMode = "Sms:TestMode";
 

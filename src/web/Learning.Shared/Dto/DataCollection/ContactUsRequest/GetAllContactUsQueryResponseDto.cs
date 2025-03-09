@@ -2,6 +2,7 @@
 
 public class GetAllContactUsQueryResponseDto
 {
+    public required long Id { get; set; }
     public required string Name { get; set; }
     public required string ContactNumber { get; set; }
     public required string City { get; set; }

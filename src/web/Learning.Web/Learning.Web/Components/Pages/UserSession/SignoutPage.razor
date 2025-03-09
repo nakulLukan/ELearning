@@ -15,7 +15,7 @@
         {
             await UserManager.Logout();
             // Redirect to the Cognito sign-out endpoint
-            NavigationManager.NavigateTo("");
+            NavigationManager.NavigateTo("", true);
         }
     }
 }

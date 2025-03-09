@@ -17,9 +17,9 @@
 <PageTitle>BTS Sign Up</PageTitle>
 
 <AppPage Class="d-flex flex-column flex-grow-1">
-	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1" MaxWidth="MaxWidth.ExtraLarge">
-		<div class="my-10 my-md-17"></div>
-		<div class="d-flex flex-column flex-md-row flex-grow-1 gap-3">
+	<MudContainer Class="flex-grow-1 d-flex flex-column flex-grow-1 justify-center" MaxWidth="MaxWidth.ExtraLarge">
+		<div class="my-10"></div>
+		<div class="d-flex flex-column flex-md-row flex-grow-1 gap-3 align-center">
 			<div class="d-flex flex-column align-center flex-grow-1">
 				<EditForm Model="@Model"
 						  FormName="Signup"
@@ -28,7 +28,7 @@
 					<DataAnnotationsValidator />
 					<div class="d-flex flex-column gap-3 gap-md-6 form-input-container">
 						<h3 class="mb-1 mb-md-12 mt-5 mt-md-0">Create an account</h3>
-						<AppTextFieldV2 Label="Phone Number"
+						<AppTextFieldV2 Label="Mobile Number"
 										@bind-Value="@Model.Username"
 										For="(()=> Model.Username)"></AppTextFieldV2>
 						<AppTextFieldV2 Label="Name"
@@ -101,25 +101,30 @@
 	{
 		[Required]
 		[RegularExpression(RegexExpConst.GeneralPhoneNumber, ErrorMessage = RegexExpConst.GeneralPhoneNumberMessage)]
+		[Display(Name = "Mobile Number")]
 		public string? Username { get; set; }
 
 		[Required]
 		[MaxLength(50)]
 		[RegularExpression(RegexExpConst.GeneralPassword, ErrorMessage = RegexExpConst.GeneralPasswordPolicyMessage)]
+		[Display(Name = "Password")]
 		public string? Password { get; set; }
 
 		[Required]
 		[Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+		[Display(Name = "Confirm Password")]
 		public string? ConfirmPassword { get; set; }
 
 		[Required]
 		[MaxLength(50)]
 		[RegularExpression(RegexExpConst.GeneralName, ErrorMessage = RegexExpConst.GeneralNameMessage)]
+		[Display(Name = "Name")]
 		public string? Name { get; set; }
 
 		[Required]
 		[MaxLength(50)]
 		[RegularExpression(RegexExpConst.GeneralPlace, ErrorMessage = RegexExpConst.GeneralPlaceMessage)]
+		[Display(Name = "City")]
 		public string? Address { get; set; }
 
 		[MustBeTrue("Confirmation is required for creating account.")]

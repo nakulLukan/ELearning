@@ -1,0 +1,79 @@
+﻿@page "/about-us"
+@using Learning.Web.Client.Components.Pages.General.Cards
+<PageTitle>BTS About Us</PageTitle>
+<AppPage BackgroundColor="#F4F4F4">
+	<div class="pt-9 d-flex flex-column">
+		<MudContainer MaxWidth="MaxWidth.Medium" Class="en-page-container">
+			<div class="d-flex flex-column">
+				<h4>About us</h4>
+				<div class="d-flex flex-wrap gap-3 mt-6 mt-md-12">
+
+					<h2 class="app-brand-name">@UIConstant.AppName</h2>
+					<h2 class="app-brand-sub-name"> <span class="d-none d-sm-inline">-</span> Sainik Udyog Shikshak</h2>
+				</div>
+				<p class="app-mis-content mt-5 mt-md-7">
+					At <b>@UIConstant.AppName</b>, we are committed to transforming the aspirations of young individuals into reality by preparing them for careers in the <b>Indian Army, Navy, Air Force, and Paramilitary forces</b>. As a premier defence coaching institute, our mission is to <b>train, guide, and mentor</b> candidates to excel in their respective military examinations and physical training.
+				</p>
+
+				<MudImage Src="/assets/images/about_us/about_us_bg1.jpg"
+						  Class="app-mis-image bg1 mt-2 mt-md-12 mb-0 mb-md-20"
+						  ObjectPosition="ObjectPosition.Center"
+						  ObjectFit="ObjectFit.Cover"></MudImage>
+
+				<MudGrid Class="mt-11 mt-md-15" Spacing="6">
+					<MudItem xs="12" sm="8" Class="d-flex flex-column gap-2 gap-md-6">
+						<h4>
+							Our Legacy & Expertise
+						</h4>
+						<p class="app-mis-content ">
+							Founded by a team of <b>military veterans and experts</b> from sports and academia, @UIConstant.AppName blends <b>academic excellence with rigorous physical training</b>. Our mentors, with a broad spectrum of experience, ensure that each candidate is fully prepared—mentally, academically, and physically—to meet the challenges of the defence sector.
+						</p>
+					</MudItem>
+					<MudItem xs="12" sm="4">
+						<div class="bg2">
+							<MudImage Src="/assets/images/about_us/about_us_bg2.jpg"
+									  Class="app-mis-image bg2 w-100 h-100"
+									  ObjectFit="ObjectFit.Cover"
+									  ObjectPosition="ObjectPosition.Center"></MudImage>
+						</div>
+					</MudItem>
+				</MudGrid>
+
+				<h4 class="mt-12 mt-md-16 mb-6 mb-md-12">What sets us apart</h4>
+				
+			</div>
+		</MudContainer>
+		<div class="set-apart-container">
+			<MudContainer MaxWidth="MaxWidth.Medium">
+				<MudGrid Class="py-10 py-md-20" Spacing="9">
+					<MudItem xs="12" sm="6">
+						<IconCardComponent Title="Comprehensive training" Icon="@GlyphIcons.PencilScaleCrossed">
+							<p>We offer specialized coaching for various military recruitment exams, ensuring that students receive <b>top-notch guidance and structured preparation.</b></p>
+						</IconCardComponent>
+					</MudItem>
+					<MudItem xs="12" sm="6">
+						<IconCardComponent Title="Physical & Mental readiness" Icon="@GlyphIcons.TreadmillRunning">
+							<p>Our academy provides <b>fitness training</b> and mental conditioning to help candidates excel in physical endurance tests and personal interviews.</p>
+						</IconCardComponent>
+					</MudItem>
+
+					<MudItem xs="12" sm="6">
+						<IconCardComponent Title="Expert Mentors" Icon="@GlyphIcons.Mentor">
+							<p>Our team includes <b>ex-defence personnel and experienced trainers</b> who have successfully guided numerous students to achieve their defence career dreams.</p>
+						</IconCardComponent>
+					</MudItem>
+					<MudItem xs="12" sm="6">
+						<IconCardComponent Title="All Defence Streams Covered" Icon="@GlyphIcons.Shield">
+							<p>Whether you aim to join the <b>Army, Navy, Air Force, or Paramilitary Forces</b>, BTS is your <b>one-stop destination</b> for complete preparation.</p>
+						</IconCardComponent>
+					</MudItem>
+				</MudGrid>
+			</MudContainer>
+		</div>
+		<MudContainer MaxWidth="MaxWidth.Medium">
+			<h4 class="mt-12 mt-md-18">Our Mission & Vision</h4>
+			<p class="app-mis-content mt-3 mt-md-6 mb-12 mb-20">We believe in <b>channelizing the energy and passion of India's youth</b> towards nation-building and national security. With the right training, guidance, and motivation, we empower aspirants to <b>serve their country with honor and pride</b>.</p>
+		</MudContainer>
+	</div>
+</AppPage>
+<Learning.Web.Client.Components.Pages.Home.Footer.FooterComponent></Learning.Web.Client.Components.Pages.Home.Footer.FooterComponent>

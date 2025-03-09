@@ -32,6 +32,7 @@ public class GetAllContactusQueryHandler : IRequestHandler<GetAllContactusQuery,
             .Take(request.Take!.Value)
             .Select(x => new GetAllContactUsQueryResponseDto
             {
+                Id = x.Id,
                 City = x.City.ToUpper(),
                 ContactNumber = $"{x.CountryCode}{x.PhoneNumber}",
                 EmailAddress = x.EmailAddress,

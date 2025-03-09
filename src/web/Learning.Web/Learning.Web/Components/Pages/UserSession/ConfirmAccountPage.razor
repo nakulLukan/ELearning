@@ -45,7 +45,7 @@
 				</EditForm>
 				<EditForm Model="@Model"
 						  FormName="resendotp"
-				OnValidSubmit="ResentOtp">
+						  OnValidSubmit="ResentOtp">
 					<input name="Model.OTP" @bind-value="Model.OTP" hidden />
 					<button id="resendButton" disabled class="mt-3 mt-md-4 cursor-wait" type="submit">Resent OTP</button>
 				</EditForm>
@@ -73,7 +73,7 @@
 			}
 		}, 1000)
 	}
-	
+
 </script>
 @code {
 	[SupplyParameterFromQuery]
@@ -102,6 +102,7 @@
 		await Mediator.Send(new CreateOtpCommand()
 			{
 				MobileNumber = Username!,
+				IsPasswordRecovery = false
 			});
 	}
 
@@ -109,6 +110,7 @@
 	{
 		[Required]
 		[RegularExpression(RegexExpConst.GeneralOtp, ErrorMessage = RegexExpConst.GeneralOtpMessage)]
+		[Display(Name = "OTP")]
 		public string? OTP { get; set; }
 	}
 }

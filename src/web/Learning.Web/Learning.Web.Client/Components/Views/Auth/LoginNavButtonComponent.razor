@@ -18,21 +18,29 @@
 				Logout
 			</MudMenuItem>
 		</MudMenu>
-		<MudNavGroup Title="@($"Hi, {_loggedInName}")" Expanded="false" Class="app-nav-menu d-md-none">
-			<MudNavLink Class="app-nav-menu"
-						Icon="@Icons.Material.Filled.AddShoppingCart"
-						Style="text-transform:none;"
-						OnClick="OnPurchaseHistory">
-				Purchase History
-			</MudNavLink>
-			<MudDivider />
-			<MudNavLink Class="app-nav-menu"
-						Icon="@Icons.Material.Filled.Logout"
-						Style="text-transform:none;"
-						OnClick="OnLogout">
-				Logout
-			</MudNavLink>
-		</MudNavGroup>
+		<MudMenu Class="app-nav-menu d-md-none" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopRight" Size="Size.Small" Dense>
+			<ActivatorContent>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary">@($"Hi, {_loggedInName}")</MudButton>
+			</ActivatorContent>
+			<ChildContent>
+				<MudMenuItem Class="app-nav-menu"
+							 IconSize="Size.Small"
+							 Icon="@Icons.Material.Filled.AddShoppingCart"
+							 Style="text-transform:none;"
+							 OnClick="OnPurchaseHistory">
+					Purchase History
+				</MudMenuItem>
+				<MudDivider />
+				<MudMenuItem Class="app-nav-menu"
+							 IconSize="Size.Small"
+							 IconColor="Color.Error"
+							 Icon="@Icons.Material.Filled.Logout"
+							 Style="text-transform:none;"
+							 OnClick="OnLogout">
+					Logout
+				</MudMenuItem>
+			</ChildContent>
+		</MudMenu>
 	}
 	else
 	{

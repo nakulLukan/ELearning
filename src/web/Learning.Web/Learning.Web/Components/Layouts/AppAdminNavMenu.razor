@@ -23,16 +23,14 @@
 			</MudNavMenu>
 			<AuthorizeView>
 				<Authorized>
-					<form action="Account/SignOut" method="post">
-						<AntiforgeryToken />
-						<input type="hidden" name="ReturnUrl" value="" />
-						<MudButton ButtonType="ButtonType.Submit"
-								   Class="mud-nav-link"
-								   StartIcon="@Icons.Material.Filled.Logout"
-								   Style="text-transform:none;">
-							Logout
-						</MudButton>
-					</form>
+
+					<MudButton ButtonType="ButtonType.Submit"
+							   Href="/account/signout"
+							   Class="mud-nav-link"
+							   StartIcon="@Icons.Material.Filled.Logout"
+							   Style="text-transform:none;">
+						Logout
+					</MudButton>
 				</Authorized>
 			</AuthorizeView>
 		</MudStack>

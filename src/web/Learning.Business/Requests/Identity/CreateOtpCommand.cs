@@ -3,6 +3,7 @@ using Learning.Domain.Identity;
 using Learning.Shared.Application.Contracts.Communication;
 using Learning.Shared.Application.Helpers;
 using Learning.Shared.Common.Dto;
+using Learning.Shared.Common.Models.Communication;
 using Learning.Shared.Common.Utilities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ public class CreateOtpCommand : IRequest<ResponseDto<long>>
     /// 10 digit phone number
     /// </summary>
     public required string MobileNumber { get; set; }
+
+    public required bool IsPasswordRecovery { get; set; }
 }
 public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, ResponseDto<long>>
 {
@@ -45,15 +48,15 @@ public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, Respons
         //      If no otps are issued today, then send new otp.
         if (existingOtp == null)
         {
-            return await AddNewOtpEntry(otpNumber, phoneNumber, cancellationToken);
+            return await AddNewOtpEntry(otpNumber, phoneNumber, request.IsPasswordRecovery, cancellationToken);
         }
         else
         {
-            return await UpdateExistingOtpEntry(otpNumber, phoneNumber, existingOtp, cancellationToken);
+            return await UpdateExistingOtpEntry(otpNumber, phoneNumber, existingOtp, request.IsPasswordRecovery, cancellationToken);
         }
     }
 
-    private async Task<ResponseDto<long>> UpdateExistingOtpEntry(int otpNumber, string phoneNumber, OtpHistory? existingOtp, CancellationToken cancellationToken)
+    private async Task<ResponseDto<long>> UpdateExistingOtpEntry(int otpNumber, string phoneNumber, OtpHistory? existingOtp, bool isPasswordRecovery, CancellationToken cancellationToken)
     {
         // If otp is created for first time then allow to resend otp
         // Or last issued otp was 2 minutes before
@@ -87,11 +90,23 @@ public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, Respons
             throw new NotImplementedException();
         }
 
-        var smsresult = await _smsService.SendOtpAsync(phoneNumber, otpNumber);
+        await SendOtp(otpNumber, phoneNumber, isPasswordRecovery);
         return new(existingOtp.Id);
     }
 
-    private async Task<ResponseDto<long>> AddNewOtpEntry(int otpNumber, string phoneNumber, CancellationToken cancellationToken)
+    private Task<SmsResponse> SendOtp(int otpNumber, string phoneNumber, bool isPasswordRecovery)
+    {
+        if (!isPasswordRecovery)
+        {
+            return _smsService.SendOtpForAccountVerification(phoneNumber, otpNumber);
+        }
+        else
+        {
+            return _smsService.SendOtpForPasswordRecovery(phoneNumber, otpNumber);
+        }
+    }
+
+    private async Task<ResponseDto<long>> AddNewOtpEntry(int otpNumber, string phoneNumber, bool isPasswordRecovery, CancellationToken cancellationToken)
     {
         var newOtp = new Domain.Identity.OtpHistory
         {
@@ -102,7 +117,7 @@ public class CreateOtpCommandHandler : IRequestHandler<CreateOtpCommand, Respons
             ExpiresOn = AppDateTime.UtcNow.AddMinutes(OTP_EXPIRY_IN_MINUTES)
         };
 
-        var smsresult = await _smsService.SendOtpAsync(phoneNumber, otpNumber);
+        var smsresult = await SendOtp(otpNumber, phoneNumber, isPasswordRecovery);
         if (smsresult.Success)
         {
             _dbContext.OtpHistory.Add(newOtp);

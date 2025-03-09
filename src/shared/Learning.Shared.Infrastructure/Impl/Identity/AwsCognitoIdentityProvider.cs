@@ -229,23 +229,34 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
             UserPoolId = _userPoolId,
             Username = username
         };
-
-        var response = await _client.AdminGetUserAsync(request);
-        return new ExternalUser
+        try
         {
-            CreatedOn = response.UserCreateDate,
-            Sub = response.UserAttributes.First(x => x.Name == ClaimConstant.Sub).Value,
-            UserName = response.Username,
-            LastUpdatedOn = response.UserLastModifiedDate,
-            Email = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.EmailClaim)?.Value ?? string.Empty,
-            IsEmailConfirmed = bool.Parse(response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.IsEmailVerifiedClaim)?.Value ?? false.ToString()),
-            FullName = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.Name)?.Value ?? string.Empty,
-            PhoneNumber = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.PhoneNumber)?.Value ?? string.Empty,
-            IsPhoneNumberConfirmed = bool.Parse(response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.IsPhoneNumberVerifiedClaim)?.Value ?? false.ToString()),
-            Role = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.AwsRoleClaim)?.Value,
-            IsEnabled = response.Enabled,
-            IsAccountConfirmed = response.UserStatus == UserStatusType.CONFIRMED
-        };
+            var response = await _client.AdminGetUserAsync(request);
+
+            return new ExternalUser
+            {
+                CreatedOn = response.UserCreateDate,
+                Sub = response.UserAttributes.First(x => x.Name == ClaimConstant.Sub).Value,
+                UserName = response.Username,
+                LastUpdatedOn = response.UserLastModifiedDate,
+                Email = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.EmailClaim)?.Value ?? string.Empty,
+                IsEmailConfirmed = bool.Parse(response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.IsEmailVerifiedClaim)?.Value ?? false.ToString()),
+                FullName = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.Name)?.Value ?? string.Empty,
+                PhoneNumber = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.PhoneNumber)?.Value ?? string.Empty,
+                IsPhoneNumberConfirmed = bool.Parse(response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.IsPhoneNumberVerifiedClaim)?.Value ?? false.ToString()),
+                Role = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.AwsRoleClaim)?.Value,
+                IsEnabled = response.Enabled,
+                IsAccountConfirmed = response.UserStatus == UserStatusType.CONFIRMED
+            };
+        }
+        catch (UserNotFoundException ex)
+        {
+            throw new ExternalIdentityProviderException(ExternalIdentityProviderExceptionType.AccountNotFound);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task ChangeUserPassword(string username, string newPassword)

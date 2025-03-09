@@ -50,7 +50,8 @@ Environment=PaymentGateway__SecretKey=secretkey
 # SMS Service
 Environment=Sms__ApiKey=accesskey
 Environment=Sms__DltSenderId=dltsenderid
-Environment=Sms__DltMessageId=f2smsapikey
+Environment=Sms__DltAccountVerificationMessageId=f2smsapikey
+Environment=Sms__DltPasswordRecoveryMessageId=f2smsapikey
 Environment=Sms__SuppressSms=true
 Environment=Sms__TestMode=false
 

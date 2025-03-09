@@ -84,7 +84,7 @@ public class UserManager : IUserManager
 
     private async Task<long> SendOtpForAccountConfirmation(string username)
     {
-        return (await _mediator.Send(new CreateOtpCommand() { MobileNumber = username })).Data;
+        return (await _mediator.Send(new CreateOtpCommand() { MobileNumber = username, IsPasswordRecovery = false })).Data;
     }
 
     public async Task<bool> ConfirmAccount(string username, int otp)

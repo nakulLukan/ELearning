@@ -90,6 +90,7 @@
     <Folder Include="Components\Pages\ExamNotification\ModelExam\Listing\" />
     <Folder Include="Components\Pages\General\ErrorPages\" />
     <Folder Include="Components\Pages\PurchaseHistory\ModelExams\" />
+    <Folder Include="wwwroot\assets\images\privacy_policy\" />
   </ItemGroup>
 
 

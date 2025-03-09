@@ -1,38 +1,39 @@
-﻿<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundImage="/assets/images/homepage/footer_bg.jpg">
+﻿@using Learning.Shared.Constants
+<Learning.Web.Client.Components.Pages.General.AppContainer BackgroundImage="/assets/images/homepage/footer_bg.jpg">
 	<div class="d-flex flex-column flex-md-row justify-space-between px-7 py-10 pb-13 px-md-18 py-md-20 mt-md-10">
 		<div class="d-flex flex-column flex-md-row flex-md-wrap gap-14 justify-center align-center justify-md-start w-100">
 			<MudImage Src="/assets/images/bts_icon.svg" Width="85" Class="align-self-start"></MudImage>
 			<div class="d-flex flex-column flex-md-row gap-15 gap-md-6 justify-space-between w-100">
 				@* Section 1 *@
 				<div class="d-flex flex-column gap-2">
-					<MudNavLink Class="section-1-text" Href="">About Us</MudNavLink>
-					<MudNavLink Class="section-1-text">Terms & Condition</MudNavLink>
-					<MudNavLink Class="section-1-text">Privacy Policy</MudNavLink>
-					<MudNavLink Class="section-1-text" Href="contact-us">Contact Us</MudNavLink>
+					<MudNavLink Class="section-1-text" Href="/about-us">About Us</MudNavLink>
+					<MudNavLink Class="section-1-text" Href="/terms-and-conditions">Terms & Condition</MudNavLink>
+					<MudNavLink Class="section-1-text" Href="/privacy-policy">Privacy Policy</MudNavLink>
+					<MudNavLink Class="section-1-text" Href="/contact-us">Contact Us</MudNavLink>
 				</div>
 
 				@* Section 2 *@
 				<div class="d-flex flex-column justify-end gap-2 gap-md-4">
-					<FooterContactComponent Icon="@GlyphIcons.Whatsapp" Text="90234 23922" Href="https://wa.me/9023423922?text=Hello" />
-					<FooterContactComponent Icon="@GlyphIcons.Mail" Text="btsacademy@gmail.com" Href="mailto:btsacademy@gmail.com" />
-					<FooterContactComponent Icon="@GlyphIcons.PhoneDialer" Text="90234 23922" Href="tel:+919023423922" />
+					<FooterContactComponent Icon="@GlyphIcons.Whatsapp" Text="@ContactInfoConstant.Whatsapp" Href="@($"https://wa.me/{ContactInfoConstant.Whatsapp}?text=Hello")" />
+					<FooterContactComponent Icon="@GlyphIcons.Mail" Text="@ContactInfoConstant.EmailAddress" Href="@($"mailto:{ContactInfoConstant.EmailAddress}")" />
+					<FooterContactComponent Icon="@GlyphIcons.PhoneDialer" Text="@ContactInfoConstant.Mobile1" Href="@($"tel:{ContactInfoConstant.Mobile1}")" />
+					<FooterContactComponent Icon="@GlyphIcons.PhoneDialer" Text="@ContactInfoConstant.Mobile2" Href="@($"tel:{ContactInfoConstant.Mobile2}")" />
 				</div>
 
 				@* Section 3 *@
 				<div class="d-flex flex-column justify-end gap-2">
 					<h6 class="section-3-header mb-2">OUR BRANCHES</h6>
-					<h6 class="section-3-text">Perinthalmanna</h6>
-					<h6 class="section-3-text">Palakkad</h6>
-					<h6 class="section-3-text">Feroke</h6>
+					@foreach (var branch in ContactInfoConstant.Branches)
+					{
+						<h6 class="section-3-text">@branch</h6>
+					}
 				</div>
 
 				@* Section 4 *@
 				<div class="d-flex flex-column justify-end gap-2">
 					<h6 class="section-3-header mb-3">FOLLOW US ON</h6>
 					<div class="d-flex gap-4">
-						<MudImage Src="@GlyphIcons.Fb" Width="24" />
-						<MudImage Src="@GlyphIcons.Insta" Width="24" />
-						<MudImage Src="@GlyphIcons.Whatsapp" Width="24" />
+						<Learning.Web.Client.Components.Pages.General.SocialMediaBannerComponent DarkMode/>
 					</div>
 				</div>
 			</div>
