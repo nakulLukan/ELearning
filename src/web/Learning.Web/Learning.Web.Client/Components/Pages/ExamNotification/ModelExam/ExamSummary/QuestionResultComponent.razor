@@ -1,5 +1,5 @@
 ﻿<div class="d-flex gap-2 ">
-	<MudIcon Icon="@(IsCorrect ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Cancel)" Color="@(IsCorrect ? Color.Success : Color.Error)"></MudIcon>
+	<MudIcon Icon="@(IsCorrect ? Icons.Material.Filled.CheckCircle : SelectedOptionOrder.HasValue ? Icons.Material.Filled.Cancel : Icons.Material.Filled.DoDisturbOn)" Color="@(IsCorrect ? Color.Success :  SelectedOptionOrder.HasValue ? Color.Error : Color.Surface)"></MudIcon>
 	<div class="d-flex flex-column gap-2 gap-md-4">
 		<h6>@(QuestionNumber). @QuestionText</h6>
 		@if (!IsCorrect)
