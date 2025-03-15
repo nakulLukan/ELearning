@@ -5,5 +5,5 @@ public static class PaymentConstant
     /// <summary>
     /// Normalized value
     /// </summary>
-    public const float GstPercentage = 0.18F;
+    public const float GstPercentage = 0F;
 }

@@ -120,7 +120,17 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
             var authResponse = await _client.InitiateAuthAsync(authRequest);
             if (authResponse.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED)
             {
-                return await ConfirmNewPassword(authResponse.Session, username, password);
+                var userattributes = System.Text.Json.JsonSerializer.Deserialize<IDictionary<string, string>>(authResponse.ChallengeParameters["userAttributes"]);
+                if (!userattributes!.TryGetValue("address", out string? address) || string.IsNullOrEmpty(address))
+                {
+                    address = "NA";
+                }
+                if (!userattributes!.TryGetValue("name", out string? name) || string.IsNullOrEmpty(name))
+                {
+                    name = "NA";
+                }
+
+                return await ConfirmNewPassword(authResponse.Session, username, password, address, name);
             }
 
             return new(authResponse.AuthenticationResult.IdToken, authResponse.AuthenticationResult.RefreshToken, authResponse.AuthenticationResult.AccessToken, authResponse.AuthenticationResult.ExpiresIn);
@@ -139,7 +149,7 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
         }
     }
 
-    public async Task<SigninResponseDto> ConfirmNewPassword(string session, string username, string newPassword)
+    public async Task<SigninResponseDto> ConfirmNewPassword(string session, string username, string newPassword, string address, string name)
     {
         var challengeRequest = new RespondToAuthChallengeRequest
         {
@@ -150,8 +160,8 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
                 {
                     { "USERNAME", username },
                     { "NEW_PASSWORD", newPassword },
-                    {"userAttributes.address", "palakkad" },
-                    {"userAttributes.name", "nakul" }
+                    { "userAttributes.address", address },
+                    { "userAttributes.name", name },
                 }
         };
 

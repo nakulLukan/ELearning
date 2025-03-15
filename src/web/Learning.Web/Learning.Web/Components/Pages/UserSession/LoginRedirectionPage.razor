@@ -65,10 +65,11 @@
 	private async Task Login()
 	{
 		_globalErrorMessage = "";
+		bool isSuccess = false;
 		try
 		{
 			await UserManager.Login(Model.Username!, Model.Password!);
-			NavigationManager.NavigateTo(RedirectUrl ?? "/");
+			isSuccess = true;
 		}
 		catch (ExternalIdentityProviderException ex)
 		{
@@ -80,6 +81,14 @@
 			{
 				_globalErrorMessage = ex.Message!;
 			}
+		}
+		catch (Exception)
+		{
+			_globalErrorMessage = "Oops, something went wrong";
+		}
+		if (isSuccess)
+		{
+			NavigationManager.NavigateTo(RedirectUrl ?? "", true);
 		}
 	}
 

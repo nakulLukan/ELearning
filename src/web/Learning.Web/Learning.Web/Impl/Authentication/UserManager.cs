@@ -17,12 +17,14 @@ public class UserManager : IUserManager
     private readonly IExternalIdentityProvider _identityProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMediator _mediator;
+    private readonly ILogger<UserManager> _logger;
 
-    public UserManager(IExternalIdentityProvider identityProvider, IHttpContextAccessor httpContextAccessor, IMediator mediator)
+    public UserManager(IExternalIdentityProvider identityProvider, IHttpContextAccessor httpContextAccessor, IMediator mediator, ILogger<UserManager> logger)
     {
         _identityProvider = identityProvider;
         _httpContextAccessor = httpContextAccessor;
         _mediator = mediator;
+        _logger = logger;
     }
 
     public async Task Login(string username, string password)
@@ -53,6 +55,11 @@ public class UserManager : IUserManager
             {
                 _ = await SendOtpForAccountConfirmation(username);
             }
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Login failed");
             throw;
         }
     }
