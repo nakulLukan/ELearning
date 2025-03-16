@@ -68,13 +68,13 @@
 		MenuItems = [
 			new()
 			{
-				AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.ExamNotification],
+				AllowedRoles = [RoleConstant.SuperAdmin, RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.ExamNotification, RoleConstant.QuizExamNotification],
 				MenuName = "Configure Exam Notification",
 				Route = "/admin/exam-notifications",
 			},
 			new()
 			{
-				AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.QuizTeam],
+				AllowedRoles = [RoleConstant.SuperAdmin , RoleConstant.Admin, RoleConstant.OfficeStaff, RoleConstant.QuizTeam, RoleConstant.QuizExamNotification],
 				MenuName = "Configure Quiz",
 				Route = "/admin/quiz/configure",
 			},

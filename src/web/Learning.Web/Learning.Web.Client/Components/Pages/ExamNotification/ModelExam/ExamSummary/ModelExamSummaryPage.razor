@@ -187,7 +187,7 @@
 		await InvokeAsync(async () =>
 		{
 			await Task.Delay(100);
-			_scorePercentage = (int)((float)_score * 100 / (float)_totalScore);
+			_scorePercentage = Math.Clamp((int)((float)_score * 100 / (float)_totalScore), 0, 100);
 			StateHasChanged();
 		});
 

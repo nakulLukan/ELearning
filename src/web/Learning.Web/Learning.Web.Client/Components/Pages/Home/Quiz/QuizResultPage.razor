@@ -87,7 +87,7 @@
 						</div>
 					</div>
 					<div class="app-coupon-container d-flex flex-column gap-0 mt-9 mt-md-11">
-						@if (!string.IsNullOrEmpty(_result.CouponCode))
+						@if (!string.IsNullOrEmpty(_result.CouponCode) && _result.Discount > 0)
 						{
 							@* Coupon *@
 							<div class="app-coupon-card d-flex flex-column flex-md-row gap-4 justify-md-space-between">

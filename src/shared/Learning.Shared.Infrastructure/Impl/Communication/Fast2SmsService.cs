@@ -55,9 +55,9 @@ public class Fast2SmsService : ISmsService
             };
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await client.PostAsync(Fast2SmsApiUrl, content);
-            var responseJson = await response.Content.ReadFromJsonAsync<SmsApiResponse>();
             if (response.IsSuccessStatusCode)
             {
+                var responseJson = await response.Content.ReadFromJsonAsync<SmsApiResponse>();
                 return new SmsResponse()
                 {
                     Success = true,
@@ -65,9 +65,11 @@ public class Fast2SmsService : ISmsService
             }
             else
             {
+                var responseJson = await response.Content.ReadFromJsonAsync<SmsApiErrorResponse>();
+                _logger.LogError("F2Sms Failed: {Message}", responseJson!.Message);
                 return new SmsResponse()
                 {
-                    ErrorMessage = responseJson!.Message!.First(),
+                    ErrorMessage = responseJson.Message,
                     Success = responseJson.Return
                 };
             }
@@ -101,4 +103,13 @@ public class SmsApiResponse
 
     [JsonPropertyName("message")]
     public string[]? Message { get; set; }
+}
+
+public class SmsApiErrorResponse
+{
+    [JsonPropertyName("return")]
+    public bool Return { get; set; }
+
+    [JsonPropertyName("message")]
+    public string? Message { get; set; }
 }

@@ -155,7 +155,7 @@
 			Result.CouponCode = string.Empty;
 		}
 
-		if (quizAttempStatusEnum  == QuizAttempStatusEnum.Completed)
+		if (quizAttempStatusEnum == QuizAttempStatusEnum.Completed)
 		{
 			NavigationManager.NavigateTo("quiz/result");
 		}
@@ -281,10 +281,13 @@
 			Result.Discount = config.TotalDiscount;
 			Result.CouponCode = config.DiscountCode;
 
-			var result = await CouponCodeDataService.SaveCouponCode(config.DiscountCode ?? throw new ArgumentNullException(), config.TotalDiscount);
-			if (result.IsFailed)
+			if (config.TotalDiscount > 0)
 			{
-				Console.WriteLine("oops! something went wrong.");
+				var result = await CouponCodeDataService.SaveCouponCode(config.DiscountCode!, config.TotalDiscount);
+				if (result.IsFailed)
+				{
+					Console.WriteLine("oops! something went wrong.");
+				}
 			}
 
 			NavigationManager.NavigateTo("quiz/result");

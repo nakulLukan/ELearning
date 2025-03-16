@@ -8,6 +8,7 @@ public static class RoleConstant
     public const string OfficeStaff = "office-staff";
     public const string QuizTeam = "quiz-team";
     public const string ExamNotification = "exam-notification";
+    public const string QuizExamNotification = "quiz-exam-notification";
     public const string CouponCodes = "coupon-codes";
     public const string User = "user";
 }

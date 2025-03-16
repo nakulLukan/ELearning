@@ -7,6 +7,7 @@ using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.Persistence;
 using Learning.Infrastructure;
 using Learning.Shared.Common.Constants;
+using Learning.Shared.Constants;
 using Learning.Shared.Contracts.HttpContext;
 using Learning.Web.Client.Constants;
 using Learning.Web.Client.Contracts.Interop;
@@ -35,8 +36,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
@@ -153,7 +152,8 @@ public static class ServiceRegistry
                     context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
                     || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
                     || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff)
-                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.ExamNotification));
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.ExamNotification) 
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.QuizExamNotification));
             });
             options.AddPolicy(PolicyConstant.QuizPolicy, policy =>
             {
@@ -161,7 +161,8 @@ public static class ServiceRegistry
                     context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.SuperAdmin)
                     || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.Admin)
                     || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.OfficeStaff)
-                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.QuizTeam));
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.QuizTeam)
+                    || context.User.HasClaim(ClaimConstant.AwsRoleClaim, RoleConstant.QuizExamNotification));
             });
         });
         #endregion
@@ -214,6 +215,10 @@ public static class ServiceRegistry
         #endregion CORS
 
         #region Rate Limiting
+        static string? GetRateLimitingPartitionKey(HttpContext httpContext)
+        {
+            return httpContext.Request.Cookies[CookieConstant.ClientId];
+        }
 
         builder.Services.AddRateLimiter(rateLimiterOptions =>
         {
@@ -225,8 +230,9 @@ public static class ServiceRegistry
             };
             rateLimiterOptions.AddPolicy(RateLimitingPolicyConstant.SignupPage, httpContext =>
             {
-                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
-                return RateLimitPartition.GetFixedWindowLimiter(ipAddress!,
+                var partitionKey = GetRateLimitingPartitionKey(httpContext);
+                var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey!,
                     _ => new FixedWindowRateLimiterOptions
                     {
                         PermitLimit = 10,
@@ -237,8 +243,8 @@ public static class ServiceRegistry
             });
             rateLimiterOptions.AddPolicy(RateLimitingPolicyConstant.ConfirmAccountPage, httpContext =>
             {
-                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
-                return RateLimitPartition.GetFixedWindowLimiter(ipAddress!,
+                var partitionKey = GetRateLimitingPartitionKey(httpContext);
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey!,
                     _ => new FixedWindowRateLimiterOptions
                     {
                         PermitLimit = 15,
@@ -249,8 +255,8 @@ public static class ServiceRegistry
             });
             rateLimiterOptions.AddPolicy(RateLimitingPolicyConstant.ForgotPasswordPage, httpContext =>
             {
-                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
-                return RateLimitPartition.GetFixedWindowLimiter(ipAddress!,
+                var partitionKey = GetRateLimitingPartitionKey(httpContext);
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey!,
                     _ => new FixedWindowRateLimiterOptions
                     {
                         PermitLimit = 10,
