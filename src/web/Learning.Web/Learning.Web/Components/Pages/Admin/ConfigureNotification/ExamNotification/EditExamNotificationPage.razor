@@ -50,19 +50,19 @@
                                      InputMode="InputMode.url"></AppMudTextField>
                     <AppMudFileUpload FileChanged=@(file=> _model.ImageFile.File = file ?? null)
                                       FileNameDisplay="@_model.ImageFile.Name"
-                                      MaxSize="1_000_000"
+                                      MaxSize="FileSizeConstant.ExamNotificationImageFile"
                                       IsRequired
                                       Label="Upload Image"
                                       Accept=".png, .jpeg, .jpg"></AppMudFileUpload>
                     <AppMudFileUpload FileChanged=@(file=> _model.PdfFile.File = file ?? null)
                                       FileNameDisplay="@_model.PdfFile.Name"
-                                      MaxSize="5_000_000"
+                                      MaxSize="FileSizeConstant.ExamNotificationPdfFile"
                                       Label="Upload PDF"
                                       Accept=".pdf"></AppMudFileUpload>
 
                     <AppMudFileUpload FileChanged=@(file=> _model.Video.File = file ?? null)
                                       FileNameDisplay="@_model.Video.Name"
-                                      MaxSize="50_000_000"
+                                      MaxSize="FileSizeConstant.ExamNotificationVideoFile"
                                       Label="Upload Video"
                                       Accept=".mp4"></AppMudFileUpload>
 
@@ -134,7 +134,7 @@
             };
         if (_model.ImageFile.File != null)
         {
-            request.ImageFile = new Shared.Common.Dto.File.FileStreamData(_model.ImageFile.File.OpenReadStream(), _model.ImageFile.Name, _model.ImageFile.Size);
+            request.ImageFile = new Shared.Common.Dto.File.FileStreamData(_model.ImageFile.File.OpenReadStream(FileSizeConstant.ExamNotificationImageFile), _model.ImageFile.Name, _model.ImageFile.Size);
         }
         await AppMediator.Send(request)
             .OnSuccess(async notificationId =>
@@ -147,7 +147,7 @@
                         await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
                             {
                                 ExamNotificationId = notificationId,
-                                File = new(_model.Video.File.OpenReadStream(50_000_000), _model.Video.Name, _model.Video.Size),
+                                File = new(_model.Video.File.OpenReadStream(FileSizeConstant.ExamNotificationVideoFile), _model.Video.Name, _model.Video.Size),
                                 IsPdf = false
                             });
 
@@ -159,7 +159,7 @@
                         await Mediator.Send(new UploadExamNotificationPdfOrVideoCommand
                             {
                                 ExamNotificationId = notificationId,
-                                File = new Shared.Common.Dto.File.FileStreamData(_model.PdfFile.File.OpenReadStream(5_000_000), _model.PdfFile.Name, _model.PdfFile.Size),
+                                File = new Shared.Common.Dto.File.FileStreamData(_model.PdfFile.File.OpenReadStream(FileSizeConstant.ExamNotificationPdfFile), _model.PdfFile.Name, _model.PdfFile.Size),
                                 IsPdf = true
                             });
                         ToastService.Success("Pdf uploaded successfully.");
@@ -187,10 +187,10 @@
 
         public BrowserFile ImageFile { get; set; } = new();
 
-        [MaxFileSize(5_000_000)]
+        [MaxFileSize(FileSizeConstant.ExamNotificationPdfFile)]
         public BrowserFile PdfFile { get; set; } = new();
 
-        [MaxFileSize(50_000_000)]
+        [MaxFileSize(FileSizeConstant.ExamNotificationVideoFile)]
         public BrowserFile Video { get; set; } = new();
     }
 }

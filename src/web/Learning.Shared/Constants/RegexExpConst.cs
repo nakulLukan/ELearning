@@ -78,8 +78,6 @@ public static class RegexExpConst
     #endregion
 
     #region Notifications
-    [StringSyntax(StringSyntaxAttribute.Regex)] public const string ImportantPoints = "^[A-Za-z 0-9.,\n']+$";
-    public const string ImportantPointsMessage = "Please enter a value containing only letters, numbers, comma, newline, apostrophe and dots.";
 
     [StringSyntax(StringSyntaxAttribute.Regex)] public const string ExamNotificationTitle = "^[A-Za-z 0-9]+$";
     public const string ExamNotificationTitleMessage = "Please enter a value containing only letters, space and numbers.";

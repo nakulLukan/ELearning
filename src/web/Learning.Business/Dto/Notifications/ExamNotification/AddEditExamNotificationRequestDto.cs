@@ -12,11 +12,9 @@ public abstract class AddEditExamNotificationRequestDto
 
     [Required]
     [MaxLength(500)]
-    [RegularExpression(RegexExpConst.GeneralDescription, ErrorMessage = RegexExpConst.GeneralDescriptionMessage)]
     public string? Description { get; set; }
 
     [MaxLength(1000)]
-    [RegularExpression(RegexExpConst.ImportantPoints, ErrorMessage = RegexExpConst.ImportantPointsMessage)]
     public string? ImportantPoints { get; set; }
 
     [Required]
