@@ -12,7 +12,10 @@ public interface IAlertService
         string modelExamName,
         string modelExamDescription,
         int totalQuestions,
-        int totalTimeInSeconds);
+        int totalTimeInSeconds,
+        float positiveMark,
+        float negativeMark,
+        float totalMarks);
     Task<bool> DisplayPurchaseExamAlert(ModelExamPurchaseDialogParam parameter);
 }
 

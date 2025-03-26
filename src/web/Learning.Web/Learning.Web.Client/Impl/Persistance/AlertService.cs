@@ -71,7 +71,10 @@ public class AlertService : IAlertService
         string modelExamName,
         string modelExamDescription,
         int totalQuestions,
-        int totalTimeInSeconds)
+        int totalTimeInSeconds,
+        float positiveMark,
+        float negativeMark,
+        float totalMarks)
     {
         var options = new DialogOptions()
         {
@@ -88,6 +91,9 @@ public class AlertService : IAlertService
             { nameof(StartModelExamDialog.ModelExamDescription), modelExamDescription },
             { nameof(StartModelExamDialog.TotalQuestions), totalQuestions },
             { nameof(StartModelExamDialog.TotalTimeSeconds), totalTimeInSeconds},
+            { nameof(StartModelExamDialog.TotalMarks), totalMarks},
+            { nameof(StartModelExamDialog.PositiveMark), positiveMark},
+            { nameof(StartModelExamDialog.NegativeMark), negativeMark},
         };
         var dialog = await _dialogService.ShowAsync<StartModelExamDialog>(string.Empty, parameters, options);
         var res = (await dialog.Result);

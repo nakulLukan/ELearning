@@ -65,7 +65,10 @@ else
 				var started = await AlertService.DisplayStartModelExamAlert(Model!.ExamName,
 					Model.ExamDescription,
 					Model.TotalQuestions,
-					Model.TotalTimeInSeconds);
+					Model.TotalTimeInSeconds,
+					Model.PositiveMark,
+					Model.NegativeMark,
+					Model.TotalMarks);
 				if (started)
 				{
 					NavigationManager.NavigateTo($"/model-exams/{Model!.ModelExamId}/begin");

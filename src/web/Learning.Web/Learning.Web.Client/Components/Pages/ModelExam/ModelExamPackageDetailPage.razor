@@ -27,7 +27,7 @@
 					{
 						<ModelExamPurchaseNowComponent ExamNotificationId="ExamNotificationId" DiscountedPrice="_discountedPrice" />
 					}
-					<div class="d-flex flex-column flex-md-row gap-8 gap-md-11 mt-5 mt-md-6">
+					<div class="d-flex flex-column flex-md-row gap-8 flex-wrap gap-md-11 mt-5 mt-md-6">
 						@foreach (var modelExam in _modelExams)
 						{
 							<ModelExamDetailComponent Model="modelExam" />
@@ -90,7 +90,10 @@
 						IsLocked = x.IsLocked,
 						ExamDescription = x.ExamDescription,
 						TotalQuestions = x.TotalQuestions,
-						TotalTimeInSeconds = x.TotalTimeInSeconds
+						TotalTimeInSeconds = x.TotalTimeInSeconds,
+						NegativeMark = x.NegativeMark,
+						PositiveMark = x.PositiveMark,
+						TotalMarks = x.TotalMarks
 					}).ToArray();
 				_isLocked = _modelExams.Any(x => x.IsLocked);
 				if (_isLocked)

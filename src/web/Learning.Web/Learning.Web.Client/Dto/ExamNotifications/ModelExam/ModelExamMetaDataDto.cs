@@ -11,6 +11,9 @@ public class ModelExamMetaDataDto
     public required bool IsFree { get; set; }
     public required bool IsLocked { get; set; }
     public required int TotalQuestions{ get; set; }
+    public required float TotalMarks { get; set; }
+    public required float PositiveMark { get; set; }
+    public required float NegativeMark { get; set; }
     public required int TotalTimeInSeconds { get; set; }
 
 }

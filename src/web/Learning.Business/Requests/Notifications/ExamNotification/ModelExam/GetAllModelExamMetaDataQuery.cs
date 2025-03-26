@@ -41,7 +41,9 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
                 ExamPackageId = x.ModelExamPackageId,
                 DiscountedPrice = x.ModelExamPackage.DiscountedPrice,
                 TotalQuestions = x.Questions != null ? x.Questions.Count : 0,
-                TotalTimeInSeconds = x.TotalTimeLimit
+                TotalTimeInSeconds = x.TotalTimeLimit,
+                PositiveMark = x.Score,
+                NegativeMark = x.NegativeScore
             })
             .ToListAsync(cancellationToken);
 
@@ -67,6 +69,9 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
             ExamDescription = x.ExamDescription,
             TotalQuestions = x.TotalQuestions,
             TotalTimeInSeconds = x.TotalTimeInSeconds,
+            NegativeMark = x.NegativeMark,
+            PositiveMark = x.PositiveMark,
+            TotalMarks = x.PositiveMark * x.TotalQuestions
         }).ToArray();
     }
 }
