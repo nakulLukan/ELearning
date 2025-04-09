@@ -8,5 +8,5 @@ public interface IAppJSInterop
 	public Task ScrollToBottomOnNavigation();
 	public Task ScrollToTarget(string targetId);
 	public Task<bool> IsMobile();
-	public Task InitRazorpayPopup(string appName, string rzrpayOrderId, string? userName, string? userEmail, string phoneNumber, string internalOrderId);
+	public Task InitRazorpayPopup(string appName, string rzrpayOrderId, string? userName, string? userEmail, string phoneNumber, string internalOrderId, string rzrpayApiKey);
 }

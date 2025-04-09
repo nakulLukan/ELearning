@@ -9,8 +9,10 @@ window.initRazorpayPopup = function initRazorpayPopup(appName
     , userName
     , userEmail
     , phoneNumber
-    , internalOrderId) {
+    , internalOrderId
+    , apiKey) {
     options = {
+        "key": apiKey,
         "name": appName,
         "description": "",
         "order_id": rzrpayOrderId,

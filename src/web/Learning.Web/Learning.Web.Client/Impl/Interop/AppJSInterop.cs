@@ -41,9 +41,9 @@ public class AppJSInterop : IAppJSInterop
 		await _jsRuntime.InvokeVoidAsync("scrollToTarget", targetId);
 	}
 
-	public async Task InitRazorpayPopup(string appName, string rzrpayOrderId, string? userName, string? userEmail, string phoneNumber, string internalOrderId)
+	public async Task InitRazorpayPopup(string appName, string rzrpayOrderId, string? userName, string? userEmail, string phoneNumber, string internalOrderId, string rzrpayApiKey)
 	{
-		await _jsRuntime.InvokeVoidAsync("initRazorpayPopup", appName, rzrpayOrderId, userName, userEmail, phoneNumber, internalOrderId);
+		await _jsRuntime.InvokeVoidAsync("initRazorpayPopup", appName, rzrpayOrderId, userName, userEmail, phoneNumber, internalOrderId, rzrpayApiKey);
 	}
 
 }

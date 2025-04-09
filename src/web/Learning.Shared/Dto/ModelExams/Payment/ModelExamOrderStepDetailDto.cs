@@ -6,6 +6,7 @@ public class ModelExamOrderStepDetailDto
 {
     public required long ModelExamOrderId { get; set; }
     public required string? RazorpayOrderId { get; set; }
+    public required string RazorpayApiKey { get; set; }
     public required double AmountInPaisa { get; set; }
     public required OrderStatusEnum Status { get; set; }
 

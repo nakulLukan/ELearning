@@ -1,10 +1,12 @@
 ﻿using Learning.Business.Contracts.HttpContext;
 using Learning.Business.Contracts.PaymentGateway;
 using Learning.Business.Impl.Data;
+using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Utilities;
 using Learning.Shared.Dto.ModelExam.Payment;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
 
@@ -18,15 +20,18 @@ public class CreateRazorpayOrderCommandHandler : IRequestHandler<CreateRazorpayO
     private readonly IAppDbContext _appDbContext;
     private readonly IApiRequestContext _requestContext;
     private readonly IAppPaymentGateway _paymentGateway;
+    private readonly IConfiguration _configuration;
 
     public CreateRazorpayOrderCommandHandler(
         IAppDbContextFactory appDbContext,
         IApiRequestContext requestContext,
-        IAppPaymentGateway paymentGateway)
+        IAppPaymentGateway paymentGateway,
+        IConfiguration configuration)
     {
         _appDbContext = appDbContext.CreateDbContext();
         _requestContext = requestContext;
         _paymentGateway = paymentGateway;
+        _configuration = configuration;
     }
 
     public async Task<ModelExamOrderStepDetailDto> Handle(CreateRazorpayOrderCommand request, CancellationToken cancellationToken)
@@ -50,6 +55,7 @@ public class CreateRazorpayOrderCommandHandler : IRequestHandler<CreateRazorpayO
             AmountInPaisa = amountInPaisa,
             ModelExamOrderId = orderDetails.Id,
             RazorpayOrderId = rzrpayOrderId,
+            RazorpayApiKey = _configuration[AppSettingsKeyConstant.PaymentGateway_AccessKey]!,
             Status = orderDetails.Status,
             Email = emailId,
             Name = name,

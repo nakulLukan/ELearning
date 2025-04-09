@@ -3,11 +3,13 @@ using Learning.Business.Contracts.PaymentGateway;
 using Learning.Business.Impl.Data;
 using Learning.Business.Services.ExamNotification;
 using Learning.Domain.Notification;
+using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
 using Learning.Shared.Dto.ModelExam.Payment;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
 
@@ -21,6 +23,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
     private readonly IAppDbContext _appDbContext;
     private readonly IApiRequestContext _requestContext;
     private readonly IAppPaymentGateway _paymentGateway;
+    private readonly IConfiguration _configuration;
 
     public class OrderQueryDto
     {
@@ -39,11 +42,13 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
     public GetModelExamOrderByIdQueryHandler(
         IAppDbContextFactory appDbContext,
         IApiRequestContext requestContext,
-        IAppPaymentGateway paymentGateway)
+        IAppPaymentGateway paymentGateway,
+        IConfiguration configuration)
     {
         _appDbContext = appDbContext.CreateDbContext();
         _requestContext = requestContext;
         _paymentGateway = paymentGateway;
+        _configuration = configuration;
     }
 
     public async Task<ModelExamOrderStepDetailDto> Handle(GetModelExamOrderByIdQuery request, CancellationToken cancellationToken)
@@ -89,6 +94,7 @@ public class GetModelExamOrderByIdQueryHandler : IRequestHandler<GetModelExamOrd
             AmountInPaisa = 0,
             ModelExamOrderId = request.ModelExamOrderId,
             RazorpayOrderId = order.RzrpayOrderId,
+            RazorpayApiKey = _configuration[AppSettingsKeyConstant.PaymentGateway_AccessKey]!,
             Status = order.Status,
             Email = null,
             Name = null,
