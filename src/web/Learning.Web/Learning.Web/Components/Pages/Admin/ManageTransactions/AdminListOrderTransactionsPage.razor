@@ -1,0 +1,121 @@
+﻿@page "/admin/orders/transactions"
+@using Learning.Web.Components.Layouts
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+@layout AdminLayout
+@attribute [Authorize(Policy = PolicyConstant.AdminPolicy)]
+@using Learning.Business.Dto.Core.ClassDivision
+@using Learning.Business.Dto.Core.Course
+@using Learning.Business.Dto.Core.Subject
+@using Learning.Business.Dto.PurchaseHistory
+@using Learning.Business.Requests.Core.Course
+@using Learning.Business.Requests.Core.Subject.ManageSubject
+@using Learning.Business.Requests.PurchaseHistory
+@inject NavigationManager NavigationManager
+@inherits AppBaseComponent
+<MudDataGrid Items="@Elements" T="AdminOrderHistoryItemDto" Virtualize="true" Groupable="false" Bordered ShowMenuIcon="false" FixedHeader Dense=true
+			 Hover RowClass="cursor-pointer" Loading="_isLoading" ColumnResizeMode="ResizeMode.Container" Striped>
+	<ToolBarContent>
+		<MudText Typo="Typo.h6"><b>Subjects</b></MudText>
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn Property="x => x.OrderId" Title="#" />
+		<PropertyColumn Property="x => x.Amount" Title="Amount" />
+		<PropertyColumn Property="x => x.Status.ToString()" Title="Status" />
+		<PropertyColumn Property="x => x.InitiatedOn" Title="Initiated On" />
+		<PropertyColumn Property="x => x.CompletedOn" Title="Completed On" />
+		<PropertyColumn Property="x => x.PurchasedOn" Title="Purchased On" />
+		<PropertyColumn Property="x => x.ExamNotificationTitle" Title="Notification Title" />
+		<PropertyColumn Property="x => x.Fullname" Title="Fullname" />
+		<PropertyColumn Property="x => x.RzrPayOrderId" Title="Razorpay Order Id" />
+		<TemplateColumn>
+			<CellTemplate>
+				<MudIconButton Icon="@Icons.Material.Rounded.Delete" OnClick="@(()=>DeleteOrder(context.Item.OrderId))" Disabled="@(context.Item.Status == Shared.Common.Enums.OrderStatusEnum.Success)" />
+			</CellTemplate>
+		</TemplateColumn>
+	</Columns>
+	<PagerContent>
+		<div class="d-flex flex-column align-center">
+			<MudPagination Class="pa-4"
+						   Color="Color.Primary" Count="_orderCount" Size="Size.Small" SelectedChanged="@(async (x) => await OnPageSelected(x))" />
+		</div>
+	</PagerContent>
+	<NoRecordsContent>
+		<NoRecordsComponent />
+	</NoRecordsContent>
+</MudDataGrid>
+@code {
+	[Parameter]
+	public bool RefreshData { get; set; }
+	private bool refreshData;
+
+	private int _orderCount;
+	private int _selectedPage = 1;
+	private const int _pageSize = 10;
+
+	private List<AdminOrderHistoryItemDto> Elements = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender) return;
+		await LoadOrderHistory();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (RefreshData != refreshData)
+		{
+			refreshData = RefreshData;
+			await LoadOrderHistory();
+		}
+	}
+
+	private async Task LoadOrderHistory()
+	{
+		ChangeToLoadingState();
+		var response = (await Mediator.Send(new AdminOrderHistoryQuery()
+			{
+				Skip = GetPageSkipValue(_selectedPage, _pageSize),
+				Take = _pageSize,
+			}));
+
+		Elements = new(response.Data);
+		_orderCount = GetNumberOfPages(response.TotalRecords, _pageSize);
+		_selectedPage = 1;
+		ChangeToLoadedState();
+	}
+
+	private async Task OnClear()
+	{
+		await LoadOrderHistory();
+	}
+
+	private async Task OnPageSelected(int selectedPage)
+	{
+		_selectedPage = selectedPage;
+		await LoadOrderHistory();
+	}
+
+	private async Task DeleteOrder(long orderId)
+	{
+		await AppMediator.Send(new AdminOrderHistoryDeleteCommand()
+			{
+				OrderId = orderId
+			})
+		.OnSuccess(data =>
+		{
+			if (data)
+			{
+				ToastService.Success("Order deleted");
+			}
+			else
+			{
+				ToastService.Error("Failed");
+			}
+		})
+		.OnError(err =>
+		{
+			ToastService.Error(err.Message);
+		});
+	}
+}
