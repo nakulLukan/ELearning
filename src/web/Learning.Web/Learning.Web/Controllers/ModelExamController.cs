@@ -129,4 +129,15 @@ public class ModelExamController : ControllerBase
         }).ConfigureAwait(false);
         return Ok(data);
     }
+
+    [Authorize]
+    [HttpDelete("model-exam-orders/{modelExamOrderId:long}/purchase-history/delete-failed-order")]
+    public async Task<IActionResult> DeleteFailedModelExamOrder([FromRoute] long modelExamOrderId)
+    {
+        var data = await _mediator.Send(new DeleteFailedOrderCommand()
+        {
+            ModelExamOrderId = modelExamOrderId
+        }).ConfigureAwait(false);
+        return Ok(data);
+    }
 }

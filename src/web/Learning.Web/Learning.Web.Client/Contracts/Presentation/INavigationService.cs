@@ -2,6 +2,7 @@
 
 public interface INavigationService
 {
+    string CurrentUri();
     void NavigateTo(string url);
     void NavigateTo(string url, bool forceLoad);
     void NavigateToLogin(bool suppressRedirect = false);

@@ -34,5 +34,6 @@ public interface IModelExamDataService
     public Task<Result<ModelExamOrderStepDetailDto>> CreateRazorpayOrder(long modelExamOrderId);
     public Task<Result<ModelExamPaymentReceipt>> GetPaymentReceipt(long modelExamOrderId);
     public Task<Result<ModelExamPurchaseHistoryItemDto[]>> GetModelExamPurchaseHistory();
+    public Task<Result<ResponseDto<bool>>> DeleteFailedOrder(long modelExamOrderId);
 
 }

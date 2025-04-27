@@ -72,4 +72,7 @@ public interface IExamNotificationHttpClient
 
     [Get("/api/public/model-exam-orders/purchase-history")]
     public Task<ModelExamPurchaseHistoryItemDto[]> GetModelExamPurchaseHistory();
+
+    [Delete("/api/public/model-exam-orders/{modelExamOrderId}/purchase-history/delete-failed-order")]
+    public Task<ResponseDto<bool>> DeleteFailedModelExamOrder(long modelExamOrderId);
 }

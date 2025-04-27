@@ -262,4 +262,17 @@ public class ModelExamRestDataService : IModelExamDataService
             return Result.Fail(ex.Message);
         }
     }
+
+    public async Task<Result<ResponseDto<bool>>> DeleteFailedOrder(long modelExamOrderId)
+    {
+        try
+        {
+            var result = await _httpClient.DeleteFailedModelExamOrder(modelExamOrderId);
+            return Result.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
 }

@@ -41,4 +41,9 @@ public class NavigationService : INavigationService
     {
         _navigationManager.NavigateTo($"/account/confirm?username={Uri.EscapeDataString(mobileNumber)}", true, true);
     }
+
+    public string CurrentUri()
+    {
+        return _navigationManager.Uri;
+    }
 }

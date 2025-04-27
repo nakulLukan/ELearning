@@ -60,7 +60,9 @@ public class BeginModelExamSessionCommandHandler : IRequestHandler<BeginModelExa
                                  from mep in mepGroup.DefaultIfEmpty()
 
                                  join meph in _dbContext.ModelExamPurchaseHistory.IgnoreQueryFilters()
-                                    .Where(x => x.ModelExamOrder!.UserId == userId && x.ValidTill >= DateTimeOffset.UtcNow)
+                                    .Where(x => x.ModelExamOrder!.UserId == userId 
+                                            && x.ValidTill >= DateTimeOffset.UtcNow 
+                                            && x.ModelExamOrder!.Status == OrderStatusEnum.Success)
                                      on mep.Id equals meph.ModelExamOrder!.ModelExamPackageId into mephGroup
                                  from meph in mephGroup.DefaultIfEmpty()
 

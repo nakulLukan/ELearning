@@ -46,6 +46,7 @@ public class GetActiveModelExamPackagesQueryHandler : IRequestHandler<GetActiveM
             purchasedPackages = await _appDbContext.ModelExamPurchaseHistory.IgnoreQueryFilters()
                .Where(x => x.ModelExamOrder!.UserId == userId
                    && x.ValidTill >= AppDateTime.UtcNow
+                   && x.ModelExamOrder!.Status == Shared.Common.Enums.OrderStatusEnum.Success
                    && x.ModelExamOrder!.ModelExamPackage!.ExamNotification!.IsActive)
                .Select(x => new ActiveModelExamPackageBasicDetailDto
                {

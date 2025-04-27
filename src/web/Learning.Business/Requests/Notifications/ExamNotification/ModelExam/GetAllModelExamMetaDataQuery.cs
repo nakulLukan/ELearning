@@ -54,6 +54,7 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
             hasPurchased = await _appDbContext.ModelExamPurchaseHistory
                 .AnyAsync(x => x.ModelExamOrder!.UserId == userId
                     && x.ModelExamOrder.ModelExamPackageId == modelExams.First().ExamPackageId
+                    && x.ModelExamOrder.Status == Shared.Common.Enums.OrderStatusEnum.Success
                     && x.ValidTill >= AppDateTime.UtcNow, cancellationToken);
         }
 

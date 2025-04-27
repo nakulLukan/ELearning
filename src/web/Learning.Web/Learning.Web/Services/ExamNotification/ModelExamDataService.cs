@@ -4,7 +4,6 @@ using Learning.Business.Requests.Notifications.ExamNotification.ModelExam;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.ModelExamQuizSession;
 using Learning.Business.Requests.Notifications.ExamNotification.ModelExam.Payment;
 using Learning.Business.Requests.PurchaseHistory;
-using Learning.Domain.Notification;
 using Learning.Shared.Common.Dto;
 using Learning.Shared.Common.Enums;
 using Learning.Shared.Common.Utilities;
@@ -309,6 +308,23 @@ public class ModelExamDataService : IModelExamDataService
         try
         {
             var response = await _mediator.Send(new ModelExamPurchaseHistoryQuery());
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex.Message);
+        }
+    }
+
+    public async Task<Result<ResponseDto<bool>>> DeleteFailedOrder(long modelExamOrderId)
+    {
+        try
+        {
+            var response = await _mediator.Send(new DeleteFailedOrderCommand()
+            {
+                ModelExamOrderId = modelExamOrderId
+            });
+
             return response;
         }
         catch (Exception ex)
