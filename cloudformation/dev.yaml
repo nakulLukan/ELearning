@@ -130,7 +130,7 @@ Resources:
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins:
-              - "https://localhost:5000"
+              # - "https://localhost:5000"
               - !Join 
                 - ''
                 - - "https://"
@@ -188,7 +188,7 @@ Resources:
             Principal:
               AWS: 
                 - !GetAtt WebServerIAMRole.Arn
-                - !Ref S3PolicyCustomResource
+                # - !Ref S3PolicyCustomResource
             Resource: 
               - !Sub "arn:aws:s3:::${FileStorageBuckNameParam}/*"
 # Allow free access to anyone in public directory
@@ -201,8 +201,9 @@ Resources:
             Condition:
               StringLike:
                 'aws:Referer':
-                  - 'https://localhost:5000/*'
+                  # - 'https://localhost:5000/*'
                   - !Join [ "", ['https://', !Ref SiteDomainName ,'/*']]
+                  - !Join [ "", ['https://www.', !Ref SiteDomainName ,'/*']]
                   - !Join [ "", ['https://', !GetAtt EC2WebServer.PublicIp ,'/*']]
             
   RdsDB:
