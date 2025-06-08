@@ -28,4 +28,7 @@ public class AppSettingsKeyConstant
     public const string Sms_SuppressSms = "Sms:SuppressSms";
     public const string Sms_TestMode = "Sms:TestMode";
 
+    public const string StaticContent_HomePage_Video1 = "StaticContent:HomePage:Video1";
+    public const string StaticContent_HomePage_Video2 = "StaticContent:HomePage:Video2";
+    public const string StaticContent_HomePage_Video3 = "StaticContent:HomePage:Video3";
 }

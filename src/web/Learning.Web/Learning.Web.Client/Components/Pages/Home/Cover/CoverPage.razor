@@ -1,4 +1,5 @@
 ﻿@using BlazorBootstrap
+
 <Learning.Web.Client.Components.Pages.General.AppContainer BackgroundColor="#000000">
 	<div class="d-flex justify-center align-stretch align-stretch cover-main-container">
 		<MudGrid Justify="Justify.Center" Class="align-center h-100 ma-0">
@@ -6,17 +7,17 @@
 				<Carousel Id="carouselVideoPreview" Autoplay="CarouselAutoPlay.StartOnPageLoad" ShowIndicators="false" ShowPreviousNextControls="false">
 
 					<CarouselItem Active="true" Interval="10000">
-						<video autoplay muted src="https://btss3storage.s3.ap-south-1.amazonaws.com/public/static/cover_video_1.mp4" loop/>
+						<video autoplay muted src="https://btss3storageprod.s3.ap-south-1.amazonaws.com/public/static/cover_video_1.mp4" loop />
 
 					</CarouselItem>
 
 					<CarouselItem Interval="10000">
-						<video autoplay muted src="https://btss3storage.s3.ap-south-1.amazonaws.com/public/static/cover_video_2.mp4" loop />
+						<video autoplay muted src="https://btss3storageprod.s3.ap-south-1.amazonaws.com/public/static/cover_video_2.mp4" loop />
 
 					</CarouselItem>
 
 					<CarouselItem  Interval="10000">
-						<video autoplay muted src="https://btss3storage.s3.ap-south-1.amazonaws.com/public/static/cover_video_3.mp4" loop />
+						<video autoplay muted src="https://btss3storageprod.s3.ap-south-1.amazonaws.com/public/static/cover_video_3.mp4" loop />
 
 					</CarouselItem>
 				</Carousel>
@@ -38,6 +39,3 @@
 		</MudGrid>
 	</div>
 </Learning.Web.Client.Components.Pages.General.AppContainer>
-@code {
-
-}

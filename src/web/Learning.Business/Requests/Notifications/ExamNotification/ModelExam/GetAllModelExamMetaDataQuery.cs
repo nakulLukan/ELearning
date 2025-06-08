@@ -28,7 +28,8 @@ public class GetAllModelExamMetaDataQueryHandler : IRequestHandler<GetAllModelEx
     public async Task<GetAllModelExamMetaDataResponseDto[]> Handle(GetAllModelExamMetaDataQuery request, CancellationToken cancellationToken)
     {
         var modelExams = await _appDbContext.ModelExamConfigurations
-            .Where(x => x.ExamNotificationId == request.ExamNotificationId)
+            .Where(x => x.ExamNotificationId == request.ExamNotificationId
+                && x.IsActive)
             .Select(x => new
             {
                 ExamNotificationId = request.ExamNotificationId,
