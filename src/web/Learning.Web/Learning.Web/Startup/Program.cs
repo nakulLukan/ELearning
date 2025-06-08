@@ -1,9 +1,22 @@
-using Learning.Shared.Constants;
 using Learning.Web;
 using Learning.Web.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Serilog;
 
+
+#region Logging
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/app.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 7,
+        fileSizeLimitBytes: 10 * 1024 * 1024,
+        shared: true,
+        flushToDiskInterval: TimeSpan.FromMinutes(1))
+    .CreateLogger();
+#endregion
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 builder.RegisterServices();
 var app = builder.Build();

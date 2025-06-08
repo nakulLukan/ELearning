@@ -1,6 +1,7 @@
 ﻿using Learning.Business.Impl.Data;
 using Learning.Infrasture.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Learning.Web.Extensions;
 public static class DbInitializer
@@ -9,10 +10,15 @@ public static class DbInitializer
     {
         Task.Run(async () =>
         {
-            using (var scope = app.Services.CreateScope())
+            try
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<IAppDbContextFactory>().CreateDbContext() as ApplicationDbContext;
+                using var scope = app.Services.CreateScope();
+                var dbContext = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService<IAppDbContextFactory>().CreateDbContext();
                 await dbContext.Database.MigrateAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Migration failed");
             }
         });
         return Task.CompletedTask;
