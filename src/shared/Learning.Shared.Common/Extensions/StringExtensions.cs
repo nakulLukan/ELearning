@@ -25,4 +25,14 @@ public static class StringExtensions
         // Use TextInfo.ToTitleCase to convert to Title Case
         return textInfo.ToTitleCase(lowerCaseInput);
     }
+
+    public static string TrimToLen(this string str, int length)
+    {
+        if (str.Length > length)
+        {
+            return str.Substring(0, length);
+        }
+
+        return str;
+    }
 }

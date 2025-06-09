@@ -15,7 +15,7 @@ public class PublicUserListQuery : IRequest<PaginatedResponse<PublicUserListItem
 
     public string SortBy { get; set; }
     public bool IsDescending { get; set; }
-    public string EmailOrNameFilter { get; set; }
+    public string PlaceOrNameFilter { get; set; }
 }
 
 public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, PaginatedResponse<PublicUserListItemDto>>
@@ -41,9 +41,8 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
             {
                 Id = x.Id,
                 AccountCreatedOn = x.AccountCreatedOn.ToLocalDateTimeString(),
-                ContactNumber = x.OtherDetails.PhoneNumber ?? string.Empty,
-                EmailAddress = x.OtherDetails.Email ?? string.Empty,
-                IsEmailAddressVerified = x.OtherDetails.EmailConfirmed,
+                ContactNumber = x.OtherDetails!.PhoneNumber ?? string.Empty,
+                Place = x.OtherDetails.Place!,
                 IsContactNumberVerified = x.OtherDetails.PhoneNumberConfirmed,
                 FullName = x.OtherDetails.FullName ?? string.Empty,
                 IsActive = x.IsActive,
@@ -59,11 +58,10 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
         {
             usersQuery = (request.SortBy) switch
             {
-                nameof(PublicUserListItemDto.EmailAddress) => usersQuery.SortyBy(x => x.OtherDetails.NormalizedEmail, request.IsDescending),
-                nameof(PublicUserListItemDto.IsEmailAddressVerified) => usersQuery.SortyBy(x => x.OtherDetails.EmailConfirmed, request.IsDescending),
+                nameof(PublicUserListItemDto.Place) => usersQuery.SortyBy(x => x.OtherDetails!.Place, request.IsDescending),
                 nameof(PublicUserListItemDto.AccountCreatedOn) => usersQuery.SortyBy(x => x.AccountCreatedOn, request.IsDescending),
                 nameof(PublicUserListItemDto.Index) => usersQuery.SortyBy(x => x.Index, request.IsDescending),
-                nameof(PublicUserListItemDto.FullName) => usersQuery.SortyBy(x => x.OtherDetails.FullName, request.IsDescending),
+                nameof(PublicUserListItemDto.FullName) => usersQuery.SortyBy(x => x.OtherDetails!.FullName, request.IsDescending),
                 _ => throw new NotImplementedException()
             };
         }
@@ -88,12 +86,12 @@ public class PublicUserListQueryHandler : IRequestHandler<PublicUserListQuery, P
 
     private static IQueryable<ApplicationUser> BuildFilterConditions(PublicUserListQuery request, IQueryable<ApplicationUser> usersQuery)
     {
-        if (!string.IsNullOrEmpty(request.EmailOrNameFilter))
+        if (!string.IsNullOrEmpty(request.PlaceOrNameFilter))
         {
             usersQuery = usersQuery
-                .Where(x => x.OtherDetails.NormalizedEmail!.Contains(request.EmailOrNameFilter.ToUpper())
+                .Where(x => x.OtherDetails!.Place!.Contains(request.PlaceOrNameFilter.ToUpperInvariant())
                     || (x.OtherDetails.FullName != null
-                        && x.OtherDetails.FullName.ToUpper().Contains(request.EmailOrNameFilter.ToUpper())))
+                        && x.OtherDetails.FullName.ToUpper().Contains(request.PlaceOrNameFilter.ToUpper())))
                 .AsQueryable();
         }
 

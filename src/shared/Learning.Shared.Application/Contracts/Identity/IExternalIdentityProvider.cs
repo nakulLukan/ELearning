@@ -8,8 +8,8 @@ public interface IExternalIdentityProvider
     public Task<(List<ExternalUser> Users, string? PaginationToken)>
         ListUsersAsync(DateTime? minLastUpdatedOn, string? lastPaginationToken, int? pageSize = 60);
 
-    public Task EnableUser(string userId);
-    public Task DisableUser(string userId);
+    public Task EnableUser(string username);
+    public Task DisableUser(string username);
     public Task<SigninResponseDto> Login(string username, string password);
     public Task SignUpUser(string username, string password, string name, string address);
 

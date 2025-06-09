@@ -6,6 +6,7 @@ using Learning.Shared.Application.Helpers;
 using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Extensions;
 using Learning.Shared.Common.Utilities;
+using Learning.Shared.Constants;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -76,6 +77,7 @@ public class VerifyOtpCommandHandler : IRequestHandler<VerifyOtpCommand, VerifyO
                 PhoneNumberConfirmed = userDetails.IsPhoneNumberConfirmed,
                 FullName = userDetails.FullName,
                 NormalizedEmail = userDetails.Email.ToNormalizedString(),
+                Place = userDetails.Place.TrimToLen(DomainConstant.PlaceFieldMaxLength).ToUpper(),
             },
             RoleId = null
         };

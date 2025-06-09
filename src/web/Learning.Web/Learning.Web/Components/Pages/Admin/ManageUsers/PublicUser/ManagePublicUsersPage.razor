@@ -31,8 +31,7 @@
 		<PropertyColumn Property="x => x.FullName" Title="Full Name" Sortable="true" />
 		<PropertyColumn Property="x => x.ContactNumber" Title="Contact Number" />
 		<PropertyColumn Property="@(context=> context.IsContactNumberVerified ? "Verified" : "Not Verified")" Title="Contact Verified" />
-		<PropertyColumn Property="x => x.EmailAddress" Title="Email Address" Sortable=true />
-		<PropertyColumn Property="@(context=> context.IsEmailAddressVerified ? "Verified" : "Not Verified")" Title="Email Verified" />
+		<PropertyColumn Property="x => x.Place" Title="Place" Sortable=true />
 		<PropertyColumn Property="x => x.AccountCreatedOn" Title="Joined On" Sortable="true" />
 		<PropertyColumn Property="@(context=> context.IsActive ? "Active" : "In-Active")" Title="Account Status" />
 		@if (userRole == RoleConstant.SuperAdmin)
@@ -84,7 +83,7 @@
 				Take = gridState.PageSize,
 				SortBy = sortBy?.SortBy ?? string.Empty,
 				IsDescending = sortBy?.Descending ?? false,
-				EmailOrNameFilter = SearchString,
+				PlaceOrNameFilter = SearchString,
 			}));
 		return new GridData<PublicUserListItemDto>
 			{

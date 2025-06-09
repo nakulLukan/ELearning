@@ -38,7 +38,7 @@ public class ModelExamReceiptQueryHandler : IRequestHandler<ModelExamReceiptQuer
             .Select(x => new
             {
                 x.Amount,
-                x.User!.OtherDetails.FullName,
+                x.User!.OtherDetails!.FullName,
                 x.OrderedCompletedOn,
                 x.ModelExamPackage!.ExamNotification!.NotificationTitle,
             })

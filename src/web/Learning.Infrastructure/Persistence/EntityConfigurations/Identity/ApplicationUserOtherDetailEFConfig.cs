@@ -1,4 +1,5 @@
 ﻿using Learning.Domain.Identity;
+using Learning.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,5 +16,10 @@ public class ApplicationUserOtherDetailEFConfig : IEntityTypeConfiguration<Appli
         builder.Property(x => x.NormalizedEmail).IsRequired(false);
 
         builder.Property(x => x.YearOfBirth).IsRequired(false);
+        builder
+            .Property(x => x.Place)
+            .HasMaxLength(DomainConstant.PlaceFieldMaxLength)
+            .HasDefaultValue(string.Empty)
+            .IsRequired(true);
     }
 }

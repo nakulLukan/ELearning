@@ -14,4 +14,9 @@ public class ExternalUser
     public required string FullName { get; set; }
     public required bool IsEnabled { get; set; }
     public required bool IsAccountConfirmed { get; set; }
+
+    /// <summary>
+    /// Value stored in uppercase
+    /// </summary>
+    public required string Place { get; set; }
 }

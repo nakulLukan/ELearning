@@ -7,8 +7,7 @@ public class PublicUserListItemDto
     public string FullName { get; set; }
     public string ContactNumber { get; set; }
     public bool IsContactNumberVerified { get; set; }
-    public string EmailAddress { get; set; }
-    public bool IsEmailAddressVerified { get; set; }
+    public required string Place { get; set; }
     public bool IsActive { get; set; }
     public string AccountCreatedOn { get; set; }
 }

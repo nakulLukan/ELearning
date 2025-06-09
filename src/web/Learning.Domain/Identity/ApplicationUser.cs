@@ -7,5 +7,5 @@ public class ApplicationUser : IdentityUserBase
     public required string Id { get; set; }
     public bool IsAdmin { get; set; }
 
-    public ApplicationUserOtherDetail OtherDetails { get; set; } = new();
+    public ApplicationUserOtherDetail? OtherDetails { get; set; }
 }

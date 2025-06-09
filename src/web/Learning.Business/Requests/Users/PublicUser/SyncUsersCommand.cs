@@ -7,6 +7,7 @@ using Learning.Shared.Application.Helpers;
 using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Extensions;
 using Learning.Shared.Common.Models.Identity;
+using Learning.Shared.Constants;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +45,7 @@ public class SyncUsersCommandHandler : IRequestHandler<SyncUsersCommand, SyncUse
 
         if (users.Any())
         {
-            minDate = minDate ?? DateTime.UtcNow;
+            minDate = DateTime.UtcNow;
             await _masterSettingsManager.SetValue(_appDbContext, AppMasterSettingKeyConstant.COG_USER_MIN_DATE, minDate.Value, cancellationToken);
             await _masterSettingsManager.SetValue(_appDbContext, AppMasterSettingKeyConstant.COG_USER_LIST_PAGINATION, nextPaginationToken, cancellationToken);
         }
@@ -90,6 +91,7 @@ public class SyncUsersCommandHandler : IRequestHandler<SyncUsersCommand, SyncUse
                     PhoneNumberConfirmed = newUser.IsPhoneNumberConfirmed,
                     FullName = newUser.FullName,
                     NormalizedEmail = newUser.Email.ToNormalizedString(),
+                    Place = newUser.Place
                 },
                 RoleId = roleMapper.ContainsKey(newUser.Role ?? string.Empty) ? roleMapper[newUser.Role] : null,
             });
@@ -132,7 +134,7 @@ public class SyncUsersCommandHandler : IRequestHandler<SyncUsersCommand, SyncUse
                     existingUser.IsActive = user.IsEnabled;
                 }
 
-                if (existingUser.OtherDetails.EmailConfirmed != user.IsEmailConfirmed)
+                if (existingUser.OtherDetails!.EmailConfirmed != user.IsEmailConfirmed)
                 {
                     existingUser.OtherDetails.EmailConfirmed = user.IsEmailConfirmed;
                 }
@@ -145,6 +147,11 @@ public class SyncUsersCommandHandler : IRequestHandler<SyncUsersCommand, SyncUse
                 if (existingUser.OtherDetails.FullName != user.FullName)
                 {
                     existingUser.OtherDetails.FullName = user.FullName;
+                }
+
+                if (existingUser.OtherDetails.Place != user.Place.ToUpper())
+                {
+                    existingUser.OtherDetails.Place = user.Place.TrimToLen(DomainConstant.PlaceFieldMaxLength).ToUpper();
                 }
 
                 if (roleMapper.ContainsKey(user.Role ?? string.Empty))

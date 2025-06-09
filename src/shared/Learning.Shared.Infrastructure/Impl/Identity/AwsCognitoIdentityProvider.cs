@@ -8,6 +8,7 @@ using Learning.Shared.Common.Constants;
 using Learning.Shared.Common.Models.Identity;
 using Learning.Shared.Common.Utilities;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Learning.Shared.Infrastructure.Impl.Identity;
 
@@ -76,27 +77,28 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
                     IsPhoneNumberConfirmed = bool.Parse(x.Attributes.FirstOrDefault(x => x.Name == ClaimConstant.IsPhoneNumberVerifiedClaim)?.Value ?? false.ToString()),
                     Role = x.Attributes.FirstOrDefault(x => x.Name == ClaimConstant.AwsRoleClaim)?.Value,
                     IsEnabled = x.Enabled,
-                    IsAccountConfirmed = x.UserStatus == UserStatusType.CONFIRMED
+                    IsAccountConfirmed = x.UserStatus == UserStatusType.CONFIRMED,
+                    Place = x.Attributes.First(x=>x.Name == ClaimConstant.Address).Value
                 }));
         } while (lastPaginationToken != null && (!pageSize.HasValue || externalUsers.Count <= pageSize.Value));
 
         return (externalUsers, nextPaginationToken);
     }
 
-    public async Task EnableUser(string userId)
+    public async Task EnableUser(string username)
     {
 
         var response = await _client.AdminEnableUserAsync(new AdminEnableUserRequest
         {
-            Username = userId,
+            Username = username,
             UserPoolId = _userPoolId
         });
     }
-    public async Task DisableUser(string userId)
+    public async Task DisableUser(string username)
     {
         var response = await _client.AdminDisableUserAsync(new AdminDisableUserRequest
         {
-            Username = userId,
+            Username = username,
             UserPoolId = _userPoolId
         });
     }
@@ -256,7 +258,8 @@ public class AwsCognitoIdentityProvider : IExternalIdentityProvider
                 IsPhoneNumberConfirmed = bool.Parse(response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.IsPhoneNumberVerifiedClaim)?.Value ?? false.ToString()),
                 Role = response.UserAttributes.FirstOrDefault(x => x.Name == ClaimConstant.AwsRoleClaim)?.Value,
                 IsEnabled = response.Enabled,
-                IsAccountConfirmed = response.UserStatus == UserStatusType.CONFIRMED
+                IsAccountConfirmed = response.UserStatus == UserStatusType.CONFIRMED,
+                Place = response.UserAttributes.First(x=>x.Name == ClaimConstant.Address).Value
             };
         }
         catch (UserNotFoundException ex)
