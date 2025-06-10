@@ -20,7 +20,7 @@
 		<MudSpacer />
 		<AppProgressButton Variant="Variant.Filled" IsProgressing="_isSync" OnClick="SyncUsers">Sync Users</AppProgressButton>
 		<MudTextField @bind-Value="@SearchString" Lines="1" MaxLines=1 InputType=InputType.Email
-					  Placeholder="@(@"Search by ""Name"" or ""Email Address""")" Adornment="Adornment.Start" Immediate
+					  Placeholder="@(@"Search by ""Name"" or ""Place""")" Adornment="Adornment.Start" Immediate
 					  AdornmentIcon="@Icons.Material.Filled.Search" Variant=Variant.Outlined Margin=Margin.Dense
 					  IconSize="Size.Medium" Class="mt-0" Clearable AutoGrow
 					  OnClearButtonClick="OnClear"></MudTextField>

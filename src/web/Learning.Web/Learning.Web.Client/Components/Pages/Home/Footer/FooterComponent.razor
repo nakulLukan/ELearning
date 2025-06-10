@@ -14,10 +14,9 @@
 
 				@* Section 2 *@
 				<div class="d-flex flex-column justify-end gap-2 gap-md-4">
-					<FooterContactComponent Icon="@GlyphIcons.Whatsapp" Text="@ContactInfoConstant.Whatsapp" Href="@($"https://wa.me/{ContactInfoConstant.Whatsapp}?text=Hello")" />
+					<FooterContactComponent Icon="@GlyphIcons.Whatsapp" Text="@ContactInfoConstant.Whatsapp" Href="@($"https://wa.me/{ContactInfoConstant.Whatsapp}?text=Hi")" />
 					<FooterContactComponent Icon="@GlyphIcons.Mail" Text="@ContactInfoConstant.EmailAddress" Href="@($"mailto:{ContactInfoConstant.EmailAddress}")" />
 					<FooterContactComponent Icon="@GlyphIcons.PhoneDialer" Text="@ContactInfoConstant.Mobile1" Href="@($"tel:{ContactInfoConstant.Mobile1}")" />
-					<FooterContactComponent Icon="@GlyphIcons.PhoneDialer" Text="@ContactInfoConstant.Mobile2" Href="@($"tel:{ContactInfoConstant.Mobile2}")" />
 				</div>
 
 				@* Section 3 *@
@@ -25,7 +24,8 @@
 					<h6 class="section-3-header mb-2">OUR BRANCHES</h6>
 					@foreach (var branch in ContactInfoConstant.Branches)
 					{
-						<h6 class="section-3-text">@branch</h6>
+						var item = branch.Split('|');
+						<h6 class="section-3-text">@item[0] | 🖁 <a class="text-white" href="tel:@item[1]">@item[1]</a></h6>
 					}
 				</div>
 
