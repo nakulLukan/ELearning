@@ -1,8 +1,8 @@
+using Learning.Shared.Application.Helpers;
 using Learning.Web;
 using Learning.Web.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
-
 
 #region Logging
 Log.Logger = new LoggerConfiguration()

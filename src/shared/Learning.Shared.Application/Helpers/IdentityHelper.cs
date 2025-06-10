@@ -1,5 +1,5 @@
-﻿using System.Security.Cryptography;
-using Learning.Shared.Constants;
+﻿using Learning.Shared.Constants;
+using System.Security.Cryptography;
 
 namespace Learning.Shared.Application.Helpers;
 
@@ -21,18 +21,19 @@ public class IdentityHelper
         var bytes = new byte[4];
         rng.GetBytes(bytes);
         int otp = BitConverter.ToInt32(bytes, 0) % 1000000;
-        var otpString = Math.Abs(otp).ToString("D6");
-        return int.Parse(otpString.Length == 6 ? otpString : MakeIt6Digit(otpString)); // Ensures 6-digit format
-    }
-
-    private static string MakeIt6Digit(string otp)
-    {
-        int len = (6 - otp.Length);
-        for (int i = 1; i <= len; i++)
+        var otpString = Math.Abs(otp).ToString("D6").ToCharArray();
+        
+        for (int i = 0; i < otpString.Length; i++)
         {
-            otp += i;
+            if (otpString[i] == '0')
+            {
+                otpString[i] = '1';
+            }
+            else
+            {
+                return int.Parse(new string(otpString));
+            }
         }
-
         return otp;
     }
 }
